@@ -122,7 +122,7 @@ export const TaskGroupList = () => {
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+    <div className="sm:px-6 md:px-8 max-w-7xl mx-auto ">
       <AddGroupForm onCreate={() => reload?.()} />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="groups" type="group">
@@ -130,7 +130,7 @@ export const TaskGroupList = () => {
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start"
             >
               {groups.map((group, idx) => (
                 <TaskGroupCard

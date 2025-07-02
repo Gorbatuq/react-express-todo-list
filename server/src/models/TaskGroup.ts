@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface Task {
+  _id?: Types.ObjectId;
   title: string;
   completed: boolean;
   order: number;

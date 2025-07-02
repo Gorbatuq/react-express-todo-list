@@ -1,36 +1,46 @@
 import { Request, Response, NextFunction } from "express";
 import { TaskGroup } from "../models/TaskGroup";
 
-// Додати задачу
+// Add task in group
 export const addTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const group = await TaskGroup.findById(req.params.groupId);
-    if (!group) throw new Error("Групу не знайдено");
 
-    group.tasks.push({ 
-      title: req.body.title, 
-      completed: false, 
-      order: group.tasks.length // or use a different logic for order if needed
-    });
+    
+    if (!req.body.title || !req.body.title.trim()) 
+      return res.status(400).json({ message: "Title is required" });
+
+    const group = await TaskGroup.findById(req.params.groupId);
+    if (!group) return res.status(404).json({ message: "Group not found" });
+
+
+    const newTask = {
+      title: req.body.title.trim(),
+      completed: false,
+      order: group.tasks.length
+    };
+
+    group.tasks.push(newTask);
     await group.save();
 
-    const task = group.tasks[group.tasks.length - 1];
-    res.status(201).json(task);
+    const createdTask = group.tasks.at(-1);
+    res.status(201).json(createdTask);
   } catch (err) {
+    console.error("Error adding task:", err);
     next(err);
   }
 };
 
-// Видалити задачу
+
+// Видалити задачу Потрібно рефакторнути
 export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const group = await TaskGroup.findById(req.params.groupId);
     if (!group) throw new Error("Групу не знайдено");
 
-    const taskToRemove = group.tasks.find((t: any) => t._id?.toString() === req.params.taskId);
+    const taskToRemove = group.tasks.filter((t: any) => t._id?.toString() !== req.params.taskId);
     if (!taskToRemove) throw new Error("Задачу не знайдено");
 
-    group.tasks = group.tasks.filter((t: any) => t._id?.toString() !== req.params.taskId);
+    group.tasks = taskToRemove;
     await group.save();
     res.json(group);
   } catch (err) {
@@ -116,6 +126,7 @@ export const moveTask = async (req: Request, res: Response, next: NextFunction) 
     await sourceGroup.save();
 
     targetGroup.tasks.push({
+      _id: task._id,
       title: task.title,
       completed: task.completed,
       order: targetGroup.tasks.length

@@ -14,9 +14,13 @@ export const AddTaskInput = ({
   const handleAdd = async () => {
     const title = value.trim();
     if (!title) return;
-    await onAdd(groupId, title);
-    onChange("");
-    reload();
+    try {
+      await onAdd(groupId, title);
+      onChange("");
+      reload();
+    } catch (err) {
+      console.error("Не вдалося додати задачу:", err);
+    }
   };
 
   return (
@@ -27,6 +31,7 @@ export const AddTaskInput = ({
         className="flex-1 border rounded px-3 py-2"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleAdd()}
       />
       <button
         className="bg-green-400 hover:bg-green-500 text-white px-2 rounded"

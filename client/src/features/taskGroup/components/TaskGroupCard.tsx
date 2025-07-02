@@ -101,7 +101,9 @@ export const TaskGroupCard = ({
               </span>
             )}
             <button
-              onClick={() => handlers.deleteGroup(group._id)}
+              onClick={() => {
+                handlers.deleteGroup(group._id).then(() => handlers.reload?.());
+              }}
               className="ml-3 text-red-600 text-xl"
             >
               ×

@@ -51,7 +51,7 @@ export const TaskItem = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-2"
+          className="flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2"
         >
           <div className="flex items-center gap-3 rounded px-2 py-1 flex-1">
             <input
@@ -80,14 +80,18 @@ export const TaskItem = ({
                     title: task.title,
                   })
                 }
-                className="truncate max-w-full break-words"
+                className="break-words w-0 flex-1"
               >
                 {task.title}
               </span>
             )}
           </div>
           <button
-            onClick={() => handlers.deleteTaskFromGroup(groupId, task._id)}
+            onClick={() => {
+              handlers
+                .deleteTaskFromGroup(groupId, task._id)
+                .then(() => handlers.reload?.());
+            }}
             className="ml-3 bg-red-400 text-white rounded-full w-7 h-7 flex items-center justify-center"
           >
             ×
