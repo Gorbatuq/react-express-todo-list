@@ -19,11 +19,11 @@ app.use("/api/task-groups", taskRoutes);
 
 
 app.get("/", (_req, res) => {
-  res.send("Сервер працює!");
+  res.send("Server work!");
 });
 
 app.listen(PORT, () => {
-  console.log(`Сервер запущено на порту ${PORT}`);
+  console.log(`Server work in: ${PORT}`);
 });
 
 app.use(errorHandler);

@@ -7,15 +7,46 @@ import {
   reorderGroups,
 } from "../controllers/taskGroupController";
 
-import { createGroupSchema, reorderGroupsSchema  } from "../validation/taskSchemas";
-import { validate } from "../middleware/validate";
+import {
+  createGroupSchema,
+  reorderGroupsSchema,
+  idParamSchema,
+} from "../validation/taskSchemas";
+
+import { validateBody, validateParams } from "../middleware/validate";
 
 const router = express.Router();
 
+// Get all groups
 router.get("/", getAllGroups);
-router.post("/", validate(createGroupSchema), createGroup);
-router.delete("/:id", deleteGroup);
-router.put("/:id", updateGroupTitle);
-router.patch("/order", validate(reorderGroupsSchema), reorderGroups);
+
+// Create a new group
+router.post(
+  "/",
+  validateBody(createGroupSchema),
+  createGroup
+);
+
+// Delete a group by ID
+router.delete(
+  "/:id",
+  validateParams(idParamSchema),
+  deleteGroup
+);
+
+// Update group title
+router.put(
+  "/:id",
+  validateParams(idParamSchema),
+  validateBody(createGroupSchema),
+  updateGroupTitle
+);
+
+// Reorder groups
+router.patch(
+  "/order",
+  validateBody(reorderGroupsSchema),
+  reorderGroups
+);
 
 export default router;

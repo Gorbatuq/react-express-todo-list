@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createGroup } from "../api/taskGroupApi";
+import { groupApi } from "../api/groups";
 
 export const AddGroupForm = ({ onCreate }: { onCreate: () => void }) => {
   const [title, setTitle] = useState("");
@@ -10,7 +10,7 @@ export const AddGroupForm = ({ onCreate }: { onCreate: () => void }) => {
     if (!trimmed) return;
 
     try {
-      await createGroup(trimmed);
+      await groupApi.create(trimmed);
       setTitle("");
       onCreate();
       console.log(`Create group ${trimmed}`);

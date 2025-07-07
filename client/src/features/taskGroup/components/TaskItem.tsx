@@ -19,8 +19,11 @@ interface TaskItemProps {
       groupId: string,
       taskId: string,
       title: string
-    ) => Promise<void>;
-    deleteTaskFromGroup: (groupId: string, taskId: string) => Promise<void>;
+    ) => Promise<Task>;
+    deleteTaskFromGroup: (
+      groupId: string,
+      taskId: string
+    ) => Promise<{ message: string }>;
     reload?: () => void;
   };
 }
@@ -57,7 +60,10 @@ export const TaskItem = ({
             <input
               type="checkbox"
               checked={task.completed}
-              onChange={() => handlers.handleToggleTask(groupId, task._id)}
+              onChange={() => {
+                console.log("Toggle", groupId, task._id, "was", task.completed);
+                handlers.handleToggleTask(groupId, task._id);
+              }}
             />
             {editingTask?.groupId === groupId &&
             editingTask?.taskId === task._id ? (

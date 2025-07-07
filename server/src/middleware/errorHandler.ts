@@ -1,14 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 
 export function errorHandler(
-  err: any,
+  err: unknown,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  console.error(err.stack);
-  res.status(500).json({
-    message: "Внутрішня помилка сервера",
-    error: err.message || "Невідома помилка",
-  });
+  if (err instanceof Error) {
+    console.error(err.stack);
+    res.status(500).json({ message: "Internal server error", error: err.message });
+  } else {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error", error: String(err) });
+  }
 }
+

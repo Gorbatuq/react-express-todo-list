@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { TaskGroup } from "../../../types";
-import { fetchGroups } from "../api/taskGroupApi";
+
+import { groupApi } from "../api/groups";
 
 export const useGroups = (withReload = false) => {
   const [groups, setGroups] = useState<TaskGroup[]>([]);
@@ -8,7 +9,7 @@ export const useGroups = (withReload = false) => {
 
   const load = async () => {
     try {
-      const data = await fetchGroups();
+      const data = await groupApi.getAll();
       setGroups(data);
     } catch (err) {
       console.error("Failed to load groups", err);

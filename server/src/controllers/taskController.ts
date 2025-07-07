@@ -1,17 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { TaskGroup } from "../models/TaskGroup";
 
-// Add task in group
+// Add task to group
 export const addTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
-
-    
-    if (!req.body.title || !req.body.title.trim()) 
-      return res.status(400).json({ message: "Title is required" });
-
     const group = await TaskGroup.findById(req.params.groupId);
     if (!group) return res.status(404).json({ message: "Group not found" });
-
 
     const newTask = {
       title: req.body.title.trim(),
@@ -25,112 +19,114 @@ export const addTask = async (req: Request, res: Response, next: NextFunction) =
     const createdTask = group.tasks.at(-1);
     res.status(201).json(createdTask);
   } catch (err) {
-    console.error("Error adding task:", err);
     next(err);
   }
 };
 
-
-// Видалити задачу Потрібно рефакторнути
+// Delete task
 export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const group = await TaskGroup.findById(req.params.groupId);
-    if (!group) throw new Error("Групу не знайдено");
+    if (!group) return res.status(404).json({ message: "Group not found" });
 
-    const taskToRemove = group.tasks.filter((t: any) => t._id?.toString() !== req.params.taskId);
-    if (!taskToRemove) throw new Error("Задачу не знайдено");
+    const initialLen = group.tasks.length;
+    group.tasks = group.tasks.filter(task => task._id?.toString() !== req.params.taskId);
 
-    group.tasks = taskToRemove;
+    if (group.tasks.length === initialLen)
+      return res.status(404).json({ message: "Task not found" });
+
+    group.tasks.forEach((task, index) => task.order = index);
     await group.save();
-    res.json(group);
+
+    res.json({ message: "Task deleted" });
   } catch (err) {
     next(err);
   }
 };
 
-// Змінити статус
+// Toggle task completion
 export const toggleTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const group = await TaskGroup.findById(req.params.groupId);
-    if (!group) throw new Error("Групу не знайдено");
+    if (!group) return res.status(404).json({ message: "Group not found" });
 
-    const task = group.tasks.find((t: any) => t._id?.toString() === req.params.taskId);
-    if (!task) throw new Error("Задачу не знайдено");
+    const task = group.tasks.find(task => task._id?.toString() === req.params.taskId);
+    if (!task) return res.status(404).json({ message: "Task not found" });
 
-    task.completed = !task.completed;  // <--- для гарантії
+    task.completed = !task.completed;
     await group.save();
 
-    res.json({
-      message: "Task toggled",
-      updatedGroup: group
-    });
+    res.json({ message: "Task toggled", task });
   } catch (err) {
     next(err);
   }
 };
 
-
-// Оновити назву
+// Update task title
 export const updateTaskTitle = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const group = await TaskGroup.findById(req.params.groupId);
-    if (!group) throw new Error("Групу не знайдено");
+    if (!group) return res.status(404).json({ message: "Group not found" });
 
-    const task = group.tasks.find((t: any) => t._id?.toString() === req.params.taskId);
-    if (!task) throw new Error("Задачу не знайдено");
+    const task = group.tasks.find(task => task._id?.toString() === req.params.taskId);
+    if (!task) return res.status(404).json({ message: "Task not found" });
 
-    task.title = req.body.title;
+    task.title = req.body.title.trim();
     await group.save();
-    res.json(task); // повертаєш таску, не group
+
+    res.json(task);
   } catch (err) {
     next(err);
   }
 };
 
 
+// Reorder tasks
 export const reorderTasks = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { groupId } = req.params;
-    const { order } = req.body; // [taskId1, taskId2, ...]
-    const group = await TaskGroup.findById(groupId);
-    if (!group) throw new Error("Групу не знайдено");
+    const group = await TaskGroup.findById(req.params.groupId);
+    if (!group) return res.status(404).json({ message: "Group not found" });
 
-    // Перебудуй tasks у новому порядку
-    group.tasks.sort((a: any, b: any) =>
+    const { order } = req.body;
+    const idSet = new Set(order);
+
+    group.tasks.sort((a, b) =>
       order.indexOf(a._id?.toString()) - order.indexOf(b._id?.toString())
     );
-    // Онови поле order для кожної таски
-    group.tasks.forEach((task, idx) => (task.order = idx));
+
+    // Ensure only provided IDs are reordered, others push to end
+    group.tasks.forEach((task, index) => {
+      if (idSet.has(task._id?.toString())) {
+        task.order = index;
+      }
+    });
+
     await group.save();
-
-    res.json(group);
-
+    res.json({ message: "Tasks reordered", tasks: group.tasks });
   } catch (err) {
     next(err);
   }
 };
 
+// Move task between groups
 export const moveTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { sourceGroupId, taskId, targetGroupId } = req.params;
+
     const sourceGroup = await TaskGroup.findById(sourceGroupId);
     const targetGroup = await TaskGroup.findById(targetGroupId);
 
-    if (!sourceGroup) throw new Error("Джерельну групу не знайдено");
-    if (!targetGroup) throw new Error("Цільову групу не знайдено");
+    if (!sourceGroup) return res.status(404).json({ message: "Source group not found" });
+    if (!targetGroup) return res.status(404).json({ message: "Target group not found" });
 
-    const taskIdx = sourceGroup.tasks.findIndex((t: any) => t._id.toString() === taskId);
-    if (taskIdx === -1) throw new Error("Таску не знайдено в джерельній групі");
+    const taskIdx = sourceGroup.tasks.findIndex(task => task._id && task._id.toString() === taskId);
+    if (taskIdx === -1) return res.status(404).json({ message: "Task not found in source group" });
 
     const [task] = sourceGroup.tasks.splice(taskIdx, 1);
     await sourceGroup.save();
-
-    targetGroup.tasks.push({
-      _id: task._id,
-      title: task.title,
-      completed: task.completed,
-      order: targetGroup.tasks.length
-    });
+    
+    task.order = targetGroup.tasks.length;
+    targetGroup.tasks.push(task);
     await targetGroup.save();
 
     res.json({ message: "Task moved" });
@@ -138,3 +134,4 @@ export const moveTask = async (req: Request, res: Response, next: NextFunction) 
     next(err);
   }
 };
+

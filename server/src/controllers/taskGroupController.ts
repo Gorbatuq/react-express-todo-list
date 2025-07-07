@@ -1,71 +1,87 @@
 import { Request, Response, NextFunction } from "express";
 import { TaskGroup } from "../models/TaskGroup";
 
-// Отримати всі групи
+// Get all groups
 export const getAllGroups = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const groups = await TaskGroup.find().sort({ order: 1 });
+    const groups = await TaskGroup.find().sort({ order: 1 }).lean();
     res.json(groups);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// Створити нову групу
+// Create a new group
 export const createGroup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title } = req.body;
+    if (!title || typeof title !== "string") {
+      return res.status(400).json({ message: "Title is required and must be a string." });
+    }
+
     const count = await TaskGroup.countDocuments();
     const newGroup = new TaskGroup({ title, order: count, tasks: [] });
-
     await newGroup.save();
+
     res.status(201).json(newGroup);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
-// Видалити групу
+// Delete a group
 export const deleteGroup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await TaskGroup.findByIdAndDelete(req.params.id);
-    res.json({ message: "Групу видалено" });
-  } catch (err) {
-    next(err);
+    const deleted = await TaskGroup.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Group not found." });
+    }
+    res.json({ message: "Group deleted." });
+  } catch (error) {
+    next(error);
   }
 };
 
-// Оновити назву групи
+// Update group title
 export const updateGroupTitle = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title } = req.body;
+    if (!title || typeof title !== "string") {
+      return res.status(400).json({ message: "Title is required and must be a string." });
+    }
+
     const updated = await TaskGroup.findByIdAndUpdate(
       req.params.id,
       { title },
       { new: true }
     );
-    if (!updated) throw new Error("Групу не знайдено");
+
+    if (!updated) {
+      return res.status(404).json({ message: "Group not found." });
+    }
+
     res.json(updated);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
 // PATCH /groups/reorder
 export const reorderGroups = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { order } = req.body; // ["groupId1", "groupId2", ...]
-    const groups = await TaskGroup.find({ _id: { $in: order } }) as (typeof TaskGroup.prototype & { _id: any, order?: number })[];
-
-    for (let i = 0; i < order.length; i++) {
-      const group = groups.find((g) => (g._id as any).toString() === order[i]);
-      if (group) {
-        group.order = i;
-        await group.save();
-      }
+    const { order } = req.body;
+    if (!Array.isArray(order)) {
+      return res.status(400).json({ message: "`order` must be an array of IDs." });
     }
-    res.json(await TaskGroup.find().sort({ order: 1 }));
-  } catch (err) {
-    next(err);
+
+    // Update orders in bulk
+    await Promise.all(order.map((id, index) => 
+      TaskGroup.findByIdAndUpdate(id, { order: index })
+    ));
+
+    const updatedGroups = await TaskGroup.find().sort({ order: 1 }).lean();
+    res.json(updatedGroups);
+  } catch (error) {
+    next(error);
   }
 };
