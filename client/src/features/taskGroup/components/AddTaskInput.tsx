@@ -1,3 +1,4 @@
+import { PiPlus } from "react-icons/pi";
 export const AddTaskInput = ({
   groupId,
   value,
@@ -19,7 +20,7 @@ export const AddTaskInput = ({
       onChange("");
       reload();
     } catch (err) {
-      console.error("Не вдалося додати задачу:", err);
+      console.error("Failed to add task:", err);
     }
   };
 
@@ -37,7 +38,7 @@ export const AddTaskInput = ({
         className="bg-green-400 hover:bg-green-500 text-white px-2 rounded"
         onClick={handleAdd}
       >
-        Add
+        <PiPlus />
       </button>
     </div>
   );

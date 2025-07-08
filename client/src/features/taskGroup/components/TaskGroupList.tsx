@@ -2,18 +2,17 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import { AddGroupForm } from "./AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
 import { useTaskGroups } from "../hooks/useTaskGroup";
+import { GroupsProvider } from "./contexts/GroupsContext";
+import { EditingProvider } from "./contexts/EditingContext";
 import { groupApi } from "../api/groups";
 import { taskApi } from "../api/task";
 
 export const TaskGroupList = () => {
   const {
     groups,
+    setGroups,
     loading,
     reload,
-    taskTitles,
-    setTaskTitles,
-    filter,
-    setFilter,
     editingGroup,
     setEditingGroup,
     editingTask,
@@ -22,34 +21,41 @@ export const TaskGroupList = () => {
     onDragEnd,
   } = useTaskGroups();
 
+  const handlers = {
+    reload,
+    handleToggleTask,
+    deleteGroup: (id: string) => groupApi.delete(id),
+    updateGroupTitle: (id: string, title: string) =>
+      groupApi.updateTitle(id, title),
+    addTaskToGroup: (id: string, title: string) => taskApi.add(id, title),
+    deleteTaskFromGroup: (id: string, taskId: string) =>
+      taskApi.delete(id, taskId),
+    updateTaskTitle: (id: string, taskId: string, title: string) =>
+      taskApi.updateTitle(id, taskId, title),
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="sm:px-6 md:px-8 max-w-7xl mx-auto">
-      <AddGroupForm onCreate={() => reload?.()} />
-      <DragDropContext onDragEnd={onDragEnd}>
-        <TaskGroupGrid
-          groups={groups}
-          taskTitles={taskTitles}
-          setTaskTitles={setTaskTitles}
-          filter={filter}
-          setFilter={setFilter}
-          editingGroup={editingGroup}
-          setEditingGroup={setEditingGroup}
-          editingTask={editingTask}
-          setEditingTask={setEditingTask}
-          handlers={{
-            reload,
-            handleToggleTask,
-            deleteGroup: (id) => groupApi.delete(id),
-            updateGroupTitle: (id, title) => groupApi.updateTitle(id, title),
-            addTaskToGroup: (id, title) => taskApi.add(id, title),
-            deleteTaskFromGroup: (id, taskId) => taskApi.delete(id, taskId),
-            updateTaskTitle: (id, taskId, title) =>
-              taskApi.updateTitle(id, taskId, title),
-          }}
-        />
-      </DragDropContext>
-    </div>
+    <GroupsProvider value={{ groups, setGroups, handlers }}>
+      <EditingProvider
+        value={{ editingGroup, setEditingGroup, editingTask, setEditingTask }}
+      >
+        <div className="sm:px-6 md:px-8 max-w-7xl mx-auto">
+          <AddGroupForm
+            onCreate={
+              reload
+                ? () => {
+                    reload();
+                  }
+                : () => {}
+            }
+          />
+          <DragDropContext onDragEnd={onDragEnd}>
+            <TaskGroupGrid />
+          </DragDropContext>
+        </div>
+      </EditingProvider>
+    </GroupsProvider>
   );
 };

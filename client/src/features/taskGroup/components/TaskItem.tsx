@@ -1,5 +1,6 @@
 import { Draggable } from "@hello-pangea/dnd";
 import type { Task } from "../model/types";
+import { FiX } from "react-icons/fi";
 
 interface EditingTask {
   groupId: string;
@@ -100,7 +101,7 @@ export const TaskItem = ({
             }}
             className="ml-3 bg-red-400 text-white rounded-full w-7 h-7 flex items-center justify-center"
           >
-            ×
+            <FiX />
           </button>
         </li>
       )}
