@@ -42,15 +42,7 @@ export const TaskGroupList = () => {
         value={{ editingGroup, setEditingGroup, editingTask, setEditingTask }}
       >
         <div className="sm:px-6 md:px-8 max-w-7xl mx-auto">
-          <AddGroupForm
-            onCreate={
-              reload
-                ? () => {
-                    reload();
-                  }
-                : () => {}
-            }
-          />
+          <AddGroupForm onCreate={reload ?? (() => {})} />
           <DragDropContext onDragEnd={onDragEnd}>
             <TaskGroupGrid />
           </DragDropContext>

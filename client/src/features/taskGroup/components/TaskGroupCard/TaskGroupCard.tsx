@@ -33,8 +33,7 @@ const reducer = (state: LocalState, action: Action): LocalState => {
 export const TaskGroupCard = React.memo(
   ({ group, index }: { group: TaskGroup; index: number }) => {
     const { handlers } = useGroupsContext();
-    const { editingGroup, setEditingGroup, editingTask, setEditingTask } =
-      useEditingContext();
+    const { editingGroup, setEditingGroup } = useEditingContext();
 
     const [local, dispatch] = useReducer(reducer, {
       title: "",
@@ -48,7 +47,7 @@ export const TaskGroupCard = React.memo(
       handleDeleteGroup,
     } = useTaskGroupCard({
       group,
-      filter: { [group._id]: local.filter },
+      currentFilter: local.filter,
       editingGroup,
       handlers,
       setEditingGroup,
@@ -79,13 +78,7 @@ export const TaskGroupCard = React.memo(
               />
             </div>
 
-            <TaskList
-              groupId={group._id}
-              tasks={filteredTasks}
-              editingTask={editingTask}
-              setEditingTask={setEditingTask}
-              handlers={handlers}
-            />
+            <TaskList groupId={group._id} tasks={filteredTasks} />
 
             <AddTaskInput
               groupId={group._id}
