@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { groupApi } from "../api/groups";
+import { groupApi } from "../../api/groups";
 import { MdFormatListBulletedAdd } from "react-icons/md";
 
 export const AddGroupForm = ({ onCreate }: { onCreate: () => void }) => {

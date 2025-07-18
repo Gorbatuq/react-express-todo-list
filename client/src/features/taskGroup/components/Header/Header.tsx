@@ -1,0 +1,17 @@
+import { ThemeToggleButton } from "../Theme/ThemeToggleButton";
+
+export const Header = () => {
+  return (
+    <header className="w-full py-4 mb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="max-w-4xl mx-auto px-4 grid grid-cols-[1fr_auto_1fr] items-center">
+        <div></div>
+        <h1 className="text-xl sm:text-2xl md:text-3xl text-center font-semibold text-gray-900 dark:text-white">
+          - Todo List -
+        </h1>
+        <div className="flex justify-end pr-2">
+          <ThemeToggleButton />
+        </div>
+      </div>
+    </header>
+  );
+};

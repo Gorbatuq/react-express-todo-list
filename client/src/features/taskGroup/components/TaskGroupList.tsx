@@ -1,5 +1,5 @@
 import { DragDropContext } from "@hello-pangea/dnd";
-import { AddGroupForm } from "./AddGroupForm";
+import { AddGroupForm } from "./AddTask/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
 import { useTaskGroups } from "../hooks/useTaskGroup";
 import { GroupsProvider } from "./contexts/GroupsContext";

@@ -1,5 +1,5 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { AddTaskInput } from "../AddTaskInput";
+import { AddTaskInput } from "../AddTask/AddTaskInput";
 import { useTaskGroupCard } from "./useTaskGroupCard";
 import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
