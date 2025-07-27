@@ -21,4 +21,8 @@ export const taskApi = {
     safeRequest<{ message: string }>(
       api.patch(`/task-groups/${sourceGroupId}/tasks/${taskId}/move/${targetGroupId}`)
     ),
+
+  getByGroupId: (groupId: string) =>
+    safeRequest<Task[]>(api.get(`/task-groups/${groupId}/tasks`)),
+
 };

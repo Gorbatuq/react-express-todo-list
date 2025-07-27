@@ -1,6 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import { TaskGroup } from "../models/TaskGroup";
 
+// Get all task
+export const getTasksByGroupId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const group = await TaskGroup.findById(req.params.groupId);
+    if (!group) return res.status(404).json({ message: "Group not found" });
+
+    res.json(group.tasks);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Add task to group
 export const addTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -28,6 +40,8 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
   try {
     const group = await TaskGroup.findById(req.params.groupId);
     if (!group) return res.status(404).json({ message: "Group not found" });
+    
+
 
     const initialLen = group.tasks.length;
     group.tasks = group.tasks.filter(task => task._id?.toString() !== req.params.taskId);
@@ -35,6 +49,7 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
     if (group.tasks.length === initialLen)
       return res.status(404).json({ message: "Task not found" });
 
+    
     group.tasks.forEach((task, index) => task.order = index);
     await group.save();
 

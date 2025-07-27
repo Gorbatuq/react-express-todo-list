@@ -6,6 +6,7 @@ import {
   reorderTasks,
   toggleTask,
   updateTaskTitle,
+  getTasksByGroupId,
 } from "../controllers/taskController";
 
 import { validateBody, validateParams } from "../middleware/validate";
@@ -19,6 +20,13 @@ import {
 } from "../validation/taskSchemas";
 
 const router = express.Router({ mergeParams: true });
+
+// Get all tasks in a group
+router.get(
+  "/:groupId/tasks",
+  validateParams(groupIdParamSchema),
+  getTasksByGroupId
+);
 
 // Create a new task in a group
 router.post(

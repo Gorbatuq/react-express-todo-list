@@ -1,30 +1,38 @@
 import { useState } from "react";
 
-export const useTaskEditing = ({
-  groupId,
-  taskId,
-  title: initialTitle,
-  onSubmit,
-}: {
+interface UseTaskEditingProps {
   groupId: string;
   taskId: string;
   title: string;
-  onSubmit: (groupId: string, taskId: string, title: string) => void;
-}) => {
+  onSubmit: (title: string) => void;
+}
+
+export const useTaskEditing = ({
+  title: initialTitle,
+  onSubmit,
+}: UseTaskEditingProps) => {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(initialTitle);
 
   const startEditing = () => setEditing(true);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
+  };
+
   const handleSubmit = () => {
-    onSubmit(groupId, taskId, title);
+    const trimmed = title.trim();
+    if (trimmed && trimmed !== initialTitle.trim()) {
+      onSubmit(trimmed); 
+    }
     setEditing(false);
   };
+
 
   return {
     editing,
     title,
+    setTitle,
     startEditing,
     handleChange,
     handleSubmit,

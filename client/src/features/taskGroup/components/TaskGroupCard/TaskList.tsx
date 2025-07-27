@@ -1,35 +1,17 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { TaskItem } from "../TaskItem/TaskItem";
 import type { Task } from "../../model/types";
-import { useGroupsContext } from "../contexts/GroupsContext";
+import { useTaskStore } from "@/store/taskStore";
 
-export const TaskList = ({
-  groupId,
-  tasks,
-}: {
+interface Props {
   groupId: string;
   tasks: Task[];
-}) => {
-  const { handlers } = useGroupsContext();
+}
 
-  const handleToggle = (groupId: string, taskId: string) => {
-    handlers.handleToggleTask(groupId, taskId);
-    handlers.reload?.();
-  };
-
-  const handleDelete = async (groupId: string, taskId: string) => {
-    await handlers.deleteTaskFromGroup(groupId, taskId);
-    handlers.reload?.();
-  };
-
-  const handleEditSubmit = async (
-    groupId: string,
-    taskId: string,
-    title: string
-  ) => {
-    await handlers.updateTaskTitle(groupId, taskId, title);
-    handlers.reload?.();
-  };
+export const TaskList = ({ groupId, tasks }: Props) => {
+  const toggleTask = useTaskStore((s) => s.toggle);
+  const deleteTask = useTaskStore((s) => s.deleteTask);
+  const updateTitle = useTaskStore((s) => s.updateTitle);
 
   return (
     <Droppable droppableId={groupId} type="task">
@@ -39,15 +21,15 @@ export const TaskList = ({
           {...provided.droppableProps}
           className="space-y-2 mb-4"
         >
-          {tasks.map((task, idx) => (
+          {tasks.map((task, index) => (
             <TaskItem
               key={task._id}
               task={task}
               groupId={groupId}
-              index={idx}
-              onToggle={handleToggle}
-              onDelete={handleDelete}
-              onEditSubmit={handleEditSubmit}
+              index={index}
+              onToggle={toggleTask}
+              onDelete={deleteTask}
+              onEditSubmit={updateTitle}
             />
           ))}
           {provided.placeholder}

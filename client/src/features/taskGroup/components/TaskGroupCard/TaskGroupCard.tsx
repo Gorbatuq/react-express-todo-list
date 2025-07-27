@@ -1,60 +1,29 @@
 import { Draggable } from "@hello-pangea/dnd";
 import { AddTaskInput } from "../AddTask/AddTaskInput";
-import { useTaskGroupCard } from "./useTaskGroupCard";
 import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
 import { FilterButtons } from "./FilterButtons";
-import { useGroupsContext } from "../contexts/GroupsContext";
-import { useEditingContext } from "../contexts/EditingContext";
-import type { TaskGroup } from "../../model/types";
-import { useReducer } from "react";
+import { useGroupStore } from "@/store/groupStore";
+import { useTaskGroupCardLogic } from "../../hooks/useTaskGroupCardLogic";
 import React from "react";
 
-interface LocalState {
-  title: string;
-  filter: "all" | "completed" | "active";
-}
-
-type Action =
-  | { type: "SET_TITLE"; payload: string }
-  | { type: "SET_FILTER"; payload: LocalState["filter"] };
-
-const reducer = (state: LocalState, action: Action): LocalState => {
-  switch (action.type) {
-    case "SET_TITLE":
-      return { ...state, title: action.payload };
-    case "SET_FILTER":
-      return { ...state, filter: action.payload };
-    default:
-      return state;
-  }
-};
-
 export const TaskGroupCard = React.memo(
-  ({ group, index }: { group: TaskGroup; index: number }) => {
-    const { handlers } = useGroupsContext();
-    const { editingGroup, setEditingGroup } = useEditingContext();
+  ({ groupId, index }: { groupId: string; index: number }) => {
+    const group = useGroupStore((s) => s.groupMap[groupId]);
+    const editingGroupId = useGroupStore((s) => s.editingGroupId);
+    const setEditingGroupId = useGroupStore((s) => s.setEditingGroupId);
+    const updateGroupTitle = useGroupStore((s) => s.updateGroupTitle);
+    const deleteGroup = useGroupStore((s) => s.deleteGroup);
 
-    const [local, dispatch] = useReducer(reducer, {
-      title: "",
-      filter: "all",
-    });
+    const isEditingGroup = editingGroupId === groupId;
+    const { title, setTitle, filter, setFilter, filteredTasks, handleAdd } =
+      useTaskGroupCardLogic(groupId);
 
-    const {
-      isEditingGroup,
-      filteredTasks,
-      handleGroupEditSubmit,
-      handleDeleteGroup,
-    } = useTaskGroupCard({
-      group,
-      currentFilter: local.filter,
-      editingGroup,
-      handlers,
-      setEditingGroup,
-    });
+    if (!group) return null;
 
-    const handleAdd = async (groupId: string, title: string) => {
-      await handlers.addTaskToGroup(groupId, title);
+    const handleGroupEditSubmit = async (newTitle: string) => {
+      await updateGroupTitle(groupId, newTitle);
+      setEditingGroupId(null);
     };
 
     return (
@@ -63,37 +32,22 @@ export const TaskGroupCard = React.memo(
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
-            className="flex flex-col rounded-2xl bg-white dark:bg-zinc-700 
-              shadow-lg p-4 transition-transform hover:scale-[1.02]"
+            className="flex flex-col rounded-2xl bg-white dark:bg-zinc-700 shadow-lg p-4 transition-transform hover:scale-[1.02]"
           >
             <div {...provided.dragHandleProps}>
               <GroupHeader
                 groupId={group._id}
                 title={group.title}
                 isEditing={isEditingGroup}
-                editingGroup={editingGroup}
-                setEditingGroup={setEditingGroup}
+                setEditingGroupId={setEditingGroupId}
                 handleGroupEditSubmit={handleGroupEditSubmit}
-                handleDeleteGroup={handleDeleteGroup}
+                handleDeleteGroup={() => deleteGroup(groupId)}
               />
             </div>
 
             <TaskList groupId={group._id} tasks={filteredTasks} />
-
-            <AddTaskInput
-              groupId={group._id}
-              value={local.title}
-              onChange={(val) => dispatch({ type: "SET_TITLE", payload: val })}
-              onAdd={handleAdd}
-              reload={handlers.reload ?? (() => {})}
-            />
-
-            <FilterButtons
-              onChange={(type) =>
-                dispatch({ type: "SET_FILTER", payload: type })
-              }
-              currentFilter={local.filter}
-            />
+            <AddTaskInput value={title} onChange={setTitle} onAdd={handleAdd} />
+            <FilterButtons currentFilter={filter} onChange={setFilter} />
           </div>
         )}
       </Draggable>

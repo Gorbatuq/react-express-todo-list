@@ -1,16 +1,15 @@
+import { useEffect } from "react";
 import { useTaskEditing } from "../../hooks/useTaskEditing";
 import type { Task } from "../../model/types";
 
-export const EditableTaskTitle = ({
-  task,
-  groupId,
-  onSubmit,
-}: {
+interface Props {
   task: Task;
   groupId: string;
-  onSubmit: (groupId: string, taskId: string, title: string) => void;
-}) => {
-  const { editing, title, startEditing, handleChange, handleSubmit } =
+  onSubmit: (title: string) => void;
+}
+
+export const EditableTaskTitle = ({ task, groupId, onSubmit }: Props) => {
+  const { editing, title, startEditing, handleChange, handleSubmit, setTitle } =
     useTaskEditing({
       groupId,
       taskId: task._id,
@@ -18,7 +17,17 @@ export const EditableTaskTitle = ({
       onSubmit,
     });
 
-  if (!editing)
+  useEffect(() => {
+    if (!editing) {
+      setTitle(task.title);
+    }
+  }, [task.title, editing, setTitle]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSubmit();
+  };
+
+  if (!editing) {
     return (
       <span
         onClick={startEditing}
@@ -27,13 +36,14 @@ export const EditableTaskTitle = ({
         {task.title}
       </span>
     );
+  }
 
   return (
     <input
       value={title}
       onChange={handleChange}
       onBlur={handleSubmit}
-      onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+      onKeyDown={handleKeyDown}
       autoFocus
       className="flex-1 bg-white"
     />

@@ -1,53 +1,25 @@
+import { useEffect } from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
+
 import { AddGroupForm } from "./AddTask/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
-import { useTaskGroups } from "../hooks/useTaskGroup";
-import { GroupsProvider } from "./contexts/GroupsContext";
-import { EditingProvider } from "./contexts/EditingContext";
-import { groupApi } from "../api/groups";
-import { taskApi } from "../api/task";
+import { useGroupStore } from "@/store/groupStore";
+import { useTaskStore } from "@/store/taskStore";
 
 export const TaskGroupList = () => {
-  const {
-    groups,
-    setGroups,
-    loading,
-    reload,
-    editingGroup,
-    setEditingGroup,
-    editingTask,
-    setEditingTask,
-    handleToggleTask,
-    onDragEnd,
-  } = useTaskGroups();
+  const { reload } = useGroupStore();
+  const { onDragEnd } = useTaskStore();
 
-  const handlers = {
-    reload,
-    handleToggleTask,
-    deleteGroup: (id: string) => groupApi.delete(id),
-    updateGroupTitle: (id: string, title: string) =>
-      groupApi.updateTitle(id, title),
-    addTaskToGroup: (id: string, title: string) => taskApi.add(id, title),
-    deleteTaskFromGroup: (id: string, taskId: string) =>
-      taskApi.delete(id, taskId),
-    updateTaskTitle: (id: string, taskId: string, title: string) =>
-      taskApi.updateTitle(id, taskId, title),
-  };
-
-  if (loading) return <p>Loading...</p>;
-
+  useEffect(() => {
+    reload().catch(console.error);
+  }, [reload]);
+  // -- I'm thinking about loading, then I'll decide something.
   return (
-    <GroupsProvider value={{ groups, setGroups, handlers }}>
-      <EditingProvider
-        value={{ editingGroup, setEditingGroup, editingTask, setEditingTask }}
-      >
-        <div className="sm:px-6 md:px-8 max-w-7xl mx-auto">
-          <AddGroupForm onCreate={reload ?? (() => {})} />
-          <DragDropContext onDragEnd={onDragEnd}>
-            <TaskGroupGrid />
-          </DragDropContext>
-        </div>
-      </EditingProvider>
-    </GroupsProvider>
+    <div className="sm:px-6 md:px-8 max-w-7xl mx-auto">
+      <AddGroupForm onCreate={reload} />
+      <DragDropContext onDragEnd={onDragEnd}>
+        <TaskGroupGrid />
+      </DragDropContext>
+    </div>
   );
 };

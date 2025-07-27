@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import type { EditingGroup } from "./TaskGroupCard.types";
+import { useEffect, useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { MdOutlineDelete } from "react-icons/md";
 
@@ -7,9 +6,8 @@ interface Props {
   groupId: string;
   title: string;
   isEditing: boolean;
-  editingGroup: EditingGroup | null;
-  setEditingGroup: React.Dispatch<React.SetStateAction<EditingGroup | null>>;
-  handleGroupEditSubmit: () => Promise<void>;
+  setEditingGroupId: (id: string | null) => void;
+  handleGroupEditSubmit: (title: string) => Promise<void>;
   handleDeleteGroup: () => Promise<void>;
 }
 
@@ -17,24 +15,27 @@ export const GroupHeader = ({
   groupId,
   title,
   isEditing,
-  editingGroup,
-  setEditingGroup,
+  setEditingGroupId,
   handleGroupEditSubmit,
   handleDeleteGroup,
 }: Props) => {
+  const [localTitle, setLocalTitle] = useState(title);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingGroup({ id: groupId, title: e.target.value });
-  };
+  useEffect(() => {
+    if (isEditing) setLocalTitle(title);
+  }, [isEditing, title]);
 
-  const onFormSubmit = (e: React.FormEvent) => {
+  const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleGroupEditSubmit();
+    const trimmed = localTitle.trim();
+    if (!trimmed) return;
+    await handleGroupEditSubmit(trimmed);
+    setEditingGroupId(null);
   };
 
-  const onDelete = () => {
-    handleDeleteGroup();
+  const onDelete = async () => {
+    await handleDeleteGroup();
     setShowConfirm(false);
   };
 
@@ -43,8 +44,8 @@ export const GroupHeader = ({
       {isEditing ? (
         <form onSubmit={onFormSubmit} className="flex-1">
           <input
-            value={editingGroup?.title || ""}
-            onChange={onInputChange}
+            value={localTitle}
+            onChange={(e) => setLocalTitle(e.target.value)}
             autoFocus
             className="w-full border rounded px-2 py-1"
           />
@@ -52,11 +53,12 @@ export const GroupHeader = ({
       ) : (
         <span
           className="text-lg font-semibold cursor-pointer truncate max-w-full break-words"
-          onClick={() => setEditingGroup({ id: groupId, title })}
+          onClick={() => setEditingGroupId(groupId)}
         >
           - {title} -
         </span>
       )}
+
       <button
         onClick={() => setShowConfirm(true)}
         className="ml-3 text-red-600 text-xl focus:outline-none focus:ring-2 focus:ring-red-400"
@@ -64,6 +66,7 @@ export const GroupHeader = ({
       >
         <MdOutlineDelete />
       </button>
+
       {showConfirm && (
         <ConfirmModal
           message="Are you sure?"
