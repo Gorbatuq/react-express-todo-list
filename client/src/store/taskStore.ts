@@ -14,8 +14,14 @@ interface TaskState {
   deleteTask: (groupId: string, taskId: string) => Promise<void>;
   updateTitle: (groupId: string, taskId: string, title: string) => Promise<void>;
   toggle: (groupId: string, taskId: string) => Promise<void>;
-  reorder: (groupId: string, taskIds: string[]) => Promise<void>;
-  move: (sourceId: string, taskId: string, targetId: string, position: number) => Promise<void>;
+
+  reorderTasksLocally: (groupId: string, taskId: string, toIndex: number) => Promise<void>;
+  moveTaskToAnotherGroup: (
+    sourceId: string,
+    taskId: string,
+    targetId: string,
+    toIndex: number
+  ) => Promise<void>;
 
   onDragEnd: (result: DropResult) => void;
 }
@@ -26,8 +32,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   setEditingTaskId: (id) => set({ editingTaskId: id }),
 
-
-    loadTasks: async (groupId) => {
+  loadTasks: async (groupId) => {
     const tasks = await taskApi.getByGroupId(groupId);
     set((s) => ({
       tasksByGroup: {
@@ -46,7 +51,6 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       },
     }));
   },
-  
 
   deleteTask: async (groupId, taskId) => {
     await taskApi.delete(groupId, taskId);
@@ -78,42 +82,51 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     set({ tasksByGroup: { ...prev, [groupId]: updated } });
     try {
       await taskApi.toggle(groupId, taskId);
-    } catch (e) {
+    } catch {
       set({ tasksByGroup: prev });
     }
   },
 
-  reorder: async (groupId, taskIds) => {
-    await taskApi.reorder(groupId, taskIds);
-    set((s) => {
-      const tasks = taskIds.map((id) =>
-        (s.tasksByGroup[groupId] || []).find((t) => t._id === id)!
-      );
-      return {
-        tasksByGroup: {
-          ...s.tasksByGroup,
-          [groupId]: tasks,
-        },
-      };
-    });
+  reorderTasksLocally: async (groupId, taskId, toIndex) => {
+    const prev = get().tasksByGroup;
+    const tasks = [...(prev[groupId] || [])];
+    const index = tasks.findIndex((t) => t._id === taskId);
+    if (index === -1) return;
+
+    const [task] = tasks.splice(index, 1);
+    tasks.splice(toIndex, 0, task);
+
+    const updated = {
+      ...prev,
+      [groupId]: tasks,
+    };
+
+    set({ tasksByGroup: updated });
+
+    try {
+      await taskApi.reorder(groupId, tasks.map((t) => t._id));
+    } catch {
+      set({ tasksByGroup: prev });
+    }
   },
 
-  move: async (sourceId, taskId, targetId, position) => {
-    const state = get();
-    const prev = state.tasksByGroup;
+  moveTaskToAnotherGroup: async (sourceId, taskId, targetId, toIndex) => {
+    const prev = get().tasksByGroup;
 
-    const sourceTasks = [...(state.tasksByGroup[sourceId] || [])];
-    const targetTasks = [...(state.tasksByGroup[targetId] || [])];
+    const sourceTasks = [...(prev[sourceId] || [])];
+    const targetTasks = [...(prev[targetId] || [])];
+
     const task = sourceTasks.find((t) => t._id === taskId);
     if (!task) return;
 
     const updatedSource = sourceTasks.filter((t) => t._id !== taskId);
+    const newTask = { ...task, groupId: targetId };
     const updatedTarget = [...targetTasks];
-    updatedTarget.splice(position, 0, { ...task, groupId: targetId });
+    updatedTarget.splice(toIndex, 0, newTask);
 
     set({
       tasksByGroup: {
-        ...state.tasksByGroup,
+        ...prev,
         [sourceId]: updatedSource,
         [targetId]: updatedTarget,
       },
@@ -128,13 +141,16 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   onDragEnd: (result) => {
-    const { source, destination, draggableId } = result;
-    if (!destination) return;
-    get().move(
-      source.droppableId.toString(),
-      draggableId.toString(),
-      destination.droppableId.toString(),
-      destination.index
-    );
+    const { source, destination, draggableId, type } = result;
+    if (!destination || type !== "task") return;
+
+    const sourceId = source.droppableId;
+    const targetId = destination.droppableId;
+
+    if (sourceId === targetId) {
+      get().reorderTasksLocally(sourceId, draggableId, destination.index);
+    } else {
+      get().moveTaskToAnotherGroup(sourceId, draggableId, targetId, destination.index);
+    }
   },
 }));

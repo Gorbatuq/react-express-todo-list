@@ -4,11 +4,12 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import { AddGroupForm } from "./AddTask/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
 import { useGroupStore } from "@/store/groupStore";
-import { useTaskStore } from "@/store/taskStore";
+// import { useTaskStore } from "@/store/taskStore";
+import { handleDragEnd } from "@/store/dndStore";
 
 export const TaskGroupList = () => {
   const { reload } = useGroupStore();
-  const { onDragEnd } = useTaskStore();
+  // const { onDragEnd } = useTaskStore();
 
   useEffect(() => {
     reload().catch(console.error);
@@ -17,7 +18,7 @@ export const TaskGroupList = () => {
   return (
     <div className="sm:px-6 md:px-8 max-w-7xl mx-auto">
       <AddGroupForm onCreate={reload} />
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <TaskGroupGrid />
       </DragDropContext>
     </div>

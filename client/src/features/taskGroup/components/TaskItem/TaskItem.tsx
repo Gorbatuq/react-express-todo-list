@@ -18,12 +18,15 @@ export const TaskItem = memo(
   ({ task, groupId, index, onToggle, onDelete, onEditSubmit }: Props) => {
     return (
       <Draggable draggableId={task._id} index={index}>
-        {(provided) => (
+        {(provided, snapshot) => (
           <li
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className="flex items-center justify-between bg-gray-100 dark:bg-gray-500 rounded-lg px-3 py-2"
+            style={provided.draggableProps.style}
+            className={`flex items-center justify-between bg-gray-100 dark:bg-gray-500 rounded-lg px-3 py-2 ${
+              snapshot.isDragging ? "ring-2 ring-blue-50 shadow-xl" : ""
+            }`}
           >
             <div className="flex items-center gap-3 rounded px-2 py-1 flex-1">
               <TaskCheckbox

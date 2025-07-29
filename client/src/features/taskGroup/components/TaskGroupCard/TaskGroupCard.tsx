@@ -14,6 +14,7 @@ export const TaskGroupCard = React.memo(
     const setEditingGroupId = useGroupStore((s) => s.setEditingGroupId);
     const updateGroupTitle = useGroupStore((s) => s.updateGroupTitle);
     const deleteGroup = useGroupStore((s) => s.deleteGroup);
+    console.log(group.title, index);
 
     const isEditingGroup = editingGroupId === groupId;
     const { title, setTitle, filter, setFilter, filteredTasks, handleAdd } =
@@ -32,7 +33,9 @@ export const TaskGroupCard = React.memo(
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
-            className="flex flex-col rounded-2xl bg-white dark:bg-zinc-700 shadow-lg p-4 transition-transform hover:scale-[1.02]"
+            style={provided.draggableProps.style}
+            className="flex flex-col rounded-2xl bg-white dark:bg-zinc-700 shadow-lg p-4 transition-shadow
+  hover:shadow-xl"
           >
             <div {...provided.dragHandleProps}>
               <GroupHeader

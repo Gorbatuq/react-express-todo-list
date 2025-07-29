@@ -19,7 +19,7 @@ export const TaskList = ({ groupId, tasks }: Props) => {
         <ul
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className="space-y-2 mb-4"
+          className="flex flex-col gap-2 mb-4"
         >
           {tasks.map((task, index) => (
             <TaskItem

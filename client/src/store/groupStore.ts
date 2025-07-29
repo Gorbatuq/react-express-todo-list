@@ -1,4 +1,3 @@
-// ✅ 1. Переписаний groupStore з нормалізацією
 import { create } from "zustand";
 import { groupApi } from "../features/taskGroup/api/groups";
 import type { TaskGroup } from "../types";
