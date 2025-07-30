@@ -2,6 +2,7 @@ import { api, safeRequest } from "./http";
 import type { TaskGroup } from "../../../types";
 
 export const groupApi = {
+
   getAll: () => safeRequest<TaskGroup[]>(api.get("/task-groups")),
 
   create: (title: string) =>
@@ -15,4 +16,5 @@ export const groupApi = {
 
   reorder: (groupIds: string[]) =>
     safeRequest<{ message: string }>(api.patch("/task-groups/order", { order: groupIds })),
+  
 };

@@ -2,6 +2,10 @@ import { api, safeRequest } from "./http";
 import type { Task, TaskGroup } from "../../../types";
 
 export const taskApi = {
+  
+  getByGroupId: (groupId: string) =>
+    safeRequest<Task[]>(api.get(`/task-groups/${groupId}/tasks`)),
+
   add: (groupId: string, title: string) =>
     safeRequest<Task>(api.post(`/task-groups/${groupId}/tasks`, { title })),
 
@@ -21,8 +25,4 @@ export const taskApi = {
     safeRequest<{ message: string }>(
       api.patch(`/task-groups/${sourceGroupId}/tasks/${taskId}/move/${targetGroupId}`)
     ),
-
-  getByGroupId: (groupId: string) =>
-    safeRequest<Task[]>(api.get(`/task-groups/${groupId}/tasks`)),
-
 };

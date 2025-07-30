@@ -40,7 +40,7 @@ export const GroupHeader = ({
   };
 
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center relative mb-4">
       {isEditing ? (
         <form onSubmit={onFormSubmit} className="flex-1">
           <input

@@ -1,4 +1,4 @@
-import type { FilterType } from "./TaskGroupCard.types";
+type FilterType = "all" | "completed" | "active";
 
 const filterOptions: FilterType[] = ["all", "completed", "active"];
 
