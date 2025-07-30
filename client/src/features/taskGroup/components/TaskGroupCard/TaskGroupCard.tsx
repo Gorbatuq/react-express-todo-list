@@ -1,5 +1,5 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { AddTaskInput } from "../AddTask/AddTaskInput";
+import { AddTaskForm } from "../AddTask/AddTaskForm";
 import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
 import { FilterButtons } from "./FilterButtons";
@@ -14,10 +14,9 @@ export const TaskGroupCard = React.memo(
     const setEditingGroupId = useGroupStore((s) => s.setEditingGroupId);
     const updateGroupTitle = useGroupStore((s) => s.updateGroupTitle);
     const deleteGroup = useGroupStore((s) => s.deleteGroup);
-    console.log(group.title, index);
 
     const isEditingGroup = editingGroupId === groupId;
-    const { title, setTitle, filter, setFilter, filteredTasks, handleAdd } =
+    const { filter, setFilter, filteredTasks, handleAdd } =
       useTaskGroupCardLogic(groupId);
 
     if (!group) return null;
@@ -49,7 +48,7 @@ export const TaskGroupCard = React.memo(
             </div>
 
             <TaskList groupId={group._id} tasks={filteredTasks} />
-            <AddTaskInput value={title} onChange={setTitle} onAdd={handleAdd} />
+            <AddTaskForm addTask={handleAdd} />
             <FilterButtons currentFilter={filter} onChange={setFilter} />
           </div>
         )}

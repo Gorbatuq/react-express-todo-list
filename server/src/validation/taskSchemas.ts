@@ -6,7 +6,7 @@ export const idSchema = z.string().min(1, "ID is required");
 
 export const titleSchema = z.string()
   .min(1, "Title is required")
-  .max(100, "Max 100 characters");
+  .max(400, "Max 400 characters");
 
 // ===== BODY SCHEMAS =====
 

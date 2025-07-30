@@ -10,7 +10,7 @@ export const TaskGroupGrid = () => {
   }
 
   return (
-    <Droppable droppableId="groups" type="group" direction="vertical">
+    <Droppable droppableId="groups" type="group" direction="horizontal">
       {(provided) => (
         <div
           ref={provided.innerRef}

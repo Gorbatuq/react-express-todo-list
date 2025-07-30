@@ -1,36 +1,37 @@
-import { useEffect } from "react";
-import { useTaskEditing } from "../../hooks/useTaskEditing";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import type { Task } from "../../model/types";
 
 interface Props {
   task: Task;
-  groupId: string;
   onSubmit: (title: string) => void;
 }
 
-export const EditableTaskTitle = ({ task, groupId, onSubmit }: Props) => {
-  const { editing, title, startEditing, handleChange, handleSubmit, setTitle } =
-    useTaskEditing({
-      groupId,
-      taskId: task._id,
-      title: task.title,
-      onSubmit,
-    });
+export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
+  const [editing, setEditing] = useState(false);
+
+  const { register, handleSubmit, reset, setFocus } = useForm<{
+    title: string;
+  }>({
+    defaultValues: { title: task.title },
+  });
+
+  const submitHandler = ({ title }: { title: string }) => {
+    const trimmed = title.trim();
+    if (trimmed !== task.title.trim()) {
+      onSubmit(trimmed);
+    }
+    setEditing(false);
+  };
 
   useEffect(() => {
-    if (!editing) {
-      setTitle(task.title);
-    }
-  }, [task.title, editing, setTitle]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSubmit();
-  };
+    if (editing) setFocus("title");
+  }, [editing, setFocus]);
 
   if (!editing) {
     return (
       <span
-        onClick={startEditing}
+        onClick={() => setEditing(true)}
         className="break-words w-0 flex-1 cursor-pointer"
       >
         {task.title}
@@ -39,13 +40,19 @@ export const EditableTaskTitle = ({ task, groupId, onSubmit }: Props) => {
   }
 
   return (
-    <input
-      value={title}
-      onChange={handleChange}
-      onBlur={handleSubmit}
-      onKeyDown={handleKeyDown}
-      autoFocus
-      className="flex-1 bg-white"
-    />
+    <form onSubmit={handleSubmit(submitHandler)} className="flex-1">
+      <input
+        {...register("title")}
+        onBlur={handleSubmit(submitHandler)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            reset({ title: task.title });
+            setEditing(false);
+          }
+        }}
+        autoFocus
+        className="w-full bg-white dark:text-zinc-800"
+      />
+    </form>
   );
 };

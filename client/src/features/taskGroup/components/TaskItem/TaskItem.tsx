@@ -35,7 +35,6 @@ export const TaskItem = memo(
               />
               <EditableTaskTitle
                 task={task}
-                groupId={groupId}
                 onSubmit={(title) => onEditSubmit(groupId, task._id, title)}
               />
             </div>

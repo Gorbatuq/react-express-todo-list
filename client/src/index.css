@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #18062b;
+    color: #f6feff;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.75rem;
+  }
+
+  html:not(.dark) body {
+    background-color: #fcfcfc;
+    color: #1a1a1a;
+    font-family: system-ui, sans-serif;
+  }
+}
