@@ -9,7 +9,10 @@ export const authApi = {
 
   logout: () =>
     safeRequest(api.post("/auth/logout")),
+  
+getMe: async () => {
+  const res = await api.get("/auth/me", { withCredentials: true });
+  return res.data;
+}
 
-  getMe: () =>
-    safeRequest<{ id: string; email: string }>(api.get("/auth/me", { withCredentials: true }) ),
 };

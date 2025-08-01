@@ -34,7 +34,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   loadTasks: async (groupId) => {
     const tasks = await taskApi.getByGroupId(groupId);
-      console.log("Loaded tasks", tasks);
+
     set((s) => ({
       tasksByGroup: {
         ...s.tasksByGroup,

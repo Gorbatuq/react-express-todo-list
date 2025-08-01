@@ -1,4 +1,22 @@
+import { authApi } from "@/api/auth";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
 export const ProfilePage = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const handleGoTODO = () => {
+    navigate("/todo");
+  };
+
+  const handleLogout = async () => {
+    await authApi.logout();
+    queryClient.setQueryData(["me"], null);
+    queryClient.invalidateQueries({ queryKey: ["me"] });
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 flex justify-center items-start py-10 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
@@ -22,10 +40,16 @@ export const ProfilePage = () => {
         </div>
 
         <div className="pt-4 flex justify-center gap-4">
-          <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
+          <button
+            onClick={() => handleLogout()}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+          >
             Logout
           </button>
-          <button className="bg-slate-200 hover:bg-slate-600 text-black px-4 py-2 rounded-lg transition">
+          <button
+            onClick={() => handleGoTODO()}
+            className="bg-slate-200 hover:bg-slate-600 text-black px-4 py-2 rounded-lg transition"
+          >
             Back
           </button>
         </div>

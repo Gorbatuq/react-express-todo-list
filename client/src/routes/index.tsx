@@ -12,6 +12,7 @@ export const AppRoutes = () => {
     queryKey: ["me"],
     queryFn: fetchMe,
     retry: false,
+    staleTime: 0,
   });
 
   if (isLoading) {

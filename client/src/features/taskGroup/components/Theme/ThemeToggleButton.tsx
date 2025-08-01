@@ -8,9 +8,9 @@ export const ThemeToggleButton = () => {
     <button
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       aria-label="Toggle Theme"
-      className="fixed top-2 right-2 
-             [width:clamp(2.5rem,5vw,3rem)]
-             [height:clamp(2.5rem,5vw,3rem)]
+      className="fixed top-4 right-2 
+             [width:clamp(3rem,5vw,3rem)]
+             [height:clamp(3rem,5vw,2rem)]
              rounded-full border-2 
              flex items-center justify-center
              transition-all duration-300 hover:scale-105
@@ -25,7 +25,7 @@ export const ThemeToggleButton = () => {
       }`}
       />
       <FaMoon
-        className={`absolute text-blue-400 text-2xl transition-all duration-500
+        className={`absolute text-blue-400 text-1xl transition-all duration-500
       ${
         theme === "dark"
           ? "opacity-100 scale-100"

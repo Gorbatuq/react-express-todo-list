@@ -4,6 +4,7 @@ import { z } from "zod";
 import { authApi } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const authInputSchema = z.object({
   email: z.string().min(4, "mail"),
@@ -25,8 +26,10 @@ export const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const onSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["me"] });
     reset();
     navigate("/todo");
   };
