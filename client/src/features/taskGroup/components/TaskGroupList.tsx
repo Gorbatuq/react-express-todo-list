@@ -3,12 +3,14 @@ import { DragDropContext } from "@hello-pangea/dnd";
 
 import { AddGroupForm } from "./AddTask/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
-import { useGroupStore } from "@/store/groupStore";
-
 import { handleDragEnd } from "@/store/dndStore";
+import { useGroupStore } from "@/store/groupStore";
+import { TaskGroupSkeletonGrid } from "./ui/TaskGroupSkeletonGrid";
 
 export const TaskGroupList = () => {
-  const { reload } = useGroupStore();
+  const reload = useGroupStore((s) => s.reload);
+  const loading = useGroupStore((s) => s.loading);
+  const hasLoaded = useGroupStore((s) => s.hasLoaded);
 
   useEffect(() => {
     const init = async () => {
@@ -21,7 +23,8 @@ export const TaskGroupList = () => {
     init();
   }, [reload]);
 
-  // -- I'm thinking about loading, then I'll decide something.
+  if (loading && !hasLoaded) return <TaskGroupSkeletonGrid />;
+
   return (
     <div className="sm:px-6 md:px-8 max-w-7xl mx-auto">
       <AddGroupForm />

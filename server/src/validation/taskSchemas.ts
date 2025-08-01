@@ -1,52 +1,32 @@
 import { z } from "zod";
 
-// ===== BASE SCHEMAS =====
 
-export const idSchema = z.string().min(1, "ID is required");
+const id = z.string().min(1, "ID is required");
+const title = z.string().min(1, "Title is required").max(400, "Max 400 chars");
 
-export const titleSchema = z.string()
-  .min(1, "Title is required")
-  .max(400, "Max 400 characters");
-
-// ===== BODY SCHEMAS =====
 
 export const createTaskSchema = z.object({
-  title: titleSchema,
+  title,
 });
 
-export const updateTaskTitleSchema = z.object({
-  title: titleSchema,
-});
-
-export const createGroupSchema = z.object({
-  title: titleSchema,
-});
-
-export const reorderGroupsSchema = z.object({
-  order: z.array(idSchema).min(1, "Order must have at least one ID"),
-});
+export const updateTaskSchema = z
+  .object({
+    title: title.optional(),
+    completed: z.boolean().optional(),
+    groupId: id.optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided",
+  });
 
 export const reorderTaskSchema = z.object({
-  order: z.array(idSchema).min(1, "Order must have at least one ID"),
+  order: z.array(id).min(1, "Order is required"),
 });
 
-// ===== PARAMS SCHEMAS =====
 
-export const groupIdParamSchema = z.object({
-  groupId: idSchema,
-});
-
-export const groupTaskParamsSchema = z.object({
-  groupId: idSchema,
-  taskId: idSchema,
-});
-
-export const moveTaskParamsSchema = z.object({
-  sourceGroupId: idSchema,
-  taskId: idSchema,
-  targetGroupId: idSchema,
-});
-
-export const idParamSchema = z.object({
-  id: idSchema,
+export const groupIdParamSchema = z.object({ groupId: id });
+export const taskIdParamSchema = z.object({ taskId: id });
+export const groupAndTaskIdParamSchema = z.object({
+  groupId: id,
+  taskId: id,
 });

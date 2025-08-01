@@ -6,7 +6,11 @@ export const TaskGroupGrid = () => {
   const groupIds = useGroupStore((s) => s.groupIds);
 
   if (groupIds.length === 0) {
-    return <p className="text-gray-500 text-sm text-center">No groups</p>;
+    return (
+      <p className="text-gray-500 text-sm text-center">
+        No groups. Create first!!!
+      </p>
+    );
   }
 
   return (

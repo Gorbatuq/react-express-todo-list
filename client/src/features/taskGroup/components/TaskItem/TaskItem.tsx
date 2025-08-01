@@ -22,7 +22,7 @@ export const TaskItem = ({
   onEditSubmit,
 }: Props) => {
   return (
-    <Draggable draggableId={task._id} index={index}>
+    <Draggable draggableId={String(task._id)} index={index}>
       {(provided, snapshot) => (
         <li
           ref={provided.innerRef}

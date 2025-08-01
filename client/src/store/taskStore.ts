@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { taskApi } from "../features/taskGroup/api/task";
+import { taskApi } from "../api/task";
 import type { DropResult } from "@hello-pangea/dnd";
 import type { Task } from "../types";
 
@@ -34,6 +34,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   loadTasks: async (groupId) => {
     const tasks = await taskApi.getByGroupId(groupId);
+      console.log("Loaded tasks", tasks);
     set((s) => ({
       tasksByGroup: {
         ...s.tasksByGroup,
@@ -54,6 +55,8 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   deleteTask: async (groupId, taskId) => {
     await taskApi.delete(groupId, taskId);
+    console.log("Deleting", groupId, taskId);
+
     set((s) => ({
       tasksByGroup: {
         ...s.tasksByGroup,
@@ -63,7 +66,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   updateTitle: async (groupId, taskId, title) => {
-    const updated = await taskApi.updateTitle(groupId, taskId, title);
+    const updated = await taskApi.update(groupId, taskId, { title });
+    console.log("updated task", groupId, taskId, title);
+    
     set((s) => ({
       tasksByGroup: {
         ...s.tasksByGroup,
@@ -76,19 +81,29 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   toggle: async (groupId, taskId) => {
     const prev = get().tasksByGroup;
-    const updated = (prev[groupId] || []).map((t) =>
+    const task = prev[groupId]?.find((t) => t._id === taskId);
+    console.log("Toggle", groupId, taskId);
+
+    if (!task) return;
+
+    const updatedTasks = prev[groupId].map((t) =>
       t._id === taskId ? { ...t, completed: !t.completed } : t
     );
-    set({ tasksByGroup: { ...prev, [groupId]: updated } });
+
+    set({ tasksByGroup: { ...prev, [groupId]: updatedTasks } });
+
     try {
-      await taskApi.toggle(groupId, taskId);
+      await taskApi.update(groupId, taskId, { completed: !task.completed });
     } catch {
       set({ tasksByGroup: prev });
     }
   },
 
+
   reorderTasksLocally: async (groupId, taskId, toIndex) => {
     const prev = get().tasksByGroup;
+    console.log("Reorder", groupId, taskId, toIndex);
+
     const tasks = [...(prev[groupId] || [])];
     const index = tasks.findIndex((t) => t._id === taskId);
     if (index === -1) return;

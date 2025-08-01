@@ -1,13 +1,5 @@
-import { Header } from "./features/taskGroup/components/Header/Header";
-import { TaskGroupList } from "./features/taskGroup/components/TaskGroupList";
+import { AppRoutes } from "./routes";
 
-function App() {
-  return (
-    <div className="flex flex-col min-h-screen mb-12">
-      <Header />
-      <TaskGroupList />
-    </div>
-  );
-}
-
-export default App;
+export const App = () => {
+  return <AppRoutes />;
+};

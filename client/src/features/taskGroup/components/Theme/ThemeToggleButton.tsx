@@ -4,12 +4,11 @@ import { useTheme } from "@/store/themeStore";
 export const ThemeToggleButton = () => {
   const { theme, setTheme } = useTheme();
 
-  // On desktop. Overlaps groups at size 150%
   return (
     <button
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       aria-label="Toggle Theme"
-      className="fixed top-2 right-4 z-50
+      className="fixed top-2 right-2 
              [width:clamp(2.5rem,5vw,3rem)]
              [height:clamp(2.5rem,5vw,3rem)]
              rounded-full border-2 
@@ -26,7 +25,7 @@ export const ThemeToggleButton = () => {
       }`}
       />
       <FaMoon
-        className={`absolute text-blue-500 text-2xl transition-all duration-500
+        className={`absolute text-blue-400 text-2xl transition-all duration-500
       ${
         theme === "dark"
           ? "opacity-100 scale-100"
