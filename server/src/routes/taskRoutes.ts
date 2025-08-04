@@ -4,7 +4,8 @@ import {
   addTask,
   reorderTasks,
   updateTask,
-  deleteTask
+  deleteTask,
+  importTasks
 } from "../controllers/task/taskController";
 
 import { authMiddleware } from "../middleware/authMiddleware";
@@ -13,8 +14,10 @@ import { validateBody, validateParams } from "../middleware/validate";
 import {
   createTaskSchema,
   reorderTaskSchema,
-  updateTaskSchema
+  updateTaskSchema,
+  importTaskSchema
 } from "../validation/taskSchemas";
+
 
 import { groupAndTaskIdParamSchema } from "../validation/taskSchemas";
 import { groupIdParamSchema } from "../validation/groupSchemas";
@@ -22,6 +25,9 @@ import { groupIdParamSchema } from "../validation/groupSchemas";
 
 const router = express.Router({ mergeParams: true }); 
 
+
+
+router.post("/import", authMiddleware, validateBody(importTaskSchema), importTasks);
 
 router.get("/", authMiddleware, validateParams(groupIdParamSchema), getTasksByGroupId);
 

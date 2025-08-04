@@ -7,8 +7,12 @@ interface Props {
   title: string;
   isEditing: boolean;
   setEditingGroupId: (id: string | null) => void;
-  handleGroupEditSubmit: (title: string) => Promise<void>;
+  handleGroupEditSubmit: (
+    title: string,
+    priority: 1 | 2 | 3 | 4
+  ) => Promise<void>;
   handleDeleteGroup: () => Promise<void>;
+  priority: 1 | 2 | 3 | 4;
 }
 
 export const GroupHeader = ({
@@ -18,19 +22,26 @@ export const GroupHeader = ({
   setEditingGroupId,
   handleGroupEditSubmit,
   handleDeleteGroup,
+  priority,
 }: Props) => {
   const [localTitle, setLocalTitle] = useState(title);
+  const [localPriority, setLocalPriority] = useState<1 | 2 | 3 | 4>(
+    priority || 2
+  );
   const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
-    if (isEditing) setLocalTitle(title);
-  }, [isEditing, title]);
+    if (isEditing) {
+      setLocalTitle(title);
+      setLocalPriority(priority);
+    }
+  }, [isEditing, title, priority]);
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = localTitle.trim();
     if (!trimmed) return;
-    await handleGroupEditSubmit(trimmed);
+    await handleGroupEditSubmit(trimmed, localPriority);
     setEditingGroupId(null);
   };
 
@@ -39,24 +50,55 @@ export const GroupHeader = ({
     setShowConfirm(false);
   };
 
+  const priorityColors = {
+    1: "bg-red-500",
+    2: "bg-yellow-500",
+    3: "bg-green-500",
+    4: "bg-blue-500",
+  };
+
   return (
     <div className="flex justify-between items-center relative mb-4">
       {isEditing ? (
-        <form onSubmit={onFormSubmit} className="flex-1">
+        <form
+          onSubmit={onFormSubmit}
+          className="flex items-center gap-2 flex-wrap"
+        >
           <input
             value={localTitle}
             onChange={(e) => setLocalTitle(e.target.value)}
             autoFocus
-            className="w-full border rounded px-2 py-1"
+            className="border rounded px-2 py-1"
           />
+          <select
+            value={localPriority}
+            onChange={(e) => setLocalPriority(+e.target.value as 1 | 2 | 3 | 4)}
+            className="border rounded px-2 py-1"
+          >
+            <option value={1}>Hight</option>
+            <option value={2}>Mid</option>
+            <option value={3}>Lou</option>
+            <option value={4}>Sou Lou</option>
+          </select>
+          <button
+            type="submit"
+            className="px-3 py-1 bg-blue-500 text-white rounded"
+          >
+            OK
+          </button>
         </form>
       ) : (
-        <span
-          className="text-lg font-semibold cursor-pointer truncate max-w-full break-words"
+        <div
+          className="flex items-center gap-2 cursor-pointer"
           onClick={() => setEditingGroupId(groupId)}
         >
-          - {title} -
-        </span>
+          <span
+            className={`w-3 h-3 rounded-full ${priorityColors[priority]}`}
+          />
+          <span className="text-lg font-semibold truncate max-w-full break-words">
+            {title}
+          </span>
+        </div>
       )}
 
       <button

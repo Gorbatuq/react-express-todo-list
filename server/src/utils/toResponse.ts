@@ -9,7 +9,8 @@ export const toTaskResponse = (task: any) => ({
 });
 
 export const toGroupResponse = (group: TaskGroupDocument) => ({
-  id: group._id,
+  id: group._id.toString(),
   title: group.title,
   order: group.order,
+  priority: group.priority,
 });

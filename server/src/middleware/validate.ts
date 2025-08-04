@@ -22,7 +22,7 @@ const makeValidator = (
     });
   }
 
-  if (prop === "body" || "query") {
+  if (prop === "body" || prop === "query") {
     req[prop] = result.data;
   }
 

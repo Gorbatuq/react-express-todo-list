@@ -1,9 +1,9 @@
-export {};
+import { UserPayload } from "../auth/UserPayload"; 
 
 declare global {
   namespace Express {
     interface Request {
-      user: { id: string };
+      user: UserPayload;
     }
   }
 }

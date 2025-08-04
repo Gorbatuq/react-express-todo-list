@@ -8,6 +8,8 @@ interface Props {
   fieldName: string;
   onSubmit: (data: Record<string, any>) => Promise<void>;
   className?: string;
+  disabled?: boolean;
+  errorMessage?: string;
   submitButton?: React.ReactNode;
 }
 
@@ -18,6 +20,8 @@ export const AddItemForm = ({
   onSubmit,
   className,
   submitButton,
+  errorMessage,
+  disabled,
 }: Props) => {
   const {
     register,
@@ -33,25 +37,33 @@ export const AddItemForm = ({
 
   return (
     <form onSubmit={handleSubmit(submit)} className={className}>
-      <input
-        {...register(fieldName)}
-        placeholder={placeholder}
-        className={`border rounded px-3 py-2 dark:text-zinc-800 ${
-          fieldName === "title" && placeholder === "Group title" ? "w-64" : ""
-        }`}
-      />
-      {errors[fieldName]?.message && (
-        <p className="text-red-500">{String(errors[fieldName].message)}</p>
-      )}
-      {submitButton ?? (
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-green-400 hover:bg-green-500 text-white px-2 rounded"
-        >
-          <PiPlus />
-        </button>
-      )}
+      <div className="flex justify-center gap-2">
+        <input
+          {...register(fieldName)}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={`border rounded px-3 py-2 dark:text-zinc-800 ${
+            fieldName === "title" && placeholder === "Group title" ? "w-64" : ""
+          }`}
+        />
+
+        {submitButton ?? (
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-green-400 hover:bg-green-500 text-white px-2 rounded"
+          >
+            <PiPlus />
+          </button>
+        )}
+      </div>
+
+      <div className="mt-1 text-center">
+        {typeof errors[fieldName]?.message === "string" && (
+          <p className="text-red-500 text-sm">{errors[fieldName]?.message}</p>
+        )}
+        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+      </div>
     </form>
   );
 };

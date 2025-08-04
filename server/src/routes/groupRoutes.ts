@@ -3,16 +3,16 @@ import {
   getAllGroups,
   createGroup,
   deleteGroup,
-  updateGroupTitle,
+  updateGroup,
   reorderGroups,
 } from "../controllers/group/groupController";
 
 import {
   createGroupSchema,
   reorderGroupsSchema,
+  updateGroupSchema,
+  groupIdParamSchema
 } from "../validation/groupSchemas";
-
-import { groupIdParamSchema } from "../validation/groupSchemas";
 
 
 import { validateBody, validateParams } from "../middleware/validate";
@@ -25,6 +25,6 @@ const router = express.Router();
   router.post("/", authMiddleware, validateBody(createGroupSchema), createGroup);
   router.delete("/:groupId", authMiddleware, validateParams(groupIdParamSchema), deleteGroup);
   router.patch("/order", authMiddleware, validateBody(reorderGroupsSchema), reorderGroups);
-  router.patch("/:groupId", authMiddleware, validateBody(createGroupSchema), updateGroupTitle);
+  router.patch("/:groupId", authMiddleware, validateParams(groupIdParamSchema), validateBody(updateGroupSchema), updateGroup);
 
 export default router;

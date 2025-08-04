@@ -3,7 +3,7 @@ import type { Task } from "../types";
 
 export const taskApi = {
 
-  getByGroupId: (groupId: string) =>
+  getTasksByGroup: (groupId: string) =>
     safeRequest<Task[]>(api.get(`/groups/${groupId}/tasks`)),
 
   add: (groupId: string, title: string) =>

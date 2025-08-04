@@ -1,43 +1,37 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthPage } from "../pages/AuthPage";
 import { TodoPage } from "../pages/TodoPage";
 import { ProfilePage } from "../pages/ProfilePage";
-import { useQuery } from "@tanstack/react-query";
-import { authApi } from "@/api/auth";
-
-const fetchMe = () => authApi.getMe();
+import { useAuthStore } from "@/store/authStore";
 
 export const AppRoutes = () => {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["me"],
-    queryFn: fetchMe,
-    retry: false,
-    staleTime: 0,
-  });
+  const { user, isGuest, isAuth, loading, init } = useAuthStore();
 
-  if (isLoading) {
-    return <p className="text-center mt-10">Login check...</p>;
-  }
+  useEffect(() => {
+    init();
+  }, [init]);
 
-  const isAuth = !!user;
+  if (loading)
+    return <p className="text-center mt-10">Kontrola přihlášení...</p>;
 
   return (
     <Routes>
       <Route
         path="/"
-        element={!isAuth ? <AuthPage /> : <Navigate to="/todo" replace />}
+        element={!user ? <AuthPage /> : <Navigate to="/todo" replace />}
       />
       <Route
         path="/todo"
-        element={isAuth ? <TodoPage /> : <Navigate to="/" replace />}
+        element={user ? <TodoPage /> : <Navigate to="/" replace />}
       />
       <Route
         path="/profile"
-        element={isAuth ? <ProfilePage /> : <Navigate to="/" replace />}
+        element={user ? <ProfilePage /> : <Navigate to="/" replace />}
       />
       <Route
         path="*"
-        element={<Navigate to={isAuth ? "/todo" : "/"} replace />}
+        element={<Navigate to={user ? "/todo" : "/"} replace />}
       />
     </Routes>
   );

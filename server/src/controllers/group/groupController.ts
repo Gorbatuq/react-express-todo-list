@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { groupService } from "../../services/groupService";
+import { toGroupResponse } from "../../utils/toResponse";
 
 export const getAllGroups = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const groups = await groupService.getAllGroups(req.user.id);
-    res.json(groups);
+    res.json(groups.map(toGroupResponse));
   } catch (err) {
     next(err);
   }
@@ -12,8 +13,15 @@ export const getAllGroups = async (req: Request, res: Response, next: NextFuncti
 
 export const createGroup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const group = await groupService.createGroup(req.body.title, req.user.id);
-    res.status(201).json(group);
+    const priority = req.body.priority ?? 2;
+    const group = await groupService.createGroup(
+      req.body.title,
+      priority,
+      req.user.id
+    );
+
+    res.status(201).json(toGroupResponse(group)); 
+
   } catch (err) {
     next(err);
   }
@@ -28,9 +36,9 @@ export const deleteGroup = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const updateGroupTitle = async (req: Request, res: Response, next: NextFunction) => {
+export const updateGroup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const group = await groupService.updateGroupTitle(req.params.groupId, req.body.title, req.user.id);
+    const group = await groupService.updateGroup(req.params.groupId, req.user.id, req.body);
     res.json(group);
   } catch (err) {
     next(err);

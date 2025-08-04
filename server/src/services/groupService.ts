@@ -1,4 +1,5 @@
 import { TaskGroup } from "../models/TaskGroup";
+import { User } from "../models/User";
 import mongoose from "mongoose";
 
 // Custom error with HTTP status
@@ -15,22 +16,30 @@ export const groupService = {
     return TaskGroup.find({ userId }).sort({ order: 1 }).lean();
   },
 
-  async createGroup(title: string, userId: string) {
+  async createGroup(title: string, priority: number, userId: string) {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
+      const user = await User.findById(userId).lean();
+      if (!user) throw new AppError("User not found", 404);
+
       const count = await TaskGroup.countDocuments({ userId }).session(session);
-      const group = new TaskGroup({ title, order: count, userId });
+
+      if (user.role === "GUEST" && count >= 3) {
+        throw new AppError("Guest can create no more than 3 groups", 403);
+      }
+
+      const group = new TaskGroup({ title, order: count, priority, userId });
       await group.save({ session });
 
       await session.commitTransaction();
-      session.endSession();
       return group;
     } catch (err) {
       await session.abortTransaction();
+      throw err instanceof AppError ? err : new AppError("Failed to create group", 500);
+    } finally {
       session.endSession();
-      throw new AppError("Failed to create group", 500);
     }
   },
 
@@ -38,7 +47,6 @@ export const groupService = {
     const deleted = await TaskGroup.findOneAndDelete({ _id: groupId, userId });
     if (!deleted) throw new AppError("Group not found", 404);
 
-    // Оновлюємо порядок решти груп
     const groups = await TaskGroup.find({ userId }).sort({ order: 1 });
     await Promise.all(
       groups.map((group, index) =>
@@ -49,10 +57,14 @@ export const groupService = {
     return { message: "Group deleted and reordered" };
   },
 
-  async updateGroupTitle(id: string, title: string, userId: string) {
+  async updateGroup(
+    groupId: string,
+    userId: string,
+    updates: Partial<{ title: string; priority: 1 | 2 | 3 | 4 }>
+  ) {
     const group = await TaskGroup.findOneAndUpdate(
-      { _id: id, userId },
-      { title },
+      { _id: groupId, userId },
+      updates,
       { new: true }
     );
     if (!group) throw new AppError("Group not found", 404);

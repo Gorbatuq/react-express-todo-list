@@ -21,17 +21,20 @@ export const TaskList = ({ groupId, tasks }: Props) => {
           {...provided.droppableProps}
           className="flex flex-col gap-2 mb-4"
         >
-          {tasks.map((task, index) => (
-            <TaskItem
-              key={task._id}
-              task={task}
-              groupId={groupId}
-              index={index}
-              onToggle={toggleTask}
-              onDelete={deleteTask}
-              onEditSubmit={updateTitle}
-            />
-          ))}
+          {tasks.map((task, index) => {
+            if (!groupId) return null;
+            return (
+              <TaskItem
+                key={task._id}
+                task={task}
+                groupId={groupId}
+                index={index}
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onEditSubmit={updateTitle}
+              />
+            );
+          })}
           {provided.placeholder}
         </ul>
       )}

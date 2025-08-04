@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { authApi } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { authApi } from "../api/auth";
 
 const authInputSchema = z.object({
-  email: z.string().min(4, "mail"),
-  password: z.string().min(4, "pass"),
+  email: z.string().min(4, "Email musí mít alespoň 4 znaky"),
+  password: z.string().min(4, "Heslo musí mít alespoň 4 znaky"),
 });
 
 type AuthInputValues = z.infer<typeof authInputSchema>;
@@ -34,31 +34,39 @@ export const AuthPage = () => {
     navigate("/todo");
   };
 
-  const handleLogin = async (data: AuthInputValues) => {
+  const withErrorHandling = async (
+    fn: () => Promise<void>,
+    errorMsg: string
+  ) => {
     try {
       setLoading(true);
       setError(null);
-      await authApi.login(data.email, data.password);
+      await fn();
       onSuccess();
-    } catch (err) {
-      setError("Invalid data or server error");
+    } catch {
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRegister = async (data: AuthInputValues) => {
-    try {
-      setLoading(true);
-      setError(null);
-      await authApi.register(data.email, data.password);
-      onSuccess();
-    } catch (err) {
-      setError("User already exists or error");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleLogin = (data: AuthInputValues) =>
+    withErrorHandling(
+      () => authApi.login(data.email, data.password),
+      "Neplatné údaje nebo chyba serveru"
+    );
+
+  const handleRegister = (data: AuthInputValues) =>
+    withErrorHandling(
+      () => authApi.register(data.email, data.password),
+      "Uživatel již existuje nebo chyba serveru"
+    );
+
+  const handleGuest = () =>
+    withErrorHandling(
+      () => authApi.createGuest(),
+      "Nelze vytvořit dočasného uživatele"
+    );
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-700 to-slate-900">
@@ -67,7 +75,7 @@ export const AuthPage = () => {
         className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6"
       >
         <h2 className="text-2xl font-bold text-center text-slate-800">
-          Auth Form
+          Přihlášení do ToDo
         </h2>
 
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
@@ -87,7 +95,7 @@ export const AuthPage = () => {
           <input
             {...register("password")}
             type="password"
-            placeholder="Password"
+            placeholder="Heslo"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sky-400"
           />
           {errors.password && (
@@ -101,7 +109,7 @@ export const AuthPage = () => {
             disabled={loading}
             className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-md transition"
           >
-            Login
+            Přihlásit se
           </button>
           <button
             type="button"
@@ -109,9 +117,18 @@ export const AuthPage = () => {
             disabled={loading}
             className="flex-1 bg-sky-500 hover:bg-sky-600 text-white py-2 rounded-md transition"
           >
-            Sign Up
+            Registrovat
           </button>
         </div>
+
+        <button
+          type="button"
+          onClick={handleGuest}
+          disabled={loading}
+          className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-md transition"
+        >
+          Pokračovat jako host
+        </button>
       </form>
     </div>
   );

@@ -16,7 +16,6 @@ interface Props {
 export const AddTaskForm = ({ addTask }: Props) => {
   return (
     <AddItemForm
-      className="flex justify-center gap-2"
       schema={taskSchema}
       fieldName="title"
       placeholder="New Task"

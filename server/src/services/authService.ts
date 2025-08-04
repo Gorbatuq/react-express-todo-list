@@ -18,7 +18,7 @@ function generateToken(userId: string) {
   return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
-function setTokenCookie(res: Response, token: string) {
+export function setTokenCookie(res: Response, token: string) {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -35,11 +35,13 @@ export const authService = {
 
     const hashed = await bcrypt.hash(password, 10);
     const user = new User({ email, password: hashed });
+    user.lastLogin = new Date(); 
+
 
     console.log("Saving user:", email);
     await user.save(); 
 
-    const token = generateToken(user.id);
+        const token = generateToken(user._id.toString());
     setTokenCookie(res, token);
 
     return { message: "User registered" };
@@ -49,7 +51,7 @@ export const authService = {
       throw new AppError("User already exists", 409);
     }
 
-    console.error("🔥 registerUser error:", err);
+    console.error("register User error:", err);
     throw new AppError("Registration failed", 500);
   }
 },
@@ -62,7 +64,9 @@ export const authService = {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw new AppError("Invalid email or password", 401);
 
-    const token = generateToken(user.id);
+    user.lastLogin = new Date(); 
+    await user.save();
+    const token = generateToken(user._id.toString());
     setTokenCookie(res, token);
 
     return { message: "Login successful" };

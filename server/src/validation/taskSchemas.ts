@@ -9,6 +9,16 @@ export const createTaskSchema = z.object({
   title,
 });
 
+export const importTaskSchema = z.object({
+  tasks: z.array(z.object({
+    title: z.string().min(1),
+    groupId: z.string().min(1),
+    order: z.number(),
+    completed: z.boolean().optional(),
+  })),
+});
+
+
 export const updateTaskSchema = z
   .object({
     title: title.optional(),

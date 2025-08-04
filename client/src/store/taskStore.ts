@@ -8,6 +8,8 @@ interface TaskState {
   editingTaskId: string | null;
 
   loadTasks: (groupId: string) => Promise<void>;
+  reset: () => void;
+
 
   setEditingTaskId: (id: string | null) => void;
   addTask: (groupId: string, title: string) => Promise<void>;
@@ -32,9 +34,12 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   setEditingTaskId: (id) => set({ editingTaskId: id }),
 
-  loadTasks: async (groupId) => {
-    const tasks = await taskApi.getByGroupId(groupId);
+  reset: () => set({ tasksByGroup: {}, editingTaskId: null }),
 
+
+  loadTasks: async (groupId) => {
+    if (!groupId) return;
+    const tasks = await taskApi.getTasksByGroup(groupId);
     set((s) => ({
       tasksByGroup: {
         ...s.tasksByGroup,
@@ -44,6 +49,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   addTask: async (groupId, title) => {
+    if (!groupId) return;
     const newTask = await taskApi.add(groupId, title);
     set((s) => ({
       tasksByGroup: {
@@ -54,8 +60,8 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   deleteTask: async (groupId, taskId) => {
+    if (!groupId || !taskId) return;
     await taskApi.delete(groupId, taskId);
-    console.log("Deleting", groupId, taskId);
 
     set((s) => ({
       tasksByGroup: {
@@ -66,8 +72,8 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   updateTitle: async (groupId, taskId, title) => {
+      if (!groupId || !taskId || !title.trim()) return;
     const updated = await taskApi.update(groupId, taskId, { title });
-    console.log("updated task", groupId, taskId, title);
     
     set((s) => ({
       tasksByGroup: {
@@ -80,13 +86,14 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   toggle: async (groupId, taskId) => {
+    if (!groupId || !taskId) return;
+
     const prev = get().tasksByGroup;
-    const task = prev[groupId]?.find((t) => t._id === taskId);
-    console.log("Toggle", groupId, taskId);
+    const tasks = prev[groupId];
+    const task = tasks?.find((t) => t._id === taskId);
+    if (!tasks || !task) return;
 
-    if (!task) return;
-
-    const updatedTasks = prev[groupId].map((t) =>
+    const updatedTasks = tasks.map((t) =>
       t._id === taskId ? { ...t, completed: !t.completed } : t
     );
 
@@ -100,9 +107,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
 
+
   reorderTasksLocally: async (groupId, taskId, toIndex) => {
     const prev = get().tasksByGroup;
-    console.log("Reorder", groupId, taskId, toIndex);
 
     const tasks = [...(prev[groupId] || [])];
     const index = tasks.findIndex((t) => t._id === taskId);

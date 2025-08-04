@@ -1,59 +1,68 @@
-import { authApi } from "@/api/auth";
-import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
+
+import { useAuthStore } from "@/store/authStore";
 
 export const ProfilePage = () => {
+  const { user, logout } = useAuthStore();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
-  const handleGoTODO = () => {
-    navigate("/todo");
-  };
+  const registrationDate = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("cs-CZ")
+    : "-";
 
   const handleLogout = async () => {
-    await authApi.logout();
-    queryClient.setQueryData(["me"], null);
-    queryClient.invalidateQueries({ queryKey: ["me"] });
-    navigate("/");
+    try {
+      await logout();
+      navigate("/");
+    } catch (e) {
+      console.error("Logout failed", e);
+    }
   };
 
+  if (!user) return <Navigate to="/" replace />;
+
   return (
-    <div className="min-h-screen bg-slate-100 flex justify-center items-start py-10 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="w-24 h-24 rounded-full bg-slate-300 flex items-center justify-center text-3xl">
+    <main className="min-h-screen bg-slate-100 dark:bg-zinc-800 flex justify-center items-start py-10 px-4">
+      <section className="w-full max-w-md bg-white dark:bg-zinc-700 rounded-2xl shadow-xl p-8 space-y-6 transition-all duration-200">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-24 h-24 rounded-full bg-slate-300 dark:bg-zinc-600 flex items-center justify-center text-4xl">
             👤
           </div>
-          <h2 className="text-xl font-semibold text-slate-800">User name</h2>
-          <p className="text-sm text-slate-500">user@example.com</p>
+          <h2 className="text-xl font-semibold text-slate-800 dark:text-white break-words">
+            {user?.email || "Neznámý uživatel"}
+          </h2>
         </div>
 
-        <div className="border-t pt-4 space-y-3">
-          <div className="flex justify-between">
-            <span className="text-slate-600">Registration date:</span>
-            <span className="font-medium text-slate-800">01.01.2023</span>
+        <div className="border-t pt-4 space-y-3 text-sm">
+          <div className="flex justify-between text-slate-600 dark:text-zinc-300">
+            <span>Datum registrace:</span>
+            <span className="font-medium text-slate-800 dark:text-white">
+              {registrationDate}
+            </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-slate-600">Number of task:</span>
-            <span className="font-medium text-slate-800">12</span>
+          <div className="flex justify-between text-slate-600 dark:text-zinc-300">
+            <span>Počet úkolů:</span>
+            <span className="font-medium text-slate-800 dark:text-white">
+              {user?.taskCount ?? "-"}
+            </span>
           </div>
         </div>
 
         <div className="pt-4 flex justify-center gap-4">
           <button
-            onClick={() => handleLogout()}
+            onClick={handleLogout}
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
           >
-            Logout
+            Odhlásit se
           </button>
           <button
-            onClick={() => handleGoTODO()}
-            className="bg-slate-200 hover:bg-slate-600 text-black px-4 py-2 rounded-lg transition"
+            onClick={() => navigate("/todo")}
+            className="bg-slate-200 dark:bg-zinc-600 hover:bg-slate-300 dark:hover:bg-zinc-500 text-black dark:text-white px-4 py-2 rounded-lg transition"
           >
-            Back
+            Zpět
           </button>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };

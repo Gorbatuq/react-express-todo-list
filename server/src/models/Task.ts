@@ -6,14 +6,22 @@ export interface Task extends Document {
   order: number;
   groupId: Types.ObjectId;
   userId: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const TaskSchema = new Schema<Task>({
-  title: { type: String, required: true },
-  completed: { type: Boolean, default: false },
-  order: { type: Number, default: 0 },
-  groupId: { type: Schema.Types.ObjectId, ref: "TaskGroup", required: true },
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-});
+
+
+const TaskSchema = new Schema<Task>(
+  {
+    title: { type: String, required: true },
+    completed: { type: Boolean, default: false },
+    order: { type: Number, default: 0 },
+    groupId: { type: Schema.Types.ObjectId, ref: "TaskGroup", required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  },
+  { timestamps: true }
+);
+
 
 export const Task = mongoose.model<Task>("Task", TaskSchema);

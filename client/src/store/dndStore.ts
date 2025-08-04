@@ -4,12 +4,13 @@ import { useTaskStore } from "./taskStore";
 
 export const handleDragEnd = (result: DropResult) => {
   const { source, destination, draggableId, type } = result;
-  if (!destination) return;
 
-  const isSameLocation =
+  if (!destination || !draggableId || (type !== "group" && type !== "task")) return;
+
+  const isSamePosition =
     source.droppableId === destination.droppableId &&
     source.index === destination.index;
-  if (isSameLocation) return;
+  if (isSamePosition) return;
 
   if (type === "group") {
     const { groupIds, reorderGroups } = useGroupStore.getState();
@@ -18,26 +19,23 @@ export const handleDragEnd = (result: DropResult) => {
     const [moved] = updated.splice(source.index, 1);
     updated.splice(destination.index, 0, moved);
 
-    reorderGroups(updated);
+
+    reorderGroups(updated).catch((e) => {
+      console.error("❌ Failed to reorder groups", e);
+    });
+
     return;
   }
 
-  const taskStore = useTaskStore.getState();
+
+  const { reorderTasksLocally, moveTaskToAnotherGroup } = useTaskStore.getState();
 
   if (source.droppableId === destination.droppableId) {
-
-    taskStore.reorderTasksLocally(
-      source.droppableId,
-      draggableId,
-      destination.index
-    );
+    reorderTasksLocally(source.droppableId, draggableId, destination.index);
   } else {
-
-    taskStore.moveTaskToAnotherGroup(
-      source.droppableId,
-      draggableId,
-      destination.droppableId,
-      destination.index
+    moveTaskToAnotherGroup(
+      source.droppableId, draggableId, 
+      destination.droppableId, destination.index
     );
   }
 };
