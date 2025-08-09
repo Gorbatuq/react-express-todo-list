@@ -1,22 +1,26 @@
 version: "3.8"
 services:
   server:
-    build: ./server
+    build: .
     ports:
-      - "5000:5000"
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017/todo
+      - "3000:3000"
+    env_file: ./server/.env.production
     depends_on:
-      - mongodb
-
-  client:
-    build: ./client
-    ports:
-      - "4173:4173"
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
 
   mongodb:
-    image: mongo
+    image: mongo:7
     ports:
       - "27017:27017"
     volumes:
-      - ./mongo-data:/data/db
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  mongo-data:

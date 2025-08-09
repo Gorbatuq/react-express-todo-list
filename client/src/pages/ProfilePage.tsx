@@ -29,19 +29,19 @@ export const ProfilePage = () => {
             👤
           </div>
           <h2 className="text-xl font-semibold text-slate-800 dark:text-white break-words">
-            {user?.email || "Neznámý uživatel"}
+            {user?.email || "Unknown user"}
           </h2>
         </div>
 
         <div className="border-t pt-4 space-y-3 text-sm">
           <div className="flex justify-between text-slate-600 dark:text-zinc-300">
-            <span>Datum registrace:</span>
+            <span>Datum register:</span>
             <span className="font-medium text-slate-800 dark:text-white">
               {registrationDate}
             </span>
           </div>
           <div className="flex justify-between text-slate-600 dark:text-zinc-300">
-            <span>Počet úkolů:</span>
+            <span>Scout task:</span>
             <span className="font-medium text-slate-800 dark:text-white">
               {user?.taskCount ?? "-"}
             </span>
@@ -53,13 +53,13 @@ export const ProfilePage = () => {
             onClick={handleLogout}
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
           >
-            Odhlásit se
+            Log out
           </button>
           <button
             onClick={() => navigate("/todo")}
             className="bg-slate-200 dark:bg-zinc-600 hover:bg-slate-300 dark:hover:bg-zinc-500 text-black dark:text-white px-4 py-2 rounded-lg transition"
           >
-            Zpět
+            Back
           </button>
         </div>
       </section>

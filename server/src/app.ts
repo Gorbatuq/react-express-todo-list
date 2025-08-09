@@ -15,6 +15,7 @@ import hpp from "hpp";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
+app.set("trust proxy", 1);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -23,7 +24,8 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-// app.use(limiter); - in prod remove
+if (process.env.NODE_ENV === "production") app.use(limiter);
+
 app.use(helmet());
 app.use(hpp());
 
@@ -34,13 +36,20 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-const accessLogStream = fs.createWriteStream(path.join(__dirname, "..", "logs", "access.log"), { flags: "a" });
-app.use(morgan("combined", { stream: accessLogStream }));
+// const accessLogStream = fs.createWriteStream(path.join(__dirname, "..", "logs", "access.log"), { flags: "a" });
+app.use(morgan("combined"));
+
 
 app.use("/api/groups", groupRoutes);
 app.use("/api/groups/:groupId/tasks", taskRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use(errorHandler);
+
+app.use(express.static(path.join(__dirname, "public")));
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 
 export default app;

@@ -75,7 +75,7 @@ export const AuthPage = () => {
         className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6"
       >
         <h2 className="text-2xl font-bold text-center text-slate-800">
-          Přihlášení do ToDo
+          Register for ToDo
         </h2>
 
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
@@ -95,7 +95,7 @@ export const AuthPage = () => {
           <input
             {...register("password")}
             type="password"
-            placeholder="Heslo"
+            placeholder="Password"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sky-400"
           />
           {errors.password && (
@@ -109,7 +109,7 @@ export const AuthPage = () => {
             disabled={loading}
             className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-md transition"
           >
-            Přihlásit se
+            Login
           </button>
           <button
             type="button"
@@ -117,7 +117,7 @@ export const AuthPage = () => {
             disabled={loading}
             className="flex-1 bg-sky-500 hover:bg-sky-600 text-white py-2 rounded-md transition"
           >
-            Registrovat
+            Sign Up
           </button>
         </div>
 
@@ -127,7 +127,7 @@ export const AuthPage = () => {
           disabled={loading}
           className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-md transition"
         >
-          Pokračovat jako host
+          Continue in the ghost
         </button>
       </form>
     </div>
