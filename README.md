@@ -1,28 +1,52 @@
-# React-Express-Todo-List
+# React-Express Todo List
 
-A full-stack project for task management (ToDo), created as a pet project for honing skills.
-Has a frontend on React + Vite + Tailwind, backend on Express + TypeScript + Mongoose (MongoDB).
-Dockerized for local development and deployment.
+Full-stack застосунок для керування завданнями. Реалізований як pet-проєкт для практики повного циклу розробки (frontend + backend + база + деплой).
+
+🔗 [Live demo](https://todo-list-baby.onrender.com)
 
 ---
 
-## Stack
+## ✨ Функціонал
 
-- **Frontend**: React 19, Vite, TypeScript, Tailwind CSS, @hello-pangea/dnd
-- **Backend**: Express, TypeScript, Mongoose, Zod
-- **Database**: MongoDB
-- **Dev tools**: ESLint, Docker, Docker Compose
+- Реєстрація та вхід з JWT (HttpOnly cookie)
+- Гостьовий режим (можна створювати задачі без акаунта)
+- CRUD для задач і груп
+- Drag & Drop для сортування (на базі `@hello-pangea/dnd`)
+- Пріоритети завдань та груп
+- Валідація через **Zod**
+- Захист даних між користувачами
+- Dockerized середовище (dev + prod)
 
-## Locally running without Docker
+---
+
+## 🛠️ Технології
+
+**Frontend**
+
+- React 19 + Vite + TypeScript
+- Zustand (state management), React Query (data fetching)
+- TailwindCSS (UI), react-toastify (нотифікації)
+
+**Backend**
+
+- Node.js + Express + TypeScript
+- MongoDB + Mongoose
+- Zod для валідації
+- JWT авторизація (HttpOnly cookie)
+
+**Інше**
+
+- ESLint для статичного аналізу
+- Docker + Docker Compose для локального запуску і деплою
+
+---
+
+## 🚀 Запуск локально
 
 ### Backend
 
+```bash
 cd server
 npm install
 npm run dev
-
-### Frontend
-
-cd client
-npm install
-npm run dev
+```
