@@ -7,8 +7,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { authApi } from "../api/auth";
 
 const authInputSchema = z.object({
-  email: z.string().min(4, "Email musí mít alespoň 4 znaky"),
-  password: z.string().min(4, "Heslo musí mít alespoň 4 znaky"),
+  email: z.string().min(4, "Email must be at least 4 characters"),
+  password: z.string().min(4, "Password must be at least 4 characters"),
 });
 
 type AuthInputValues = z.infer<typeof authInputSchema>;
@@ -53,19 +53,19 @@ export const AuthPage = () => {
   const handleLogin = (data: AuthInputValues) =>
     withErrorHandling(
       () => authApi.login(data.email, data.password),
-      "Neplatné údaje nebo chyba serveru"
+      "Invalid data or server error"
     );
 
   const handleRegister = (data: AuthInputValues) =>
     withErrorHandling(
       () => authApi.register(data.email, data.password),
-      "Uživatel již existuje nebo chyba serveru"
+      "User already exists or server error"
     );
 
   const handleGuest = () =>
     withErrorHandling(
       () => authApi.createGuest(),
-      "Nelze vytvořit dočasného uživatele"
+      "Unable to create temporary user"
     );
 
   return (

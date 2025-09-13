@@ -5,6 +5,7 @@ import { FilterButtons } from "./FilterButtons";
 import { useGroupStore } from "@/store/groupStore";
 import { useTaskGroupCardLogic } from "../../hooks/useTaskGroupCardLogic";
 import React from "react";
+import type { Priority } from "@/types";
 
 export const TaskGroupCard = React.memo(({ groupId }: { groupId: string }) => {
   const group = useGroupStore((s) => s.groupMap[groupId]);
@@ -21,7 +22,7 @@ export const TaskGroupCard = React.memo(({ groupId }: { groupId: string }) => {
 
   const handleGroupEditSubmit = async (
     newTitle: string,
-    newPriority: 1 | 2 | 3 | 4
+    newPriority: Priority
   ) => {
     await updateGroup(groupId, { title: newTitle, priority: newPriority });
     setEditingGroupId(null);

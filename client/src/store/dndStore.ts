@@ -21,7 +21,7 @@ export const handleDragEnd = (result: DropResult) => {
 
 
     reorderGroups(updated).catch((e) => {
-      console.error("❌ Failed to reorder groups", e);
+      console.error("Failed to reorder groups", e);
     });
 
     return;

@@ -5,66 +5,61 @@ import type { User } from "@/types";
 type AuthStore = {
   user: User | null;
   loading: boolean;
-  init: () => Promise<void>;
-  logout: () => Promise<void>;
   isGuest: boolean;
   isAuth: boolean;
+  init: () => Promise<void>;
+  logout: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
+function deriveAuthState(user: User | null) {
+  if (!user) {
+    return { isGuest: false, isAuth: false };
+  }
+  if (user.role === "GUEST") {
+    return { isGuest: true, isAuth: false };
+  }
+  return { isGuest: false, isAuth: true };
+}
+
+export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   loading: true,
-
   isGuest: false,
   isAuth: false,
 
   init: async () => {
-    console.log("🟡 [authStore] init() called");
     set({ loading: true });
 
     try {
       const user = await authApi.getMe();
-      console.log("🟢 [authStore] Fetched user:", user);
-
-      set({
-        user,
-        isGuest: user.role === "GUEST",
-        isAuth: !!user && user.role !== "GUEST",
-      });
-
+      set({ user, ...deriveAuthState(user) });
+      return;
     } catch (err: any) {
-      console.warn("🔴 [authStore] getMe failed", err);
+      const status = err?.response?.status;
 
-      if (err.response?.status === 401) {
-        const hasToken = document.cookie.includes("token=");
-        console.log("🔎 [authStore] 401 + token:", hasToken);
-
-        if (!hasToken) {
-          console.log("⚪ [authStore] Creating guest...");
-          const guest = await authApi.createGuest();
-          console.log("🟢 [authStore] Guest created:", guest);
-
-          set({ user: guest, isGuest: true, isAuth: false });
-        } else {
-          console.warn("⚠️ [authStore] Token exists, but unauthorized");
-          set({ user: null, isGuest: false, isAuth: false });
+      switch (status) {
+        case 401: {
+          const hasToken = document.cookie.includes("token=");
+          if (!hasToken) {
+            const guest = await authApi.createGuest();
+            set({ user: guest, ...deriveAuthState(guest) });
+          } else {
+            set({ user: null, ...deriveAuthState(null) });
+          }
+          break;
         }
-      } else {
-        console.error("🔥 [authStore] Unknown error:", err);
-        set({ user: null, isGuest: false, isAuth: false });
+
+        default: {
+          set({ user: null, ...deriveAuthState(null) });
+        }
       }
     } finally {
-      console.log("✅ [authStore] Loading finished");
       set({ loading: false });
     }
-
-    console.log("📦 [authStore] Final state:", get());
   },
 
   logout: async () => {
-    console.log("🔁 [authStore] Logging out...");
     await authApi.logout();
-    set({ user: null, isGuest: false, isAuth: false });
-    console.log("🚪 [authStore] Logged out");
+    set({ user: null, ...deriveAuthState(null) });
   },
 }));

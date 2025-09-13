@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import type { Task } from "../../model/types";
+import type { Task } from "@/types";
 
 interface Props {
   task: Task;

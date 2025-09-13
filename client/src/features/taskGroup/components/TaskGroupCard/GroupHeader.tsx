@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { MdOutlineDelete } from "react-icons/md";
+import type { Priority } from "@/types";
 
 interface Props {
   groupId: string;
   title: string;
   isEditing: boolean;
   setEditingGroupId: (id: string | null) => void;
-  handleGroupEditSubmit: (
-    title: string,
-    priority: 1 | 2 | 3 | 4
-  ) => Promise<void>;
+  handleGroupEditSubmit: (title: string, priority: Priority) => Promise<void>;
   handleDeleteGroup: () => Promise<void>;
-  priority: 1 | 2 | 3 | 4;
+  priority: Priority;
 }
 
 export const GroupHeader = ({
@@ -25,9 +23,7 @@ export const GroupHeader = ({
   priority,
 }: Props) => {
   const [localTitle, setLocalTitle] = useState(title);
-  const [localPriority, setLocalPriority] = useState<1 | 2 | 3 | 4>(
-    priority || 2
-  );
+  const [localPriority, setLocalPriority] = useState<Priority>(priority || 2);
   const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
@@ -72,7 +68,7 @@ export const GroupHeader = ({
           />
           <select
             value={localPriority}
-            onChange={(e) => setLocalPriority(+e.target.value as 1 | 2 | 3 | 4)}
+            onChange={(e) => setLocalPriority(+e.target.value as Priority)}
             className="border rounded px-2 py-1"
           >
             <option value={1}>Hight</option>

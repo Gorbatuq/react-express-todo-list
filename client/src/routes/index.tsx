@@ -6,15 +6,13 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { useAuthStore } from "@/store/authStore";
 
 export const AppRoutes = () => {
-  const { user, isGuest, isAuth, loading, init } = useAuthStore();
+  const { user, loading, init } = useAuthStore();
 
   useEffect(() => {
     init();
   }, [init]);
 
-  if (loading)
-    return <p className="text-center mt-10">Kontrola přihlášení...</p>;
-
+  if (loading) return <p className="text-center mt-10">Checking login...</p>;
   return (
     <Routes>
       <Route
