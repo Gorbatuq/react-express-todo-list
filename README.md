@@ -1,47 +1,47 @@
 # React-Express Todo List
 
-Full-stack застосунок для керування завданнями. Реалізований як pet-проєкт для практики повного циклу розробки (frontend + backend + база + деплой).
+A full-stack task management application built as a pet project to practice the complete development cycle (frontend + backend + database + deployment).
 
 🔗 [Live demo](https://todo-list-baby.onrender.com)
 
 ---
 
-## ✨ Функціонал
+## ✨ Features
 
-- Реєстрація та вхід з JWT (HttpOnly cookie)
-- Гостьовий режим (можна створювати задачі без акаунта)
-- CRUD для задач і груп
-- Drag & Drop для сортування (на базі `@hello-pangea/dnd`)
-- Пріоритети завдань та груп
-- Валідація через **Zod**
-- Захист даних між користувачами
-- Dockerized середовище (dev + prod)
+- User registration & login with JWT (HttpOnly cookie)
+- Guest mode (create tasks without an account)
+- CRUD for tasks and groups
+- Drag & Drop sorting (powered by `@hello-pangea/dnd`)
+- Task and group priorities
+- Validation with **Zod**
+- Data isolation between users
+- Dockerized environment (dev + prod)
 
 ---
 
-## 🛠️ Технології
+## 🛠️ Tech Stack
 
 **Frontend**
 
 - React 19 + Vite + TypeScript
 - Zustand (state management), React Query (data fetching)
-- TailwindCSS (UI), react-toastify (нотифікації)
+- TailwindCSS (UI), react-toastify (notifications)
 
 **Backend**
 
 - Node.js + Express + TypeScript
 - MongoDB + Mongoose
-- Zod для валідації
-- JWT авторизація (HttpOnly cookie)
+- Zod for validation
+- JWT authentication (HttpOnly cookie)
 
-**Інше**
+**Other**
 
-- ESLint для статичного аналізу
-- Docker + Docker Compose для локального запуску і деплою
+- ESLint for static analysis
+- Docker + Docker Compose for local development and deployment
 
 ---
 
-## 🚀 Запуск локально
+## 🚀 Run Locally
 
 ### Backend
 
