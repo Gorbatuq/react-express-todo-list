@@ -1,7 +1,6 @@
 import axios from "axios";
 import type { AxiosResponse } from "axios";
 
-
 export const api = axios.create({
   baseURL: "/api",
   headers: { "Content-Type": "application/json" },
@@ -9,20 +8,20 @@ export const api = axios.create({
 });
 
 // ===== SAFE REQUEST WRAPPER =====
-
-export async function safeRequest<T>(promise: Promise<AxiosResponse<T>>): Promise<T> {
+export const safeRequest = async <T>(promise: Promise<AxiosResponse<T>>): Promise<T> => {
   try {
     const res = await promise;
+    console.log(res.data)
+
     return res.data;
   } catch (err) {
     handleApiError(err);
     throw err;
   }
-}
+};
 
 // ===== GLOBAL ERROR HANDLER =====
-
-function handleApiError(error: unknown): void {
+const handleApiError = (error: unknown): void => {
   if (axios.isAxiosError(error)) {
     const status = error.response?.status;
     const data = error.response?.data;
@@ -35,4 +34,4 @@ function handleApiError(error: unknown): void {
   } else {
     console.error("Unknown error:", error);
   }
-}
+};
