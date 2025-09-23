@@ -17,11 +17,12 @@ export const AddTaskForm = ({ addTask }: Props) => {
   return (
     <AddItemForm
       schema={taskSchema}
+      placeholder="Task title"
       fieldName="title"
-      placeholder="New Task"
       onSubmit={async ({ title }) => {
         await addTask(title.trim());
       }}
+      inputClassName="flex-1 min-w-0"
     />
   );
 };

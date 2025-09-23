@@ -8,6 +8,7 @@ interface Props {
   fieldName: string;
   onSubmit: (data: Record<string, any>) => Promise<void>;
   className?: string;
+  inputClassName?: string;
   disabled?: boolean;
   errorMessage?: string;
   submitButton?: React.ReactNode;
@@ -19,6 +20,7 @@ export const AddItemForm = ({
   fieldName,
   onSubmit,
   className,
+  inputClassName,
   submitButton,
   errorMessage,
   disabled,
@@ -36,15 +38,13 @@ export const AddItemForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(submit)} className={className}>
+    <form onSubmit={handleSubmit(submit)} className={`${className} max-w-full`}>
       <div className="flex justify-center gap-2">
         <input
           {...register(fieldName)}
           placeholder={placeholder}
           disabled={disabled}
-          className={`border rounded px-3 py-2 dark:text-zinc-800 ${
-            fieldName === "title" && placeholder === "Group title" ? "w-64" : ""
-          }`}
+          className={`border rounded px-3 py-2 dark:text-zinc-800 ${inputClassName}`}
         />
 
         {submitButton ?? (

@@ -16,7 +16,7 @@ const groupSchema = z.object({
 
 export const AddGroupForm = () => {
   const createGroup = useGroupStore((s) => s.createGroup);
-  const { user, isGuest } = useAuthStore();
+  const { isGuest } = useAuthStore();
 
   const { data: groups = [], isSuccess: groupsLoaded } = useQuery({
     queryKey: ["groups"],
@@ -31,6 +31,7 @@ export const AddGroupForm = () => {
       fieldName="title"
       placeholder="Group title"
       disabled={isGuestLimited}
+      inputClassName="w-64"
       errorMessage={
         isGuestLimited
           ? "Guests can only create 3 groups. Please log in."

@@ -25,7 +25,7 @@ export const ThemeToggleButton = () => {
       }`}
       />
       <FaMoon
-        className={`absolute text-blue-400 text-1xl transition-all duration-500
+        className={`absolute text-blue-400 text-2xl transition-all duration-500
       ${
         theme === "dark"
           ? "opacity-100 scale-100"

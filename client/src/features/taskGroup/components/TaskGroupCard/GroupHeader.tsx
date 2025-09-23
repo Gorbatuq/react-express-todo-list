@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
-import { MdOutlineDelete } from "react-icons/md";
+import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import type { Priority } from "@/types";
 
 interface Props {
@@ -23,8 +23,9 @@ export const GroupHeader = ({
   priority,
 }: Props) => {
   const [localTitle, setLocalTitle] = useState(title);
-  const [localPriority, setLocalPriority] = useState<Priority>(priority || 2);
+  const [localPriority, setLocalPriority] = useState<Priority>(priority);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isEditing) {
@@ -37,24 +38,33 @@ export const GroupHeader = ({
     e.preventDefault();
     const trimmed = localTitle.trim();
     if (!trimmed) return;
-    await handleGroupEditSubmit(trimmed, localPriority);
-    setEditingGroupId(null);
+
+    try {
+      await handleGroupEditSubmit(trimmed, localPriority);
+      setEditingGroupId(null);
+      setError(null);
+    } catch (err) {
+      setError("Failed to save changes. Try again.");
+    }
   };
 
   const onDelete = async () => {
-    await handleDeleteGroup();
-    setShowConfirm(false);
+    try {
+      await handleDeleteGroup();
+    } finally {
+      setShowConfirm(false);
+    }
   };
 
-  const priorityColors = {
+  const priorityColors: Record<Priority, string> = {
     1: "bg-red-500",
-    2: "bg-yellow-500",
-    3: "bg-green-500",
-    4: "bg-blue-500",
+    2: "bg-orange-400",
+    3: "bg-yellow-200",
+    4: "bg-blue-100",
   };
 
   return (
-    <div className="flex justify-between items-center relative mb-4">
+    <div className="flex justify-between items-center relative mb-4 ">
       {isEditing ? (
         <form
           onSubmit={onFormSubmit}
@@ -63,6 +73,7 @@ export const GroupHeader = ({
           <input
             value={localTitle}
             onChange={(e) => setLocalTitle(e.target.value)}
+            onBlur={() => !localTitle.trim() && setEditingGroupId(null)}
             autoFocus
             className="border rounded px-2 py-1"
           />
@@ -71,35 +82,38 @@ export const GroupHeader = ({
             onChange={(e) => setLocalPriority(+e.target.value as Priority)}
             className="border rounded px-2 py-1"
           >
-            <option value={1}>Hight</option>
-            <option value={2}>Mid</option>
-            <option value={3}>Lou</option>
-            <option value={4}>Sou Lou</option>
+            <option value={1}>High</option>
+            <option value={2}>Medium</option>
+            <option value={3}>Low</option>
+            <option value={4}>Super Low</option>
           </select>
           <button
             type="submit"
-            className="px-3 py-1 bg-blue-500 text-white rounded"
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             OK
           </button>
+          {error && <span className="text-red-500 text-sm">{error}</span>}
         </form>
       ) : (
-        <div
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={() => setEditingGroupId(groupId)}
-        >
+        <div className="flex items-center gap-2">
           <span
             className={`w-3 h-3 rounded-full ${priorityColors[priority]}`}
           />
-          <span className="text-lg font-semibold truncate max-w-full break-words">
-            {title}
-          </span>
+          <span className="text-lg font-semibold break-words">{title}</span>
+          <button
+            onClick={() => setEditingGroupId(groupId)}
+            className="ml-2 text-gray-500 hover:text-blue-600"
+            aria-label="Edit group"
+          >
+            <MdOutlineEdit />
+          </button>
         </div>
       )}
 
       <button
         onClick={() => setShowConfirm(true)}
-        className="ml-3 text-red-600 text-xl focus:outline-none focus:ring-2 focus:ring-red-400"
+        className="ml-3 text-red-600 text-xl focus:outline-none focus:ring-2 focus:ring-red-400 hover:text-red-700"
         aria-label="Delete group"
       >
         <MdOutlineDelete />
@@ -107,7 +121,7 @@ export const GroupHeader = ({
 
       {showConfirm && (
         <ConfirmModal
-          message="Are you sure?"
+          message="Are you sure you want to delete this group?"
           onConfirm={onDelete}
           onCancel={() => setShowConfirm(false)}
         />

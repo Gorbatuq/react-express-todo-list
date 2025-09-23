@@ -1,6 +1,6 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { TaskItem } from "../TaskItem/TaskItem";
-import type { Task } from "../../model/types";
+import type { Task } from "../../../../types";
 import { useTaskStore } from "@/store/taskStore";
 
 interface Props {

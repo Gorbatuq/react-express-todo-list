@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { authApi } from "../api/auth";
+import toast from "react-hot-toast";
 
 const authInputSchema = z.object({
   email: z.string().min(4, "Email must be at least 4 characters"),
@@ -28,23 +29,26 @@ export const AuthPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const onSuccess = () => {
+  const onSuccess = (msg: string) => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
     reset();
     navigate("/todo");
+    toast.success(msg);
   };
 
   const withErrorHandling = async (
     fn: () => Promise<void>,
+    successMsg: string,
     errorMsg: string
   ) => {
     try {
       setLoading(true);
       setError(null);
       await fn();
-      onSuccess();
+      onSuccess(successMsg);
     } catch {
       setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -53,18 +57,21 @@ export const AuthPage = () => {
   const handleLogin = (data: AuthInputValues) =>
     withErrorHandling(
       () => authApi.login(data.email, data.password),
+      "Logged in successfully",
       "Invalid data or server error"
     );
 
   const handleRegister = (data: AuthInputValues) =>
     withErrorHandling(
       () => authApi.register(data.email, data.password),
+      "User registered successfully",
       "User already exists or server error"
     );
 
   const handleGuest = () =>
     withErrorHandling(
       () => authApi.createGuest(),
+      "Guest account created",
       "Unable to create temporary user"
     );
 
