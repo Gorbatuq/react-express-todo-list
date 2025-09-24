@@ -7,7 +7,7 @@ export const App = () => {
 
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <AppRoutes />
     </>
   );

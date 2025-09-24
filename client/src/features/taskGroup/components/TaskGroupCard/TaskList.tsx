@@ -18,7 +18,7 @@ export const TaskList = ({
   onEditSubmit,
 }: Props) => {
   return (
-    <Droppable droppableId={String(groupId)} type="task">
+    <Droppable droppableId={groupId} type="task">
       {(provided) => (
         <div
           ref={provided.innerRef}

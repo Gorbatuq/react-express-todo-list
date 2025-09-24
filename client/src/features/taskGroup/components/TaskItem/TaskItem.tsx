@@ -28,7 +28,7 @@ export const TaskItem = ({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={provided.draggableProps.style}
-          className={`flex items-center justify-between bg-gray-100 dark:bg-gray-500 rounded-lg px-3 py-2 ${
+          className={`flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 ${
             snapshot.isDragging ? "ring-2 ring-blue-50 shadow-xl" : ""
           }`}
         >

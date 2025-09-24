@@ -3,28 +3,33 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   onCancel: () => void;
 }
+
 export const ConfirmModal = ({
   message,
   onConfirm,
   onCancel,
-}: ConfirmModalProps) => (
-  <div className="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center rounded shadow-md">
-    <div className="p-4 border rounded bg-white">
-      <p className="mb-4 text-center">{message}</p>
-      <div className="flex justify-center space-x-4">
-        <button
-          onClick={onConfirm}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-        >
-          Yes
-        </button>
-        <button
-          onClick={onCancel}
-          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition"
-        >
-          Cancel
-        </button>
+}: ConfirmModalProps) => {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+      <div className="w-72 rounded-xl bg-white dark:bg-zinc-800 shadow-xl border border-gray-200 dark:border-zinc-700 p-5">
+        <p className="text-sm text-gray-700 dark:text-gray-200 mb-4 text-center">
+          {message}
+        </p>
+        <div className="flex justify-center gap-3">
+          <button
+            onClick={onCancel}
+            className="px-4 py-1.5 rounded-md bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-1.5 rounded-md bg-red-500 text-white hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};

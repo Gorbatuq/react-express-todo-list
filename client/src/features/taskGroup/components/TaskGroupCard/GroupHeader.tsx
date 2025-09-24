@@ -78,24 +78,25 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
           </button>
         </div>
       )}
+      <div className="relative">
+        <button
+          onClick={() => setShowConfirm(true)}
+          className="ml-3 text-red-600 text-xl hover:text-red-700"
+        >
+          <MdOutlineDelete />
+        </button>
 
-      <button
-        onClick={() => setShowConfirm(true)}
-        className="ml-3 text-red-600 text-xl hover:text-red-700"
-      >
-        <MdOutlineDelete />
-      </button>
-
-      {showConfirm && (
-        <ConfirmModal
-          message="Are you sure you want to delete this group?"
-          onConfirm={() => {
-            onDelete();
-            setShowConfirm(false);
-          }}
-          onCancel={() => setShowConfirm(false)}
-        />
-      )}
+        {showConfirm && (
+          <ConfirmModal
+            message="Are you sure you want to delete this group?"
+            onConfirm={() => {
+              onDelete();
+              setShowConfirm(false);
+            }}
+            onCancel={() => setShowConfirm(false)}
+          />
+        )}
+      </div>
     </div>
   );
 };

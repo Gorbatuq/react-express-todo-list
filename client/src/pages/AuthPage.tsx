@@ -73,7 +73,7 @@ export const AuthPage = () => {
           disabled={guest.isPending}
           className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-md transition"
         >
-          Continue in the ghost
+          Continue in the "guest"
         </button>
       </form>
     </div>

@@ -12,7 +12,6 @@ export const useTaskMutations = () => {
       taskApi.add(groupId, title),
     onSuccess: (_data, { groupId }) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", groupId] });
-      toast.success("Task created");
     },
     onError: () => toast.error("Failed to create task"),
   });
@@ -58,7 +57,6 @@ export const useTaskMutations = () => {
       taskApi.delete(groupId, taskId),
     onSuccess: (_data, { groupId }) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", groupId] });
-      toast.success("Task deleted");
     },
     onError: () => toast.error("Failed to delete task"),
   });

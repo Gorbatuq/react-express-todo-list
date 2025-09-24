@@ -8,7 +8,7 @@ import type { TaskGroup } from "@/types";
 import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
 import { useTasks } from "../../hooks/queries/task/useTasks";
 import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
-import { useUIStore } from "@/store/uiStore";
+import { useGroupFilter } from "../../hooks/useGroupFilter";
 
 type Props = {
   group: TaskGroup;
@@ -19,17 +19,14 @@ export const TaskGroupCard = React.memo(({ group }: Props) => {
   const { data: tasks = [] } = useTasks(group.id);
   const { updateTask, deleteTask } = useTaskMutations();
 
-  const filter = useUIStore((s) => s.filter);
-  const setFilter = useUIStore((s) => s.setFilter);
-
-  const filteredTasks = tasks.filter((t) => {
-    if (filter === "active") return !t.completed;
-    if (filter === "completed") return t.completed;
-    return true;
-  });
+  const { filter, setFilter, filteredTasks } = useGroupFilter(tasks);
 
   return (
-    <div className="flex flex-col rounded-2xl bg-white dark:bg-zinc-700 shadow-lg p-4 transition-shadow hover:shadow-xl">
+    <div
+      className="flex flex-col w-72 sm:w-auto rounded-2xl 
+                bg-white dark:bg-zinc-800 
+                shadow-lg p-4 transition-shadow hover:shadow-xl"
+    >
       <GroupHeader
         title={group.title}
         priority={group.priority}

@@ -22,22 +22,33 @@ export const AddTaskForm = ({ groupId }: Props) => {
   });
 
   return (
-    <form onSubmit={submit} className="flex gap-2 items-center">
-      <input
-        {...register("title")}
-        placeholder="Task title"
-        className="border rounded px-3 py-2 flex-1 min-w-0 dark:text-zinc-800"
-      />
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="bg-green-400 hover:bg-green-500 text-white px-2 rounded"
+    <div className="mt-3 flex flex-col gap-2 w-full overflow-hidden">
+      <form
+        onSubmit={submit}
+        className="flex gap-2 items-center w-full overflow-hidden"
       >
-        <PiPlus />
-      </button>
+        <input
+          {...register("title")}
+          placeholder="Task title"
+          className="flex-1 min-w-0 px-3 py-2 rounded-md
+                 border border-gray-300 text-gray-900 bg-white
+                 dark:bg-zinc-700 dark:text-gray-100 dark:border-zinc-600"
+        />
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="shrink-0 px-3 py-2 rounded-md bg-green-500 text-white 
+                 hover:bg-green-600 transition-colors duration-200 
+                 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <PiPlus className="text-lg" />
+        </button>
+      </form>
+
+      {/* повідомлення знизу */}
       {typeof errors.title?.message === "string" && (
         <p className="text-red-500 text-sm">{errors.title.message}</p>
       )}
-    </form>
+    </div>
   );
 };
