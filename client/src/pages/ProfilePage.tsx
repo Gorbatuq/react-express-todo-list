@@ -1,23 +1,15 @@
+import { useAuthMutations } from "@/features/taskGroup/hooks/queries/auth/useAuthMutations";
+import { useMe } from "@/features/taskGroup/hooks/queries/auth/useMe";
 import { useNavigate, Navigate } from "react-router-dom";
 
-import { useAuthStore } from "@/store/authStore";
-
 export const ProfilePage = () => {
-  const { user, logout } = useAuthStore();
+  const { data: user } = useMe();
+  const { logout } = useAuthMutations();
   const navigate = useNavigate();
 
   const registrationDate = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString("cs-CZ")
     : "-";
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/");
-    } catch (e) {
-      console.error("Logout failed", e);
-    }
-  };
 
   if (!user) return <Navigate to="/" replace />;
 
@@ -35,13 +27,13 @@ export const ProfilePage = () => {
 
         <div className="border-t pt-4 space-y-3 text-sm">
           <div className="flex justify-between text-slate-600 dark:text-zinc-300">
-            <span>Datum register:</span>
+            <span>Data register:</span>
             <span className="font-medium text-slate-800 dark:text-white">
               {registrationDate}
             </span>
           </div>
           <div className="flex justify-between text-slate-600 dark:text-zinc-300">
-            <span>Scout task:</span>
+            <span>Stats task:</span>
             <span className="font-medium text-slate-800 dark:text-white">
               {user?.taskCount ?? "-"}
             </span>
@@ -50,7 +42,7 @@ export const ProfilePage = () => {
 
         <div className="pt-4 flex justify-center gap-4">
           <button
-            onClick={handleLogout}
+            onClick={() => logout.mutate()}
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
           >
             Log out

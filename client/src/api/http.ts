@@ -11,7 +11,6 @@ export const api = axios.create({
 export const safeRequest = async <T>(promise: Promise<AxiosResponse<T>>): Promise<T> => {
   try {
     const res = await promise;
-    console.log(res.data)
 
     return res.data;
   } catch (err) {

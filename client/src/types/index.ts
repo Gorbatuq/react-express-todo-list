@@ -9,7 +9,7 @@ export type User = {
 };
 
 export type Task = {
-  _id: string;
+  id: string;
   title: string;
   completed: boolean;
   order: number;

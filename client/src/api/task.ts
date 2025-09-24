@@ -9,12 +9,6 @@ export const taskApi = {
   add: (groupId: string, title: string) =>
     safeRequest<Task>(api.post(`/groups/${groupId}/tasks`, { title })),
 
-
-  reorder: (groupId: string, taskIds: string[]) =>
-    safeRequest<{ message: string }>(
-      api.patch(`/groups/${groupId}/tasks/order`, { order: taskIds })
-    ),
-
   move: (groupId: string, taskId: string, newGroupId: string) =>
     safeRequest<{ message: string }>(
       api.patch(`/groups/${groupId}/tasks/${taskId}`, { groupId: newGroupId })
@@ -23,6 +17,11 @@ export const taskApi = {
   delete: (groupId: string, taskId: string) =>
     safeRequest<{ message: string }>(
       api.delete(`/groups/${groupId}/tasks/${taskId}`)
+    ),
+
+  reorder: (groupId: string, taskIds: string[]) =>
+    safeRequest<{ message: string }>(
+      api.patch(`/groups/${groupId}/tasks/order`, { order: taskIds })
     ),
 
   update: (

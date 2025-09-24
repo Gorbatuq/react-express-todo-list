@@ -2,7 +2,7 @@ import { Task } from "../models/Task";
 import { TaskGroupDocument } from "../models/TaskGroup";
 
 export const toTaskResponse = (task: any) => ({
-  _id: task._id.toString(),
+  id: task._id.toString(),
   title: task.title,
   completed: task.completed,
   order: task.order,

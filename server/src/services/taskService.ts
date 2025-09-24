@@ -26,9 +26,9 @@ export const taskService = {
 
   const count = await Task.countDocuments({ groupId, userId });
 
-  if (user.role === "GUEST" && count >= 20) {
-    throw new AppError("Guest can create no more than 3 groups", 403);
-  }
+  // if (user.role === "GUEST" && count >= 20) {
+  //   throw new AppError("Guest can create no more than 20 tasks", 403);
+  // }
 
   const task = new Task({
     title: title.trim(),

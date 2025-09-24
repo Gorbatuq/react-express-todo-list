@@ -1,42 +1,42 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { TaskItem } from "../TaskItem/TaskItem";
 import type { Task } from "../../../../types";
-import { useTaskStore } from "@/store/taskStore";
 
 interface Props {
   groupId: string;
   tasks: Task[];
+  onToggle: (taskId: string, completed: boolean) => void;
+  onDelete: (taskId: string) => void;
+  onEditSubmit: (taskId: string, title: string) => void;
 }
 
-export const TaskList = ({ groupId, tasks }: Props) => {
-  const toggleTask = useTaskStore((s) => s.toggle);
-  const deleteTask = useTaskStore((s) => s.deleteTask);
-  const updateTitle = useTaskStore((s) => s.updateTitle);
-
+export const TaskList = ({
+  groupId,
+  tasks,
+  onToggle,
+  onDelete,
+  onEditSubmit,
+}: Props) => {
   return (
-    <Droppable droppableId={groupId} type="task">
+    <Droppable droppableId={String(groupId)} type="task">
       {(provided) => (
-        <ul
+        <div
           ref={provided.innerRef}
           {...provided.droppableProps}
           className="flex flex-col gap-2 mb-4"
         >
-          {tasks.map((task, index) => {
-            if (!groupId) return null;
-            return (
-              <TaskItem
-                key={task._id}
-                task={task}
-                groupId={groupId}
-                index={index}
-                onToggle={toggleTask}
-                onDelete={deleteTask}
-                onEditSubmit={updateTitle}
-              />
-            );
-          })}
+          {tasks.map((task, index) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              index={index}
+              onToggle={onToggle}
+              onDelete={onDelete}
+              onEditSubmit={onEditSubmit}
+            />
+          ))}
           {provided.placeholder}
-        </ul>
+        </div>
       )}
     </Droppable>
   );

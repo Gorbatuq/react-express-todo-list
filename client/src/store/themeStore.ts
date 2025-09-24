@@ -7,21 +7,23 @@ type ThemeState = {
   setTheme: (t: Theme) => void;
 };
 
-// Validate the topic with localStorage
-const isValidTheme = (t: any): t is Theme => t === "light" || t === "dark";
-const raw = localStorage.getItem("theme");
-const storedTheme: Theme = isValidTheme(raw) ? raw : "light";
-//
+const getStoredTheme = (): Theme => {
+  if (typeof window === "undefined") return "light";
+  const raw = localStorage.getItem("theme");
+  return raw === "dark" ? "dark" : "light";
+};
 
 export const useThemeStore = create<ThemeState>((set) => ({
-  theme: storedTheme,
+  theme: getStoredTheme(),
   setTheme: (theme) => {
-    set((state) => {
-      if (state.theme === theme) return state;
+    set(() => {
       try {
         localStorage.setItem("theme", theme);
+        const root = document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(theme);
       } catch (e) {
-        console.warn("Failed to save topic", e);
+        console.warn("Failed to save theme", e);
       }
       return { theme };
     });

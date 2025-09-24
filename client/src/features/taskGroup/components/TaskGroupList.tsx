@@ -1,37 +1,28 @@
-import { useEffect } from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
-
 import { AddGroupForm } from "./AddTask/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
 import { TaskGroupSkeletonGrid } from "./ui/TaskGroupSkeletonGrid";
-
-import { handleDragEnd } from "@/store/dndStore";
-import { useGroupStore } from "@/store/groupStore";
-import { useAuthStore } from "@/store/authStore";
+import { useGroups } from "../hooks/queries/group/useGroups";
+import { useMe } from "../hooks/queries/auth/useMe";
+import { useHandleDragEnd } from "../hooks/useHandleDragEnd";
 
 export const TaskGroupList = () => {
-  const reload = useGroupStore((s) => s.reload);
-  const loading = useGroupStore((s) => s.loading);
-  const hasLoaded = useGroupStore((s) => s.hasLoaded);
+  const { data: groups, isLoading } = useGroups();
+  const { data: user } = useMe();
+  const handleDragEnd = useHandleDragEnd();
 
-  const { user, loading: authLoading } = useAuthStore();
-  const shouldLoad = !!user && !hasLoaded;
+  const isGuestLimited: boolean =
+    user?.role === "GUEST" && (groups?.length ?? 0) >= 3;
 
-  useEffect(() => {
-    if (shouldLoad) {
-      reload().catch(console.error);
-    }
-  }, [shouldLoad, reload]);
-
-  if (authLoading || (!hasLoaded && loading)) {
+  if (isLoading) {
     return <TaskGroupSkeletonGrid />;
   }
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 md:px-8">
-      <AddGroupForm />
+      <AddGroupForm isGuestLimited={isGuestLimited} />
       <DragDropContext onDragEnd={handleDragEnd}>
-        <TaskGroupGrid />
+        <TaskGroupGrid groups={groups ?? []} />
       </DragDropContext>
     </div>
   );

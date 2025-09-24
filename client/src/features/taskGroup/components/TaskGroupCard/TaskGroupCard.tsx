@@ -2,45 +2,63 @@ import { AddTaskForm } from "../AddTask/AddTaskForm";
 import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
 import { FilterButtons } from "./FilterButtons";
-import { useGroupStore } from "@/store/groupStore";
-import { useTaskGroupCardLogic } from "../../hooks/useTaskGroupCardLogic";
+
 import React from "react";
-import type { Priority } from "@/types";
+import type { TaskGroup } from "@/types";
+import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
+import { useTasks } from "../../hooks/queries/task/useTasks";
+import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
+import { useUIStore } from "@/store/uiStore";
 
-export const TaskGroupCard = React.memo(({ groupId }: { groupId: string }) => {
-  const group = useGroupStore((s) => s.groupMap[groupId]);
-  const editingGroupId = useGroupStore((s) => s.editingGroupId);
-  const setEditingGroupId = useGroupStore((s) => s.setEditingGroupId);
-  const updateGroup = useGroupStore((s) => s.updateGroup);
-  const deleteGroup = useGroupStore((s) => s.deleteGroup);
+type Props = {
+  group: TaskGroup;
+};
 
-  const isEditingGroup = editingGroupId === groupId;
-  const { filter, setFilter, filteredTasks, handleAdd } =
-    useTaskGroupCardLogic(groupId);
+export const TaskGroupCard = React.memo(({ group }: Props) => {
+  const { deleteGroup, updateGroup } = useGroupMutations();
+  const { data: tasks = [] } = useTasks(group.id);
+  const { updateTask, deleteTask } = useTaskMutations();
 
-  if (!group) return null;
+  const filter = useUIStore((s) => s.filter);
+  const setFilter = useUIStore((s) => s.setFilter);
 
-  const handleGroupEditSubmit = async (
-    newTitle: string,
-    newPriority: Priority
-  ) => {
-    await updateGroup(groupId, { title: newTitle, priority: newPriority });
-    setEditingGroupId(null);
-  };
+  const filteredTasks = tasks.filter((t) => {
+    if (filter === "active") return !t.completed;
+    if (filter === "completed") return t.completed;
+    return true;
+  });
 
   return (
     <div className="flex flex-col rounded-2xl bg-white dark:bg-zinc-700 shadow-lg p-4 transition-shadow hover:shadow-xl">
       <GroupHeader
-        groupId={group.id}
         title={group.title}
         priority={group.priority}
-        isEditing={isEditingGroup}
-        setEditingGroupId={setEditingGroupId}
-        handleGroupEditSubmit={handleGroupEditSubmit}
-        handleDeleteGroup={() => deleteGroup(groupId)}
+        onSubmit={(title, priority) =>
+          updateGroup.mutate({ groupId: group.id, data: { title, priority } })
+        }
+        onDelete={() => deleteGroup.mutate(group.id)}
       />
-      <TaskList groupId={group.id} tasks={filteredTasks} />
-      <AddTaskForm addTask={handleAdd} />
+
+      <TaskList
+        groupId={group.id}
+        tasks={filteredTasks}
+        onToggle={(taskId, completed) => {
+          updateTask.mutate({
+            groupId: group.id,
+            taskId,
+            payload: { completed },
+          });
+        }}
+        onDelete={(taskId) => deleteTask.mutate({ groupId: group.id, taskId })}
+        onEditSubmit={(taskId, title) => {
+          updateTask.mutate({
+            groupId: group.id,
+            taskId,
+            payload: { title },
+          });
+        }}
+      />
+      <AddTaskForm groupId={group.id} />
       <FilterButtons currentFilter={filter} onChange={setFilter} />
     </div>
   );
