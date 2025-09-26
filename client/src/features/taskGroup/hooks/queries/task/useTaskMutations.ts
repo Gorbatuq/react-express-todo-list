@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 export const useTaskMutations = () => {
   const queryClient = useQueryClient();
 
-  // CREATE
+  // CREATE -> add new task into group
   const addTask = useMutation({
     mutationFn: ({ groupId, title }: { groupId: string; title: string }) =>
       taskApi.add(groupId, title),
@@ -16,7 +16,7 @@ export const useTaskMutations = () => {
     onError: () => toast.error("Failed to create task"),
   });
 
-  // MOVE between groups
+  // MOVE -> between different groups (with rollback)
   const moveTask = useMutation({
     mutationFn: ({ groupId, taskId, newGroupId }: {
       groupId: string; taskId: string; newGroupId: string; destIndex: number;
@@ -50,8 +50,7 @@ export const useTaskMutations = () => {
     },
   });
 
-  // DELETE
-  // DELETE
+  // DELETE -> remove task
   const deleteTask = useMutation({
     mutationFn: ({ groupId, taskId }: { groupId: string; taskId: string }) =>
       taskApi.delete(groupId, taskId),
@@ -61,7 +60,7 @@ export const useTaskMutations = () => {
     onError: () => toast.error("Failed to delete task"),
   });
 
-  // REORDER inside group
+  // REORDER -> change order inside the same group
   const reorderTask = useMutation({
     mutationFn: ({ groupId, taskIds }: { groupId: string; taskIds: string[] }) =>
       taskApi.reorder(groupId, taskIds),
@@ -84,7 +83,7 @@ export const useTaskMutations = () => {
     },
   });
 
-  // UPDATE
+  // UPDATE -> change task fields (title, completed)
   const updateTask = useMutation({
     mutationFn: ({ groupId, taskId, payload }: {
       groupId: string;

@@ -4,16 +4,15 @@
 
 @layer base {
   body {
+    @apply text-base;
     background-color: #18062b;
     color: #f6feff;
-    font-family: "Orbitron", "Jost", "PT Sans", system-ui, sans-serif;
-    font-size: 1rem;
+    font-family: "Exo 2", "PT Sans", system-ui, sans-serif;
   }
 
   html:not(.dark) body {
     background-color: #fcfcfc;
     color: #1a1a1a;
-    font-family: "Jost", "PT Sans", system-ui, sans-serif;
-    font-size: 1rem;
+    font-family: "Inter", "Jost", system-ui, sans-serif;
   }
 }

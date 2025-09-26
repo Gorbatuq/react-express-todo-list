@@ -4,6 +4,7 @@ interface ConfirmModalProps {
   onCancel: () => void;
 }
 
+// group deletion confirmation button //
 export const ConfirmModal = ({
   message,
   onConfirm,

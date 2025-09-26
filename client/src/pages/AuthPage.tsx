@@ -17,7 +17,11 @@ export const AuthPage = () => {
 
   const { login, register, guest } = useAuthMutations();
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-700 to-slate-900">
+    <div
+      className="flex items-center justify-center min-h-screen
+             bg-[url('/back-img-auth.jpg')] bg-cover bg-center"
+    >
+      {" "}
       <form
         onSubmit={handleSubmit((data) => login.mutate(data))}
         className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6"

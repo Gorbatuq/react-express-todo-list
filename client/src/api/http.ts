@@ -11,8 +11,8 @@ export const api = axios.create({
 export const safeRequest = async <T>(promise: Promise<AxiosResponse<T>>): Promise<T> => {
   try {
     const res = await promise;
-
     return res.data;
+
   } catch (err) {
     handleApiError(err);
     throw err;
@@ -22,6 +22,7 @@ export const safeRequest = async <T>(promise: Promise<AxiosResponse<T>>): Promis
 // ===== GLOBAL ERROR HANDLER =====
 const handleApiError = (error: unknown): void => {
   if (axios.isAxiosError(error)) {
+
     const status = error.response?.status;
     const data = error.response?.data;
 
@@ -30,6 +31,7 @@ const handleApiError = (error: unknown): void => {
     }
 
     console.error("Axios error:", status, data || error.message);
+    
   } else {
     console.error("Unknown error:", error);
   }

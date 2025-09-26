@@ -4,10 +4,12 @@ import type { Task } from "../types";
 export const taskApi = {
 
   getTasksByGroup: (groupId: string) =>
-    safeRequest<Task[]>(api.get(`/groups/${groupId}/tasks`)),
+    safeRequest<Task[]>(api.get(`/groups/${groupId}/tasks`)
+    ),
 
   add: (groupId: string, title: string) =>
-    safeRequest<Task>(api.post(`/groups/${groupId}/tasks`, { title })),
+    safeRequest<Task>(api.post(`/groups/${groupId}/tasks`, { title })
+    ),
 
   move: (groupId: string, taskId: string, newGroupId: string) =>
     safeRequest<{ message: string }>(

@@ -44,6 +44,7 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
         </button>
       </form>
 
+      {/* message from below */}
       {typeof errors.title?.message === "string" && (
         <p className="text-red-500 text-sm">{errors.title.message}</p>
       )}

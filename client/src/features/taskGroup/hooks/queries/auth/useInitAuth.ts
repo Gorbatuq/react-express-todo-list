@@ -5,6 +5,7 @@ import { useEffect } from "react";
 export const useInitAuth  = () => {
     const queryClient = useQueryClient();
 
+    // user availability check
     useEffect(() => {
         const init = async () => {
             try {

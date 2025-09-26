@@ -19,7 +19,7 @@ export const TaskGroupList = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto sm:px-6 md:px-8">
+    <div className="flex flex-col items-center max-w-7xl mx-auto sm:px-6 md:px-8">
       <AddGroupForm isGuestLimited={isGuestLimited} />
       <DragDropContext onDragEnd={handleDragEnd}>
         <TaskGroupGrid groups={groups ?? []} />

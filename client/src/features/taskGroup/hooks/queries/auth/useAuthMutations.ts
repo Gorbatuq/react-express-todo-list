@@ -7,6 +7,7 @@ export const useAuthMutations = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
+    // LOGIN
     const login = useMutation({
         mutationFn: (data: {email: string; password: string}) =>
             authApi.login(data.email, data.password),
@@ -18,9 +19,9 @@ export const useAuthMutations = () => {
         onError: () => {
             toast.error("Invalid credentials or server error");
         }
-        
     });
 
+    // REGISTER
     const register = useMutation({
         mutationFn: (data: {email: string; password: string}) =>
             authApi.register(data.email, data.password),
@@ -34,6 +35,7 @@ export const useAuthMutations = () => {
         }
     });
 
+    // MODE GUEST
     const guest = useMutation({
         mutationFn: () => authApi.createGuest(),
         onSuccess: () => {
@@ -46,6 +48,7 @@ export const useAuthMutations = () => {
         }
     });
 
+    // LOGOUT
     const logout = useMutation({
         mutationFn: () => authApi.logout(),
         onSuccess: () => {

@@ -12,7 +12,7 @@ export const useGroupMutations = () => {
       groupApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
-      toast.success("Group created");
+      toast("Group created");
     },
     onError: () => toast.error("Failed to create group"),
   });
@@ -22,7 +22,7 @@ export const useGroupMutations = () => {
     mutationFn: (groupId: string) => groupApi.delete(groupId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
-      toast.success("Group deleted");
+      toast("Group deleted");
     },
     onError: () => toast.error("Failed to delete group"),
   });
@@ -33,7 +33,6 @@ export const useGroupMutations = () => {
       groupApi.update(groupId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
-      toast.success("Group updated");
     },
     onError: () => toast.error("Failed to update group"),
   });
