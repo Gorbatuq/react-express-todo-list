@@ -1,5 +1,5 @@
 import { DragDropContext } from "@hello-pangea/dnd";
-import { AddGroupForm } from "./AddTask/AddGroupForm";
+import { AddGroupForm } from "./AddForms/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
 import { TaskGroupSkeletonGrid } from "./ui/TaskGroupSkeletonGrid";
 import { useGroups } from "../hooks/queries/group/useGroups";
@@ -19,7 +19,7 @@ export const TaskGroupList = () => {
   }
 
   return (
-    <div className="flex flex-col items-center max-w-7xl mx-auto sm:px-6 md:px-8">
+    <div>
       <AddGroupForm isGuestLimited={isGuestLimited} />
       <DragDropContext onDragEnd={handleDragEnd}>
         <TaskGroupGrid groups={groups ?? []} />

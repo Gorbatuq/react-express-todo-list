@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import {
   authInputSchema,
   type AuthInputValues,
-} from "@/validation/authSchemas";
+} from "@/shared/validation/authSchemas";
 import { useAuthMutations } from "@/features/taskGroup/hooks/queries/auth/useAuthMutations";
 
 export const AuthPage = () => {

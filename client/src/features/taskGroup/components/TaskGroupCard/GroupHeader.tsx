@@ -3,6 +3,8 @@ import { ConfirmModal } from "./ConfirmModal";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import type { Priority } from "@/types";
 
+// create validation later
+
 interface Props {
   title: string;
   priority: Priority;
@@ -71,8 +73,8 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
       ) : (
         <div className="flex items-center gap-2">
           {/* name group */}
-          <span
-            className={`w-3 h-3 rounded-full ${priorityColors[priority]}`}
+          <div
+            className={`w-3 h-3 rounded-full  flex-shrink-0 ${priorityColors[priority]}`}
           />
           <span className="text-lg font-semibold break-words">{title}</span>
           {/* edit button */}

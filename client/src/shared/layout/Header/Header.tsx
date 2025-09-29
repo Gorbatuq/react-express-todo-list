@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ThemeToggleButton } from "../Theme/ThemeToggleButton";
+import { ThemeToggleButton } from "../../ui/ThemeToggleButton";
 import { PiFinnTheHumanLight } from "react-icons/pi";
 
 export const Header = () => {

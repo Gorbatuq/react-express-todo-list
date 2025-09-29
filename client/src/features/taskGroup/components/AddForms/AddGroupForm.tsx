@@ -1,6 +1,6 @@
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
-import { groupSchema } from "@/validation/groupSchema";
+import { groupSchema } from "@/features/taskGroup/validation/groupSchema";
 import { useZodForm } from "../../hooks/useZodForm";
 
 type Props = {

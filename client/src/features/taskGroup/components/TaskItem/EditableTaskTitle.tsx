@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import type { Task } from "@/types";
+import { taskSchema, type TaskInputValues } from "../../validation/taskSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import TextareaAutosize from "react-textarea-autosize";
 
 interface Props {
   task: Task;
@@ -10,16 +13,14 @@ interface Props {
 export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
   const [editing, setEditing] = useState(false);
 
-  const { register, handleSubmit, reset, setFocus } = useForm<{
-    title: string;
-  }>({
+  const { register, handleSubmit, reset, setFocus } = useForm<TaskInputValues>({
+    resolver: zodResolver(taskSchema),
     defaultValues: { title: task.title },
   });
 
-  const submitHandler = ({ title }: { title: string }) => {
-    const trimmed = title.trim();
-    if (trimmed !== task.title.trim()) {
-      onSubmit(trimmed);
+  const submitHandler = ({ title }: TaskInputValues) => {
+    if (title !== task.title) {
+      onSubmit(title);
     }
     setEditing(false);
   };
@@ -32,7 +33,7 @@ export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
     return (
       <span
         onClick={() => setEditing(true)}
-        className="break-words w-0 flex-1 cursor-pointer"
+        className="break-words w-0 flex-1 cursor-pointer whitespace-pre-wrap"
       >
         {task.title}
       </span>
@@ -41,17 +42,22 @@ export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className="flex-1">
-      <input
+      <TextareaAutosize
         {...register("title")}
-        onBlur={handleSubmit(submitHandler)}
+        minRows={1}
+        maxRows={6}
         onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(submitHandler)();
+          }
           if (e.key === "Escape") {
             reset({ title: task.title });
             setEditing(false);
           }
         }}
         autoFocus
-        className="w-full bg-white dark:text-zinc-800"
+        className="w-full bg-white dark:text-zinc-800 resize-none overflow-hidden"
       />
     </form>
   );
