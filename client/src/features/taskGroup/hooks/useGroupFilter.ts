@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { Task } from "@/types";
+import { Task } from "../../../types";
 
 export type FilterType = "all" | "active" | "completed";
 

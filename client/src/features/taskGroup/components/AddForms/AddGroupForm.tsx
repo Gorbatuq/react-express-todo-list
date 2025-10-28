@@ -1,7 +1,7 @@
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
-import { groupSchema } from "@/features/taskGroup/validation/groupSchema";
 import { useZodForm } from "../../hooks/useZodForm";
+import { groupSchema } from "../../validation/groupSchema";
 
 type Props = {
   isGuestLimited: boolean;

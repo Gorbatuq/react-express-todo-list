@@ -1,6 +1,6 @@
-import { authApi } from "@/api/auth";
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react";
+import { authApi } from "../../../../../api/auth";
 
 export const useInitAuth  = () => {
     const queryClient = useQueryClient();

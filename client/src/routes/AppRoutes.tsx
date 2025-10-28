@@ -2,8 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthPage } from "../pages/AuthPage";
 import { TodoPage } from "../pages/TodoPage";
 import { ProfilePage } from "../pages/ProfilePage";
-import { useMe } from "@/features/taskGroup/hooks/queries/auth/useMe";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { useMe } from "../features/taskGroup/hooks/queries/auth/useMe";
 
 export const AppRoutes = () => {
   const { data: user, isLoading } = useMe();

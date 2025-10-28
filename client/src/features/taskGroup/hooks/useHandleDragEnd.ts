@@ -1,8 +1,9 @@
-import { useGroupMutations } from "@/features/taskGroup/hooks/queries/group/useGroupMutations";
-import { useTaskMutations } from "@/features/taskGroup/hooks/queries/task/useTaskMutations";
-import type { Task, TaskGroup } from "@/types";
+
 import type { DropResult } from "@hello-pangea/dnd";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGroupMutations } from "./queries/group/useGroupMutations";
+import { useTaskMutations } from "./queries/task/useTaskMutations";
+import { Task, TaskGroup } from "../../../types";
 
 // FIXME: micro flicker (ms) during DnD remains.
 // Tried optimistic updates, DnD tweaks, data checks → no fix.

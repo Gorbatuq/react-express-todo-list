@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
-import type { Priority } from "@/types";
+import { Priority } from "../../../../types";
 
 // create validation later
 

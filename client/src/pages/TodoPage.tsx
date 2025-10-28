@@ -1,6 +1,6 @@
-import { Header } from "@/shared/layout/Header/Header";
-import { TaskGroupList } from "@/features/taskGroup/components/TaskGroupList";
-import { Main } from "@/shared/layout/Main/Main";
+import { TaskGroupList } from "../features/taskGroup/components/TaskGroupList";
+import { Header } from "../shared/layout/Header/Header";
+import { Main } from "../shared/layout/Main/Main";
 
 export const TodoPage = () => {
   return (

@@ -1,7 +1,7 @@
-import { taskSchema } from "@/features/taskGroup/validation/taskSchema";
 import { useZodForm } from "../../hooks/useZodForm";
 import { PiPlus } from "react-icons/pi";
 import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
+import { taskSchema } from "../../validation/taskSchema";
 
 interface Props {
   groupId: string;

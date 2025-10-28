@@ -1,7 +1,7 @@
-import { taskApi } from "@/api/task";
-import type { Task } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { taskApi } from "../../../../../api/task";
+import { Task } from "../../../../../types";
 
 export const useTaskMutations = () => {
   const queryClient = useQueryClient();

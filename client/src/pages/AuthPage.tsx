@@ -2,9 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   authInputSchema,
-  type AuthInputValues,
-} from "@/shared/validation/authSchemas";
-import { useAuthMutations } from "@/features/taskGroup/hooks/queries/auth/useAuthMutations";
+  AuthInputValues,
+} from "../shared/validation/authSchemas";
+import { useAuthMutations } from "../features/taskGroup/hooks/queries/auth/useAuthMutations";
 
 export const AuthPage = () => {
   const {

@@ -3,7 +3,7 @@ import { Draggable } from "@hello-pangea/dnd";
 import { TaskCheckbox } from "./TaskCheckbox";
 import { EditableTaskTitle } from "./EditableTaskTitle";
 import { DeleteButton } from "./DeleteButton";
-import type { Task } from "@/types";
+import { Task } from "../../../../types";
 
 interface Props {
   task: Task;

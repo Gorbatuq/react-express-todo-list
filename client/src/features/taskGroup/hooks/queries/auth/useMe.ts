@@ -1,5 +1,5 @@
-import { authApi } from "@/api/auth"
 import { useQuery } from "@tanstack/react-query"
+import { authApi } from "../../../../../api/auth"
 
 export const useMe = () => {
     return useQuery({

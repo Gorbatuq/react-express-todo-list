@@ -1,7 +1,7 @@
-import { authApi } from '@/api/auth';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { authApi } from '../../../../../api/auth';
 
 export const useAuthMutations = () => {
     const queryClient = useQueryClient();

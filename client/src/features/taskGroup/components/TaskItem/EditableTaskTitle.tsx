@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import type { Task } from "@/types";
 import { taskSchema, type TaskInputValues } from "../../validation/taskSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextareaAutosize from "react-textarea-autosize";
+import { Task } from "../../../../types";
 
 interface Props {
   task: Task;

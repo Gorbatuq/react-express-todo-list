@@ -1,7 +1,6 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { TaskGroupCard } from "./TaskGroupCard/TaskGroupCard";
-
-import type { TaskGroup } from "@/types";
+import { TaskGroup } from "../../../types";
 
 type Props = {
   groups: TaskGroup[];
