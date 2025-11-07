@@ -2,21 +2,18 @@ import { api, safeRequest } from "./http";
 import type { User } from "../types";
 
 export const authApi = {
-  
-  getMe: async (): Promise<User> => {
-    const res = await api.get("/auth/me");
-    return res.data as User},
+  getMe: (): Promise<User> =>
+    safeRequest(api.get<User>("/auth/me")),
 
-  register: (email: string, password: string) =>
-    safeRequest(api.post("/auth/register", { email, password })),
+  register: (email: string, password: string): Promise<User> =>
+    safeRequest(api.post<User>("/auth/register", { email, password })),
 
-  login: (email: string, password: string) =>
-    safeRequest(api.post("/auth/login", { email, password })),
+  login: (email: string, password: string): Promise<User> =>
+    safeRequest(api.post<User>("/auth/login", { email, password })),
 
-  logout: () =>
+  logout: (): Promise<void> =>
     safeRequest(api.post("/auth/logout")),
 
-  createGuest: () => {
-  return safeRequest(api.post("/auth/guest"));
-  },  
+  createGuest: (): Promise<User> =>
+    safeRequest(api.post<User>("/auth/guest")),
 };

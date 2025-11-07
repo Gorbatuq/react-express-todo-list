@@ -1,5 +1,4 @@
 import { Draggable } from "@hello-pangea/dnd";
-
 import { TaskCheckbox } from "./TaskCheckbox";
 import { EditableTaskTitle } from "./EditableTaskTitle";
 import { DeleteButton } from "./DeleteButton";

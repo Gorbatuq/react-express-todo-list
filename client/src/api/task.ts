@@ -2,36 +2,36 @@ import { api, safeRequest } from "./http";
 import type { Task } from "../types";
 
 export const taskApi = {
+  getTasksByGroup: (groupId: string): Promise<Task[]> =>
+    safeRequest(api.get<Task[]>(`/groups/${groupId}/tasks`)),
 
-  getTasksByGroup: (groupId: string) =>
-    safeRequest<Task[]>(api.get(`/groups/${groupId}/tasks`)
-    ),
+  add: (groupId: string, title: string): Promise<Task> =>
+    safeRequest(api.post<Task>(`/groups/${groupId}/tasks`, { title })),
 
-  add: (groupId: string, title: string) =>
-    safeRequest<Task>(api.post(`/groups/${groupId}/tasks`, { title })
-    ),
+  move: (groupId: string, taskId: string, newGroupId: string): Promise<{ message: string }> =>
+    safeRequest(api.patch<{ message: string }>(
+      `/groups/${groupId}/tasks/${taskId}`,
+      { groupId: newGroupId }
+    )),
 
-  move: (groupId: string, taskId: string, newGroupId: string) =>
-    safeRequest<{ message: string }>(
-      api.patch(`/groups/${groupId}/tasks/${taskId}`, { groupId: newGroupId })
-    ),
+  delete: (groupId: string, taskId: string): Promise<{ message: string }> =>
+    safeRequest(api.delete<{ message: string }>(
+      `/groups/${groupId}/tasks/${taskId}`
+    )),
 
-  delete: (groupId: string, taskId: string) =>
-    safeRequest<{ message: string }>(
-      api.delete(`/groups/${groupId}/tasks/${taskId}`)
-    ),
-
-  reorder: (groupId: string, taskIds: string[]) =>
-    safeRequest<{ message: string }>(
-      api.patch(`/groups/${groupId}/tasks/order`, { order: taskIds })
-    ),
+  reorder: (groupId: string, taskIds: string[]): Promise<{ message: string }> =>
+    safeRequest(api.patch<{ message: string }>(
+      `/groups/${groupId}/tasks/order`,
+      { order: taskIds }
+    )),
 
   update: (
     groupId: string,
     taskId: string,
     payload: Partial<Pick<Task, "title" | "completed" | "groupId">>
-  ) =>
-    safeRequest<Task>(
-      api.patch(`/groups/${groupId}/tasks/${taskId}`, payload)
-    ),
+  ): Promise<Task> =>
+    safeRequest(api.patch<Task>(
+      `/groups/${groupId}/tasks/${taskId}`,
+      payload
+    )),
 };

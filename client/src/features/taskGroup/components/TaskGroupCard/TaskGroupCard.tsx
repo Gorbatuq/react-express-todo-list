@@ -1,14 +1,13 @@
-import { AddTaskForm } from "../AddForms/AddTaskForm";
-import { GroupHeader } from "./GroupHeader";
-import { TaskList } from "./TaskList";
-import { FilterButtons } from "./FilterButtons";
-
 import React from "react";
 import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
 import { useTasks } from "../../hooks/queries/task/useTasks";
 import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
 import { useGroupFilter } from "../../hooks/useGroupFilter";
 import { TaskGroup } from "../../../../types";
+import { AddTaskForm } from "../AddForms/AddTaskForm";
+import { GroupHeader } from "./GroupHeader";
+import { TaskList } from "./TaskList";
+import { FilterButtons } from "./FilterButtons";
 
 type Props = {
   group: TaskGroup;

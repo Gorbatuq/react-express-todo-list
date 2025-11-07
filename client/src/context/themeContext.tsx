@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
-type Theme = "light" | "dark";
+import { THEME, Theme } from "../types";
 
 type ThemeContextType = {
   theme: Theme;
@@ -10,29 +9,25 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 const getStoredTheme = (): Theme => {
-  if (typeof window === "undefined") return "light";
-  const raw = localStorage.getItem("theme");
-  return raw === "dark" ? "dark" : "light";
+  if (typeof window === "undefined") return THEME.LIGHT;
+  const saved = localStorage.getItem("theme");
+  return saved === THEME.DARK ? THEME.DARK : THEME.LIGHT;
 };
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>(getStoredTheme);
+  const [theme, setTheme] = useState<Theme>(getStoredTheme);
 
-  const setTheme = (t: Theme) => {
-    setThemeState(t);
-    try {
-      localStorage.setItem("theme", t);
-      const root = document.documentElement;
-      root.classList.remove("light", "dark");
-      root.classList.add(t);
-    } catch (e) {
-      console.warn("Failed to save theme", e);
-    }
-  };
-
+  // synchronization with DOM in localStorage
   useEffect(() => {
-    setTheme(theme);
-  }, []);
+    try {
+      localStorage.setItem("theme", theme);
+      const root = document.documentElement;
+      root.classList.remove(THEME.LIGHT, THEME.DARK);
+      root.classList.add(theme);
+    } catch (e) {
+      console.warn("Failed to apply theme:", e);
+    }
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

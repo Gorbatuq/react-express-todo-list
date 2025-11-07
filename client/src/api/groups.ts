@@ -1,20 +1,29 @@
 import { api, safeRequest } from "./http";
 import type { Priority, TaskGroup } from "../types";
 
+interface CrateGroupDto {
+  title: string; 
+  priority: Priority
+}
+
+interface UpdateGroupDto { 
+  title?: string; 
+  priority?: Priority  
+}
+
 export const groupApi = {
+  getAll: () => safeRequest(api.get<TaskGroup[]>("/groups")),
 
-  getAll: () => safeRequest<TaskGroup[]>(api.get("/groups")),
+  create: (data: CrateGroupDto): Promise<TaskGroup> =>
+    safeRequest(api.post<TaskGroup>("/groups", data)),
 
-  create: (data: { title: string; priority: Priority  }) =>
-    safeRequest<TaskGroup>(api.post("/groups", data)),
+  delete: (groupId: string): Promise<{ message: string }> =>
+    safeRequest(api.delete<{ message: string }>(`/groups/${groupId}`)),
 
-  delete: (groupId: string) =>
-    safeRequest<{ message: string }>(api.delete(`/groups/${groupId}`)),
+  update: (groupId: string, data: UpdateGroupDto): Promise<TaskGroup> =>
+    safeRequest(api.patch<TaskGroup>(`/groups/${groupId}`, data)),
 
-  update: (groupId: string, data: { title?: string; priority?: Priority  }) =>
-    safeRequest<TaskGroup>(api.patch(`/groups/${groupId}`, data)),
-
-  reorder: (groupIds: string[]) =>
-    safeRequest<{ message: string }>(api.patch("/groups/order", { order: groupIds })),
+  reorder: (groupIds: string[]): Promise<{ message: string }> =>
+    safeRequest(api.patch<{ message: string }>("/groups/order", { order: groupIds })),
   
 };

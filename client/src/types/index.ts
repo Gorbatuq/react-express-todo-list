@@ -1,5 +1,15 @@
 export type Priority = 1 | 2 | 3 | 4;
 
+export const THEME = {
+  LIGHT: "light",
+  DARK: "dark",
+} as const;
+
+export type Theme = (typeof THEME)[keyof typeof THEME];
+
+export const FILTER_OPTIONS = ["all", "completed", "active"] as const;
+export type FilterType = (typeof FILTER_OPTIONS)[number];
+
 export type User = {
   id: string;
   email: string;
@@ -26,3 +36,5 @@ export type TaskGroup = {
   priority: Priority;
   userId: string;
 };
+
+

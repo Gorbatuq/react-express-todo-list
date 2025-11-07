@@ -16,15 +16,19 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
     formState: { errors, isSubmitting },
   } = useZodForm(groupSchema);
 
-  const submit = handleSubmit(async (data) => {
-    await createGroup.mutateAsync(data);
-    reset();
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await createGroup.mutateAsync(data);
+      reset();
+    } catch (err) {
+      console.error(err);
+    }
   });
 
   return (
     <div className="my-6 flex flex-col items-center gap-2">
       <form
-        onSubmit={submit}
+        onSubmit={onSubmit}
         className="flex gap-2 justify-center items-center"
       >
         <input

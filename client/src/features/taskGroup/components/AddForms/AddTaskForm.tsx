@@ -16,15 +16,19 @@ export const AddTaskForm = ({ groupId }: Props) => {
     formState: { errors, isSubmitting },
   } = useZodForm(taskSchema);
 
-  const submit = handleSubmit(async ({ title }) => {
-    await addTask.mutateAsync({ groupId, title: title.trim() });
-    reset();
+  const onSubmit = handleSubmit(async ({ title }) => {
+    try {
+      await addTask.mutateAsync({ groupId, title: title.trim() });
+      reset();
+    } catch (err) {
+      console.error(err);
+    }
   });
 
   return (
     <div className="mt-3 flex flex-col gap-2 w-full overflow-hidden">
       <form
-        onSubmit={submit}
+        onSubmit={onSubmit}
         className="flex gap-2 items-center w-full overflow-hidden"
       >
         <input

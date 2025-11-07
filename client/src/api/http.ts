@@ -22,15 +22,11 @@ export const safeRequest = async <T>(promise: Promise<AxiosResponse<T>>): Promis
 // ===== GLOBAL ERROR HANDLER =====
 const handleApiError = (error: unknown): void => {
   if (axios.isAxiosError(error)) {
-
     const status = error.response?.status;
     const data = error.response?.data;
 
-    if (status === 401) {
-      console.warn("Unauthorized");
-    }
-
-    console.error("Axios error:", status, data || error.message);
+    if (status === 401) console.warn("Unauthorized");
+    console.error(`[API ${status ?? "?"}]`, data ?? error.message);
     
   } else {
     console.error("Unknown error:", error);
