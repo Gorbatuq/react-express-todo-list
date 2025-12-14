@@ -38,7 +38,7 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
           {...register("title")}
           placeholder="Group title"
           disabled={isDisabled}
-          className="border rounded px-3 py-2 w-64 dark:text-zinc-800 dark:bg-gray-700 "
+          className="border rounded px-3 py-2 w-64 hover:bg-zinc-50 dark:text-zinc-800 dark:bg-gray-700 "
         />
         <button
           type="submit"

@@ -35,6 +35,7 @@ export const AddTaskForm = ({ groupId }: Props) => {
           {...register("title")}
           placeholder="Task title"
           className="flex-1 min-w-0 px-3 py-2 rounded-md
+                 hover:bg-zinc-50
                  border border-gray-300 text-gray-900 dark:focus:outline-none
                  dark:bg-zinc-700 dark:text-gray-100 "
         />
