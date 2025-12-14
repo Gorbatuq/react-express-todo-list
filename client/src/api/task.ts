@@ -8,10 +8,10 @@ export const taskApi = {
   add: (groupId: string, title: string): Promise<Task> =>
     safeRequest(api.post<Task>(`/groups/${groupId}/tasks`, { title })),
 
-  move: (groupId: string, taskId: string, newGroupId: string): Promise<{ message: string }> =>
+  move: (groupId: string, taskId: string, newGroupId: string, toIndex: number): Promise<{ message: string }> =>
     safeRequest(api.patch<{ message: string }>(
       `/groups/${groupId}/tasks/${taskId}`,
-      { groupId: newGroupId }
+      { groupId: newGroupId, toIndex }
     )),
 
   delete: (groupId: string, taskId: string): Promise<{ message: string }> =>

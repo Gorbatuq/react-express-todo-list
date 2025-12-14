@@ -11,7 +11,8 @@ export const ThemeToggleButton = () => {
       className="fixed top-4 right-2 
              [width:clamp(3rem,5vw,3rem)]
              [height:clamp(3rem,5vw,2rem)]
-             rounded-full border-2 
+             rounded-full border-2
+             hover:bg-zinc-50
              flex items-center justify-center
              transition-all duration-300 hover:scale-105
              bg-white dark:bg-slate-800"

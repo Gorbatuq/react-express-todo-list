@@ -71,7 +71,7 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
           </button>
         </form>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-default">
           {/* name group */}
           <div
             className={`w-3 h-3 rounded-full  flex-shrink-0 ${priorityColors[priority]}`}
@@ -80,7 +80,7 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
           {/* edit button */}
           <button
             onClick={() => setIsEditing(true)}
-            className="ml-2 text-gray-500 hover:text-blue-600"
+            className="ml-2 text-gray-500 hover:text-blue-400"
           >
             <MdOutlineEdit />
           </button>

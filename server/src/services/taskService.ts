@@ -83,47 +83,80 @@ export const taskService = {
       title: string;
       completed: boolean;
       groupId: string;
+      toIndex?: number;
     }>;
   }) {
     const task = await Task.findOne({ _id: taskId, groupId, userId });
     if (!task) throw new AppError("Task not found", 404);
 
-    let moved = false;
-    const prevOrder = task.order;
+     const fromGroupId = String(task.groupId);
+  const fromOrder = task.order;
 
-    if (updates.groupId && !Types.ObjectId.isValid(updates.groupId)) {
-      throw new AppError("Invalid target groupId", 400);
-    }
+  // validate
+  const toGroupId = updates.groupId ?? fromGroupId;
+  if (!Types.ObjectId.isValid(toGroupId)) throw new AppError("Invalid target groupId", 400);
 
+  const toIndexRaw = updates.toIndex;
+  const isMove = updates.groupId !== undefined || updates.toIndex !== undefined;
 
-    if (updates.title !== undefined) task.title = updates.title.trim();
-    if (updates.completed !== undefined) task.completed = updates.completed;
+  if (updates.title !== undefined) task.title = updates.title.trim();
+  if (updates.completed !== undefined) task.completed = updates.completed;
 
-    if (
-      updates.groupId !== undefined &&
-      updates.groupId !== String(task.groupId)
-    ) {
-      moved = true;
-      const newOrder = await Task.countDocuments({
-        groupId: updates.groupId,
-        userId,
-      });
+  if (isMove) {
+    // clamp target index
+    const targetCount = await Task.countDocuments({ groupId: toGroupId, userId });
+    // якщо переміщуєш в ту ж групу, count включає саму задачу — тому maxIndex = targetCount - 1
+    const maxIndex = toGroupId === fromGroupId ? targetCount - 1 : targetCount;
+    const toIndex = Math.max(0, Math.min(typeof toIndexRaw === "number" ? toIndexRaw : maxIndex, maxIndex));
 
-      task.groupId = new Types.ObjectId(updates.groupId);
-      task.order = newOrder;
-    }
-
-    await task.save();
-
-    if (moved) {
+    if (toGroupId !== fromGroupId) {
+      // 1) закрити "дірку" у старій групі
       await Task.updateMany(
-        { groupId, userId, order: { $gt: prevOrder } },
+        { groupId: fromGroupId, userId, order: { $gt: fromOrder } },
         { $inc: { order: -1 } }
       );
-    }
 
-    return task;
-  },
+      // 2) звільнити місце у новій групі
+      await Task.updateMany(
+        { groupId: toGroupId, userId, order: { $gte: toIndex } },
+        { $inc: { order: 1 } }
+      );
+
+      task.groupId = new Types.ObjectId(toGroupId);
+      task.order = toIndex;
+      await task.save();
+
+      return task;
+    } else {
+      // reorder в межах однієї групи
+      if (toIndex === fromOrder) {
+        await task.save();
+        return task;
+      }
+
+      if (toIndex > fromOrder) {
+        // рух вниз: [fromOrder+1 .. toIndex] зсунути вгору (-1)
+        await Task.updateMany(
+          { groupId: fromGroupId, userId, order: { $gt: fromOrder, $lte: toIndex } },
+          { $inc: { order: -1 } }
+        );
+      } else {
+        // рух вгору: [toIndex .. fromOrder-1] зсунути вниз (+1)
+        await Task.updateMany(
+          { groupId: fromGroupId, userId, order: { $gte: toIndex, $lt: fromOrder } },
+          { $inc: { order: 1 } }
+        );
+      }
+
+      task.order = toIndex;
+      await task.save();
+      return task;
+    }
+  }
+
+  await task.save();
+  return task;
+},
 
   async importTasks(
     taskArray: Array<{
