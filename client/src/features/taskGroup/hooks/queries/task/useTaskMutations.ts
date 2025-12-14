@@ -18,11 +18,11 @@ export const useTaskMutations = () => {
 
   // MOVE -> between different groups (with rollback)
   const moveTask = useMutation({
-    mutationFn: ({ groupId, taskId, newGroupId }: {
-      groupId: string; taskId: string; newGroupId: string; destIndex: number;
-    }) => taskApi.move(groupId, taskId, newGroupId),
+    mutationFn: ({ groupId, taskId, newGroupId, toIndex }: {
+      groupId: string; taskId: string; newGroupId: string; toIndex: number;
+    }) => taskApi.move(groupId, taskId, newGroupId, toIndex),
 
-    onMutate: async ({ groupId, taskId, newGroupId, destIndex }) => {
+    onMutate: async ({ groupId, taskId, newGroupId, toIndex }) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
       await queryClient.cancelQueries({ queryKey: ["tasks", newGroupId] });
 
@@ -35,10 +35,15 @@ export const useTaskMutations = () => {
       queryClient.setQueryData(["tasks", groupId], prevSource.filter((t) => t.id !== taskId));
 
       const newDest = [...prevDest];
-      newDest.splice(destIndex, 0, { ...moved, groupId: newGroupId });
+      newDest.splice(toIndex, 0, { ...moved, groupId: newGroupId });
       queryClient.setQueryData(["tasks", newGroupId], newDest);
 
       return { prevSource, prevDest };
+    },
+
+    onSuccess: (_d, { groupId, newGroupId }) => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", groupId] });
+      queryClient.invalidateQueries({ queryKey: ["tasks", newGroupId] });
     },
 
     onError: (_e, { groupId, newGroupId }, ctx) => {

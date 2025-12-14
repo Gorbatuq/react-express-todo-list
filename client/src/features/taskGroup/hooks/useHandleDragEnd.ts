@@ -106,7 +106,7 @@ export const useHandleDragEnd = () => {
           groupId: sourceGroupId,       // old group
           taskId: draggableId,          // moved task
           newGroupId: destGroupId,      // target group
-          destIndex: destination.index, // target position
+          toIndex: destination.index, // target position
         });
       }
     }
