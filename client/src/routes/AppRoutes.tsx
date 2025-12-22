@@ -4,6 +4,7 @@ import { TodoPage } from "../pages/TodoPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { useMe } from "../features/taskGroup/hooks/queries/auth/useMe";
+import { ResetPasswordPage } from "../pages/ResetPasswordPage";
 
 export const AppRoutes = () => {
   const { data: user, isLoading } = useMe();
@@ -15,6 +16,13 @@ export const AppRoutes = () => {
         path="/"
         element={!user ? <AuthPage /> : <Navigate to="/todo" replace />}
       />
+      <Route
+        path="/reset-password"
+        element={
+          !user ? <ResetPasswordPage /> : <Navigate to="/todo" replace />
+        }
+      />
+      {/*  */}
       <Route
         path="/todo"
         element={

@@ -1,5 +1,4 @@
 import morgan from "morgan";
-import fs from "fs";
 import path from "path";
 
 import express from "express";
@@ -29,16 +28,17 @@ if (process.env.NODE_ENV === "production") app.use(limiter);
 app.use(helmet());
 app.use(hpp());
 
-app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
 // const accessLogStream = fs.createWriteStream(path.join(__dirname, "..", "logs", "access.log"), { flags: "a" });
 app.use(morgan("combined"));
-
 
 app.use("/api/groups", groupRoutes);
 app.use("/api/groups/:groupId/tasks", taskRoutes);
@@ -50,6 +50,5 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("*", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-
 
 export default app;
