@@ -1,14 +1,14 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface UserDocument extends Document {
-  _id: string;
+  _id: Types.ObjectId;
   email: string;
-  password: string;
+  password?: string;
   taskCount?: number;
   role: "USER" | "GUEST";
   createdAt: Date;
   updatedAt: Date;
-  lastLogin: Date; 
+  lastLogin: Date;
 }
 
 const UserSchema = new Schema<UserDocument>(
@@ -17,10 +17,9 @@ const UserSchema = new Schema<UserDocument>(
     password: { type: String, required: true, select: false },
     taskCount: { type: Number, default: 0 },
     role: { type: String, enum: ["USER", "GUEST"], default: "USER" },
-    lastLogin: { type: Date, default: Date.now }
+    lastLogin: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
-
 
 export const User = mongoose.model<UserDocument>("User", UserSchema);

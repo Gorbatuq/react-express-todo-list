@@ -29,7 +29,7 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
   });
 
   return (
-    <div className="my-6 flex flex-col items-center gap-2">
+    <div className="mt-6 flex flex-col items-center gap-2">
       <form
         onSubmit={onSubmit}
         className="flex gap-2 justify-center items-center"
@@ -53,7 +53,7 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
       </form>
 
       {/* message from below */}
-       <div aria-live="polite" className="min-h-[1.25rem]">
+      <div aria-live="polite" className="min-h-[1.25rem]">
         {typeof errors.title?.message === "string" && (
           <p className="text-red-500 text-sm">{errors.title.message}</p>
         )}
