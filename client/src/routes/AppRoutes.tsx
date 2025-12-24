@@ -3,8 +3,8 @@ import { AuthPage } from "../pages/AuthPage";
 import { TodoPage } from "../pages/TodoPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { useMe } from "../features/taskGroup/hooks/queries/auth/useMe";
 import { ResetPasswordPage } from "../pages/ResetPasswordPage";
+import { useMe } from "../hooks/auth/useMe";
 
 export const AppRoutes = () => {
   const { data: user, isLoading } = useMe();

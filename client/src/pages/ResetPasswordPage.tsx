@@ -1,31 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { useAuthMutations } from "../features/taskGroup/hooks/queries/auth/useAuthMutations";
-
-export const passwordSchema = z
-  .object({
-    newPassword: z
-      .string()
-      .min(8, "Min 8 chars")
-      .regex(/[A-Z]/, "At least one uppercase letter")
-      .regex(/[a-z]/, "At least one lowercase letter")
-      .regex(/[0-9]/, "At least one number"),
-
-    confirm: z.string(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.newPassword !== data.confirm) {
-      ctx.addIssue({
-        path: ["confirm"],
-        message: "Passwords do not match",
-        code: "custom",
-      });
-    }
-  });
-
-type passwordType = z.infer<typeof passwordSchema>;
+import { useAuthMutations } from "../hooks/auth/useAuthMutations";
+import { passwordSchema, passwordType } from "../shared/validation/authSchemas";
 
 export const ResetPasswordPage = () => {
   const location = useLocation();

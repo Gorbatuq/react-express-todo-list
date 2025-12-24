@@ -3,8 +3,8 @@ import { AddGroupForm } from "./AddForms/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
 import { TaskGroupSkeletonGrid } from "./ui/TaskGroupSkeletonGrid";
 import { useGroups } from "../hooks/queries/group/useGroups";
-import { useMe } from "../hooks/queries/auth/useMe";
 import { useHandleDragEnd } from "../hooks/useHandleDragEnd";
+import { useMe } from "../../../hooks/auth/useMe";
 
 export const TaskGroupList = () => {
   const { data: groups, isLoading } = useGroups();

@@ -2,11 +2,11 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useAuthMutations } from "../features/taskGroup/hooks/queries/auth/useAuthMutations";
 import {
   authInputSchema,
   AuthInputValues,
 } from "../shared/validation/authSchemas";
+import { useAuthMutations } from "../hooks/auth/useAuthMutations";
 
 export const AuthPage = () => {
   const [mode, setMode] = useState<"auth" | "forgot">("auth");

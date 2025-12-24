@@ -71,16 +71,16 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
           </button>
         </form>
       ) : (
-        <div className="flex items-center gap-2 cursor-default">
-          {/* name group */}
+        <div className="flex items-center gap-2 cursor-default min-w-0 flex-1">
           <div
-            className={`w-3 h-3 rounded-full  flex-shrink-0 ${priorityColors[priority]}`}
+            className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColors[priority]}`}
           />
-          <span className="text-lg font-semibold break-words">{title}</span>
-          {/* edit button */}
+
+          <span className="text-lg font-semibold truncate">{title}</span>
+
           <button
             onClick={() => setIsEditing(true)}
-            className="ml-2 text-gray-500 hover:text-blue-400"
+            className="ml-2 text-gray-500 hover:text-blue-400 flex-shrink-0"
           >
             <MdOutlineEdit />
           </button>
