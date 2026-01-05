@@ -15,10 +15,10 @@ export const deleteOldGuests = () => {
       });
 
       if (result.deletedCount > 0) {
-        console.log(`🧹 Deleted ${result.deletedCount} guest users`);
+        console.log(`Deleted ${result.deletedCount} guest users`);
       }
     } catch (err) {
-      console.error("❌ Cron-error in clean GUEST:", err);
+      console.error("Cron-error in clean GUEST:", err);
     }
   });
 };

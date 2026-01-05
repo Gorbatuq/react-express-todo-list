@@ -1,35 +1,35 @@
 import { z } from "zod";
+import { objectId } from "./common";
 
-const idSchema = z.string().min(1);
-const titleSchema = z.string().min(1).max(400);
-const prioritySchema = z.number().min(1).max(4);
+const title = z.string().min(1).max(400);
+const priority = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+]);
 
-// POST /groups
 export const createGroupSchema = z.object({
-  title: titleSchema,
-  priority: z.number().min(1).max(4).optional(), // default on the front, here optional
+  title,
+  priority: priority.optional(),
 });
 
-// PATCH /groups/:groupId
 export const updateGroupSchema = z
   .object({
-    title: titleSchema.optional(),
-    priority: prioritySchema.optional(),
+    title: title.optional(),
+    priority: priority.optional(),
   })
-  .refine((data) => Object.keys(data).length > 0, {
+  .refine((d) => Object.keys(d).length > 0, {
     message: "At least one field must be provided",
   });
 
-// PATCH /groups/order
 export const reorderGroupsSchema = z.object({
-  order: z.array(z.string().regex(/^[a-f\d]{24}$/i, "Invalid ObjectId")),
+  order: z
+    .array(objectId)
+    .min(1)
+    .refine((v) => new Set(v).size === v.length, "Duplicate group ids"),
 });
 
-// id
 export const groupIdParamSchema = z.object({
-  groupId: idSchema,
-});
-
-export const idParamSchema = z.object({
-  id: idSchema,
+  groupId: objectId,
 });

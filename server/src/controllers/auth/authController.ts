@@ -1,131 +1,99 @@
-import { Request, Response, NextFunction } from "express";
-import { authService } from "../../services/authService";
+import type { Request, Response, NextFunction } from "express";
+import { AppError } from "../../errors/AppError";
+import { ok, created, noContent } from "../../http/response";
 
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { User } from "../../models/User";
-import { setTokenCookie } from "../../services/authService";
+import {
+  meUsecase,
+  registerUsecase,
+  loginUsecase,
+  logoutUsecase,
+  createGuestUsecase,
+  forgotPasswordUsecase,
+  resetPasswordUsecase,
+} from "../../usecases/auth";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+import { setTokenCookie, clearTokenCookie } from "../../services/authCookies";
 
-export const getMe = async (
+export async function getMe(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.user) throw new AppError(401, "UNAUTHORIZED", "Unauthorized");
+    const user = await meUsecase(req.user.id);
+    return ok(res, user);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function register(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
-    const user = await User.findById(req.user.id).select(
-      "email role createdAt"
-    );
-
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    res.json({
-      id: user._id.toString(),
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-      guest: user.role === "GUEST", // із payload
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const register = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email, password } = req.body;
-    const result = await authService.registerUser(email, password, res);
-    res.status(201).json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email, password } = req.body;
-    const result = await authService.loginUser(email, password, res);
-    res.status(200).json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const logout = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = authService.logoutUser(res);
-    res.status(200).json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const createGuest = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (req.cookies?.token) {
-      return res.status(400).json({ message: "Guest already has token" });
-    }
-    const random = Math.random().toString(36).substring(2, 10);
-    const email = `guest_${random}@guest.local`;
-    const password = await bcrypt.hash(random, 10);
-
-    const user = new User({ email, password, role: "GUEST" });
-    user.lastLogin = new Date();
-    await user.save();
-
-    const token = jwt.sign(
-      { id: user._id.toString(), role: user.role },
-      JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
-
+    const { user, token } = await registerUsecase(req.body);
     setTokenCookie(res, token);
-
-    res.status(201).json({ message: "Guest created" });
-  } catch (err) {
-    next(err);
+    return created(res, user);
+  } catch (e) {
+    next(e);
   }
-};
+}
 
-export const forgotPassword = async (
+export async function login(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { user, token } = await loginUsecase(req.body);
+    setTokenCookie(res, token);
+    return ok(res, user);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function logout(req: Request, res: Response, next: NextFunction) {
+  try {
+    await logoutUsecase();
+    clearTokenCookie(res);
+    return noContent(res);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function createGuest(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
-    const { email } = req.body;
-    const result = await authService.forgotPassword(email);
-    res.status(200).json(result);
-  } catch (err) {
-    next(err);
+    const { user, token } = await createGuestUsecase();
+    setTokenCookie(res, token);
+    return created(res, user);
+  } catch (e) {
+    next(e);
   }
-};
+}
 
-export const resetPassword = async (
+export async function forgotPassword(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
-    const { token, newPassword } = req.body;
-    const result = await authService.resetPassword(token, newPassword);
-    res.status(200).json(result);
-  } catch (err) {
-    next(err);
+    const data = await forgotPasswordUsecase(req.body);
+    return ok(res, data);
+  } catch (e) {
+    next(e);
   }
-};
+}
+
+export async function resetPassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const data = await resetPasswordUsecase(req.body);
+    return ok(res, data);
+  } catch (e) {
+    next(e);
+  }
+}

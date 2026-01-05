@@ -1,34 +1,34 @@
-import { Request, Response, NextFunction } from "express";
-import { ZodSchema } from "zod";
+import type { Request, Response, NextFunction } from "express";
+import type { ZodTypeAny } from "zod";
+import { AppError } from "../errors/AppError";
 
-const makeValidator = (
-  schema: ZodSchema,
-  prop: 'body' | 'params' | 'query',
-  errorLabel: string
-) => (req: Request, res: Response, next: NextFunction) => {
-  const data = req[prop];
-  const result = schema.safeParse(data);
+const makeValidator =
+  (schema: ZodTypeAny, prop: "body" | "params" | "query") =>
+  (req: Request, _res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req[prop]);
 
-  if (!result.success) {
-    console.log("VALIDATION ERROR:");
-    console.log("Data:", data);
-    console.log("Issues:", result.error.issues);
-    console.log("Formatted:", result.error.format());
-    console.log("Flattened:", result.error.flatten());
+    if (!result.success) {
+      const flat = result.error.flatten();
+      const fields = Object.fromEntries(
+        Object.entries(flat.fieldErrors).map(([k, v]) => [
+          k,
+          (v ?? []).filter(Boolean) as string[],
+        ])
+      );
 
-    return res.status(400).json({
-      message: `Validation error: ${errorLabel}`,
-      issues: result.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`),
-    });
-  }
+      return next(
+        new AppError(400, "VALIDATION_ERROR", "Validation failed", fields)
+      );
+    }
 
-  if (prop === "body" || prop === "query") {
-    req[prop] = result.data;
-  }
+    // type-safe: assign validated data
+    (req as any)[prop] = result.data; // here is the only compromise in express types
+    return next();
+  };
 
-  next();
-};
-
-export const validateBody = (schema: ZodSchema) => makeValidator(schema, 'body', 'body');
-export const validateParams = (schema: ZodSchema) => makeValidator(schema, 'params', 'params');
-export const validateQuery = (schema: ZodSchema) => makeValidator(schema, 'query', 'query');
+export const validateBody = (schema: ZodTypeAny) =>
+  makeValidator(schema, "body");
+export const validateParams = (schema: ZodTypeAny) =>
+  makeValidator(schema, "params");
+export const validateQuery = (schema: ZodTypeAny) =>
+  makeValidator(schema, "query");

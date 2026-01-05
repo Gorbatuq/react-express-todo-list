@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query"
-import { groupApi } from "../../../../../api/groups"
+import { useQuery } from "@tanstack/react-query";
+import { groupsApi } from "../../../../../api";
 
 export const useGroups = () => {
-    return useQuery({
-        queryKey: ["groups"],
-        queryFn: groupApi.getAll
-    })
-}
+  return useQuery({
+    queryKey: ["groups"],
+    queryFn: groupsApi.getAll,
+  });
+};

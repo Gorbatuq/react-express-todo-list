@@ -12,7 +12,7 @@ export const AppRoutes = () => {
   const { data: user, isLoading } = useMe();
   if (isLoading) return <p className="text-center mt-10">Checking login...</p>;
 
-  const isAuth = !!user;
+  const isAuth = !!user?.id;
   const entry = isAuth ? "/todo" : "/welcome";
 
   return (
