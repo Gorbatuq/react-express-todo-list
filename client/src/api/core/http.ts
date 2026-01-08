@@ -3,12 +3,15 @@ import type { AxiosInstance } from "axios";
 import type { ApiError } from "./errors";
 import { normalizeAxiosError } from "./normalizeError";
 
-const baseURL: string = (import.meta as any).env?.VITE_API_BASE_URL ?? "/api";
+const baseURL: string = "/api";
+
+const SEC = 1000;
+const API_TIMEOUT = 15 * SEC;
 
 export const api: AxiosInstance = axios.create({
   baseURL,
   withCredentials: true,
-  timeout: 15_000,
+  timeout: API_TIMEOUT,
 });
 
 api.interceptors.response.use(

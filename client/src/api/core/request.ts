@@ -4,16 +4,7 @@ import type { AxiosRequestConfig } from "axios";
 import { api } from "./http";
 import type { ApiError } from "./errors";
 import { ApiFieldErrors } from "../schema";
-
-type Envelope<T> = { data: T; requestId?: string };
-
-function unwrap<T>(payload: unknown): { data: T; requestId?: string } {
-  if (payload && typeof payload === "object" && "data" in payload) {
-    const env = payload as Envelope<T>;
-    return { data: env.data, requestId: env.requestId };
-  }
-  return { data: payload as T };
-}
+import { unwrapEnvelope } from "./envelope";
 
 function zodToFields(e: ZodError): ApiFieldErrors {
   const out: ApiFieldErrors = {};
@@ -37,7 +28,7 @@ export async function request<T>(
 
   if (res.status === 204 || res.data == null || res.data === "") return;
 
-  const { data, requestId } = unwrap<T>(res.data);
+  const { data, requestId } = unwrapEnvelope(res.data);
 
   if (!schema) return;
 

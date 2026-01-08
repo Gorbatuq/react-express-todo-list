@@ -7,12 +7,7 @@ export const objectIdSchema = z
 // Back-compat alias
 export const idSchema = objectIdSchema;
 
-export const prioritySchema = z.union([
-  z.literal(1),
-  z.literal(2),
-  z.literal(3),
-  z.literal(4),
-]);
+export const prioritySchema = z.number().int().min(1).max(4);
 
 export const messageSchema = z.object({ message: z.string() });
 export type MessageDto = z.infer<typeof messageSchema>;

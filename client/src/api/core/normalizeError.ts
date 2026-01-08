@@ -1,19 +1,7 @@
 import axios from "axios";
 import type { ApiError } from "./errors";
 import { apiErrorSchema } from "./errors";
-
-type Envelope = { data?: unknown; requestId?: string };
-
-function unwrapErrorPayload(payload: unknown): {
-  data: unknown;
-  requestId?: string;
-} {
-  if (payload && typeof payload === "object" && "data" in payload) {
-    const env = payload as Envelope;
-    return { data: env.data, requestId: env.requestId };
-  }
-  return { data: payload };
-}
+import { unwrapEnvelope } from "./envelope";
 
 function fallback(status: number, message: string): ApiError {
   return { status, code: "UNKNOWN", message };
@@ -26,9 +14,8 @@ export function normalizeAxiosError(err: unknown): ApiError {
 
   const status = err.response?.status ?? 0;
   const raw = err.response?.data;
-  const { data, requestId } = unwrapErrorPayload(raw);
+  const { data, requestId } = unwrapEnvelope(raw);
 
-  // Backend already sent ApiError-compatible payload
   if (data && typeof data === "object") {
     const parsed = apiErrorSchema.safeParse({
       status,
