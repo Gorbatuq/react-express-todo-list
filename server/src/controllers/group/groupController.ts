@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request } from "express";
 import { ok, created, noContent } from "../../http/response";
 import { AppError } from "../../errors/AppError";
 import {
@@ -8,6 +8,7 @@ import {
   updateGroupUsecase,
   reorderGroupsUsecase,
 } from "../../usecases/groups";
+import { asyncHandler } from "../../middleware/asyncHandler";
 
 function userIdOrThrow(req: Request): string {
   const id = req.user?.id;
@@ -15,71 +16,31 @@ function userIdOrThrow(req: Request): string {
   return id;
 }
 
-export async function getAllGroups(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    return ok(res, await listGroupsUsecase(userId));
-  } catch (e) {
-    next(e);
-  }
-}
+export const getAllGroups = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(res, await listGroupsUsecase(userId));
+});
 
-export async function createGroup(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    return created(res, await createGroupUsecase(userId, req.body));
-  } catch (e) {
-    next(e);
-  }
-}
+export const createGroup = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return created(res, await createGroupUsecase(userId, req.body));
+});
 
-export async function deleteGroup(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    await deleteGroupUsecase(userId, req.params.groupId);
-    return noContent(res);
-  } catch (e) {
-    next(e);
-  }
-}
+export const deleteGroup = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  await deleteGroupUsecase(userId, req.params.groupId);
+  return noContent(res);
+});
 
-export async function updateGroup(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    return ok(
-      res,
-      await updateGroupUsecase(userId, req.params.groupId, req.body)
-    );
-  } catch (e) {
-    next(e);
-  }
-}
+export const updateGroup = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(
+    res,
+    await updateGroupUsecase(userId, req.params.groupId, req.body)
+  );
+});
 
-export async function reorderGroups(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    return ok(res, await reorderGroupsUsecase(userId, req.body));
-  } catch (e) {
-    next(e);
-  }
-}
+export const reorderGroups = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(res, await reorderGroupsUsecase(userId, req.body));
+});

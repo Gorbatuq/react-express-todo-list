@@ -6,7 +6,7 @@ export async function connectDB() {
 
   await mongoose.connect(env.MONGO_URI, {
     autoIndex: env.NODE_ENV !== "production",
-    maxPoolSize: 10,
+    maxPoolSize: 20,
   });
 
   console.log("MongoDB connected");

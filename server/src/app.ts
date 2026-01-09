@@ -15,6 +15,7 @@ import { csrfGuard } from "./middleware/csrfGuard";
 import groupRoutes from "./routes/groupRoutes";
 import taskRoutes from "./routes/taskRoutes";
 import authRoutes from "./routes/authRoutes";
+import healthRoutes from "./routes/healthRoutes";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -42,6 +43,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("combined"));
+
+app.use(healthRoutes);
 
 app.use(csrfGuard);
 

@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request } from "express";
 import { ok, created, noContent } from "../../http/response";
 import { AppError } from "../../errors/AppError";
 import {
@@ -9,6 +9,7 @@ import {
   reorderTasksUsecase,
   // importTasksUsecase,
 } from "../../usecases/tasks";
+import { asyncHandler } from "../../middleware/asyncHandler";
 
 function userIdOrThrow(req: Request): string {
   const id = req.user?.id;
@@ -16,91 +17,47 @@ function userIdOrThrow(req: Request): string {
   return id;
 }
 
-export async function getTasksByGroupId(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    return ok(res, await listTasksUsecase(userId, req.params.groupId));
-  } catch (e) {
-    next(e);
-  }
-}
+export const getTasksByGroupId = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(res, await listTasksUsecase(userId, req.params.groupId));
+});
 
-export async function addTask(req: Request, res: Response, next: NextFunction) {
-  try {
-    const userId = userIdOrThrow(req);
-    return created(
-      res,
-      await createTaskUsecase(userId, req.params.groupId, req.body)
-    );
-  } catch (e) {
-    next(e);
-  }
-}
+export const addTask = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return created(
+    res,
+    await createTaskUsecase(userId, req.params.groupId, req.body)
+  );
+});
 
-export async function deleteTask(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    await deleteTaskUsecase(userId, req.params.taskId);
-    return noContent(res);
-  } catch (e) {
-    next(e);
-  }
-}
+export const deleteTask = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  await deleteTaskUsecase(userId, req.params.taskId);
+  return noContent(res);
+});
 
-export async function updateTask(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    return ok(
-      res,
-      await updateTaskUsecase(
-        userId,
-        req.params.groupId,
-        req.params.taskId,
-        req.body
-      )
-    );
-  } catch (e) {
-    next(e);
-  }
-}
+export const updateTask = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(
+    res,
+    await updateTaskUsecase(
+      userId,
+      req.params.groupId,
+      req.params.taskId,
+      req.body
+    )
+  );
+});
 
-export async function reorderTasks(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = userIdOrThrow(req);
-    return ok(
-      res,
-      await reorderTasksUsecase(userId, req.params.groupId, req.body)
-    );
-  } catch (e) {
-    next(e);
-  }
-}
+export const reorderTasks = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(
+    res,
+    await reorderTasksUsecase(userId, req.params.groupId, req.body)
+  );
+});
 
-// export async function importTasks(
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) {
-//   try {
-//     const userId = userIdOrThrow(req);
-//     return created(res, await importTasksUsecase(userId, req.body));
-//   } catch (e) {
-//     next(e);
-//   }
-// }
+// export const importTasks = asyncHandler(async (req, res) => {
+//   const userId = userIdOrThrow(req);
+//   return created(res, await importTasksUsecase(userId, req.body));
+// });
