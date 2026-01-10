@@ -1,9 +1,9 @@
-import { UserPayload } from "../auth/UserPayload"; 
+import "express-serve-static-core";
+import type { UserPayload } from "../auth/UserPayload";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user: UserPayload;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    requestId: string;
+    user?: UserPayload;
   }
 }

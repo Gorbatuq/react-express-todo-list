@@ -18,23 +18,17 @@ export type User = {
   taskCount?: number;
 };
 
+export type TaskGroup = {
+  id: string;
+  title: string;
+  order: number;
+  priority: Priority;
+};
+
 export type Task = {
   id: string;
   title: string;
   completed: boolean;
   order: number;
   groupId: string;
-  createdAt: string;
-  updatedAt: string;
-  priority: Priority;
 };
-
-export type TaskGroup = {
-  id: string;
-  title: string;
-  order: number;
-  priority: Priority;
-  userId: string;
-};
-
-

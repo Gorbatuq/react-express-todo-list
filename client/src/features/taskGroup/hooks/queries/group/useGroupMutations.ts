@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { groupApi } from "../../../../../api/groups";
-import { Priority } from "../../../../../types";
+import { Priority, TaskGroup } from "../../../../../types";
+import { groupsApi } from "../../../../../api";
 
 export const useGroupMutations = () => {
   const queryClient = useQueryClient();
@@ -9,7 +9,7 @@ export const useGroupMutations = () => {
   // CREATE
   const createGroup = useMutation({
     mutationFn: (data: { title: string; priority: Priority }) =>
-      groupApi.create(data),
+      groupsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
       toast("Group created");
@@ -19,7 +19,7 @@ export const useGroupMutations = () => {
 
   // DELETE
   const deleteGroup = useMutation({
-    mutationFn: (groupId: string) => groupApi.delete(groupId),
+    mutationFn: (groupId: string) => groupsApi.delete(groupId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
       toast("Group deleted");
@@ -29,8 +29,13 @@ export const useGroupMutations = () => {
 
   // UPDATE
   const updateGroup = useMutation({
-    mutationFn: ({ groupId, data }: { groupId: string; data: { title?: string; priority?: Priority } }) =>
-      groupApi.update(groupId, data),
+    mutationFn: ({
+      groupId,
+      data,
+    }: {
+      groupId: string;
+      data: { title?: string; priority?: Priority };
+    }) => groupsApi.update(groupId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
     },
@@ -39,11 +44,33 @@ export const useGroupMutations = () => {
 
   // REORDER
   const reorderGroup = useMutation({
-    mutationFn: (groupIds: string[]) => groupApi.reorder(groupIds),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    mutationFn: (idsInOrder: string[]) => groupsApi.reorder(idsInOrder),
+
+    onMutate: async (idsInOrder) => {
+      await queryClient.cancelQueries({ queryKey: ["groups"] });
+
+      const prev = queryClient.getQueryData<TaskGroup[]>(["groups"]) ?? [];
+      const byId = new Map(prev.map((g) => [String(g.id), g] as const));
+
+      const next = idsInOrder
+        .map((id) => byId.get(String(id)))
+        .filter(Boolean) as TaskGroup[];
+
+      const nextWithOrder = next.map((g, i) => ({ ...g, order: i }));
+
+      queryClient.setQueryData(["groups"], nextWithOrder);
+      return { prev };
     },
-    onError: () => toast.error("Failed to reorder groups"),
+
+    onError: (_e, _ids, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(["groups"], ctx.prev);
+      toast.error("Failed to reorder groups");
+    },
+
+    onSuccess: (serverGroups) => {
+      const normalized = serverGroups.map((g, i) => ({ ...g, order: i }));
+      queryClient.setQueryData(["groups"], normalized);
+    },
   });
 
   return { createGroup, deleteGroup, updateGroup, reorderGroup };

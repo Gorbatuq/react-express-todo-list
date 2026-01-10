@@ -1,4 +1,4 @@
 export interface UserPayload {
   id: string;
-  guest: boolean;
+  role: "USER" | "GUEST";
 }

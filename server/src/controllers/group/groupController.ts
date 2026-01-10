@@ -1,58 +1,46 @@
-import { Request, Response, NextFunction } from "express";
-import { groupService } from "../../services/groupService";
-import { toGroupResponse } from "../../utils/toResponse";
+import type { Request } from "express";
+import { ok, created, noContent } from "../../http/response";
+import { AppError } from "../../errors/AppError";
+import {
+  createGroupUsecase,
+  listGroupsUsecase,
+  deleteGroupUsecase,
+  updateGroupUsecase,
+  reorderGroupsUsecase,
+} from "../../usecases/groups";
+import { asyncHandler } from "../../middleware/asyncHandler";
 
-export const getAllGroups = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const groups = await groupService.getAllGroups(req.user.id);
-    res.json(groups.map(toGroupResponse));
-  } catch (err) {
-    next(err);
-  }
-};
+function userIdOrThrow(req: Request): string {
+  const id = req.user?.id;
+  if (!id) throw new AppError(401, "UNAUTHORIZED", "Unauthorized");
+  return id;
+}
 
-export const createGroup = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const priority = req.body.priority ?? 2;
-    const group = await groupService.createGroup(
-      req.body.title,
-      priority,
-      req.user.id
-    );
+export const getAllGroups = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(res, await listGroupsUsecase(userId));
+});
 
-    res.status(201).json(toGroupResponse(group)); 
+export const createGroup = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return created(res, await createGroupUsecase(userId, req.body));
+});
 
-  } catch (err) {
-    next(err);
-  }
-};
+export const deleteGroup = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  await deleteGroupUsecase(userId, req.params.groupId);
+  return noContent(res);
+});
 
-export const deleteGroup = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await groupService.deleteGroup(req.params.groupId, req.user.id);
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
+export const updateGroup = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(
+    res,
+    await updateGroupUsecase(userId, req.params.groupId, req.body)
+  );
+});
 
-export const updateGroup = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const group = await groupService.updateGroup(req.params.groupId, req.user.id, req.body);
-    res.json(group);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const reorderGroups = async (req: Request, res: Response, next: NextFunction) => {
-  console.log("ORDER FROM BODY", req.body.order);
-  try {
-    const updated = await groupService.reorderGroups(req.body.order, req.user.id);
-    res.json(updated);
-      console.log("ORDER FROM BODY", req.body.order);
-  } catch (err) {
-    next(err);
-      console.log("ORDER FROM BODY", req.body.order);
-  }
-};
+export const reorderGroups = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(res, await reorderGroupsUsecase(userId, req.body));
+});

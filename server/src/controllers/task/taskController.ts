@@ -1,77 +1,63 @@
-import { Request, Response, NextFunction } from "express";
-import { taskService } from "../../services/taskService";
-import { toTaskResponse } from "../../utils/toResponse";
-import mongoose from "mongoose";
+import type { Request } from "express";
+import { ok, created, noContent } from "../../http/response";
+import { AppError } from "../../errors/AppError";
+import {
+  listTasksUsecase,
+  createTaskUsecase,
+  deleteTaskUsecase,
+  updateTaskUsecase,
+  reorderTasksUsecase,
+  // importTasksUsecase,
+} from "../../usecases/tasks";
+import { asyncHandler } from "../../middleware/asyncHandler";
 
-// GET /groups/:groupId/tasks
-export const getTasksByGroupId = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { groupId } = req.params;
+function userIdOrThrow(req: Request): string {
+  const id = req.user?.id;
+  if (!id) throw new AppError(401, "UNAUTHORIZED", "Unauthorized");
+  return id;
+}
 
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
-      return res.status(400).json({ message: "Invalid or missing groupId" });
-    }
+export const getTasksByGroupId = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(res, await listTasksUsecase(userId, req.params.groupId));
+});
 
-    const tasks = await taskService.getTasksByGroupId(groupId, req.user.id);
-    res.json(tasks.map(toTaskResponse));
-  } catch (err) {
-    next(err);
-  }
-};
+export const addTask = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return created(
+    res,
+    await createTaskUsecase(userId, req.params.groupId, req.body)
+  );
+});
 
-// POST /groups/:groupId/tasks
-export const addTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const task = await taskService.createTask(req.body.title, req.params.groupId, req.user.id);
-    res.status(201).json(toTaskResponse(task));
-  } catch (err) {
-    next(err);
-  }
-};
+export const deleteTask = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  await deleteTaskUsecase(userId, req.params.taskId);
+  return noContent(res);
+});
 
-// DELETE /groups/:groupId/tasks/:taskId
-export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await taskService.deleteTask(req.params.taskId, req.user.id);
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
+export const updateTask = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(
+    res,
+    await updateTaskUsecase(
+      userId,
+      req.params.groupId,
+      req.params.taskId,
+      req.body
+    )
+  );
+});
 
-// PATCH /groups/:groupId/tasks/:taskId
-export const updateTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const task = await taskService.updateTask({
-      taskId: req.params.taskId,
-      groupId: req.params.groupId,
-      userId: req.user.id,
-      updates: req.body, // { title?, completed?, groupId? }
-    });
+export const reorderTasks = asyncHandler(async (req, res) => {
+  const userId = userIdOrThrow(req);
+  return ok(
+    res,
+    await reorderTasksUsecase(userId, req.params.groupId, req.body)
+  );
+});
 
-    res.json(toTaskResponse(task));
-  } catch (err) {
-    next(err);
-  }
-};
-
-// PATCH /groups/:groupId/tasks/order
-export const reorderTasks = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await taskService.reorderTasks(req.body.order, req.params.groupId, req.user.id);
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
-// POST /api/tasks/import
-export const importTasks = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await taskService.importTasks(req.body.tasks, req.user.id);
-    res.status(201).json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
+// export const importTasks = asyncHandler(async (req, res) => {
+//   const userId = userIdOrThrow(req);
+//   return created(res, await importTasksUsecase(userId, req.body));
+// });

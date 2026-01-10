@@ -53,7 +53,7 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
       </form>
 
       {/* message from below */}
-      <div aria-live="polite" className="min-h-[1.25rem]">
+      <div aria-live="polite" className="min-h-[1.5rem]">
         {typeof errors.title?.message === "string" && (
           <p className="text-red-500 text-sm">{errors.title.message}</p>
         )}

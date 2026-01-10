@@ -1,39 +1,58 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { taskApi } from "../../../../../api/task";
-import { Task } from "../../../../../types";
+import type { Task } from "../../../../../types";
+import { tasksApi } from "../../../../../api";
 
 export const useTaskMutations = () => {
   const queryClient = useQueryClient();
 
-  // CREATE -> add new task into group
+  // CREATE
   const addTask = useMutation({
     mutationFn: ({ groupId, title }: { groupId: string; title: string }) =>
-      taskApi.add(groupId, title),
+      tasksApi.create(groupId, { title }),
     onSuccess: (_data, { groupId }) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", groupId] });
     },
     onError: () => toast.error("Failed to create task"),
   });
 
-  // MOVE -> between different groups (with rollback)
+  // MOVE between groups (backend: PATCH /groups/:groupId/tasks/:taskId with { groupId: newGroupId, toIndex })
   const moveTask = useMutation({
-    mutationFn: ({ groupId, taskId, newGroupId, toIndex }: {
-      groupId: string; taskId: string; newGroupId: string; toIndex: number;
-    }) => taskApi.move(groupId, taskId, newGroupId, toIndex),
+    mutationFn: ({
+      groupId,
+      taskId,
+      newGroupId,
+      toIndex,
+    }: {
+      groupId: string;
+      taskId: string;
+      newGroupId: string;
+      toIndex: number;
+    }) =>
+      tasksApi.update(groupId, taskId, {
+        groupId: newGroupId,
+        toIndex,
+      }),
 
     onMutate: async ({ groupId, taskId, newGroupId, toIndex }) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
       await queryClient.cancelQueries({ queryKey: ["tasks", newGroupId] });
 
-      const prevSource = queryClient.getQueryData<Task[]>(["tasks", groupId]) || [];
-      const prevDest = queryClient.getQueryData<Task[]>(["tasks", newGroupId]) || [];
+      const prevSource =
+        queryClient.getQueryData<Task[]>(["tasks", groupId]) || [];
+      const prevDest =
+        queryClient.getQueryData<Task[]>(["tasks", newGroupId]) || [];
 
       const moved = prevSource.find((t) => String(t.id) === String(taskId));
       if (!moved) return { prevSource, prevDest };
 
-      queryClient.setQueryData(["tasks", groupId], prevSource.filter((t) => t.id !== taskId));
+      // remove from source
+      queryClient.setQueryData(
+        ["tasks", groupId],
+        prevSource.filter((t) => String(t.id) !== String(taskId))
+      );
 
+      // insert into dest
       const newDest = [...prevDest];
       newDest.splice(toIndex, 0, { ...moved, groupId: newGroupId });
       queryClient.setQueryData(["tasks", newGroupId], newDest);
@@ -55,30 +74,50 @@ export const useTaskMutations = () => {
     },
   });
 
-  // DELETE -> remove task
+  // DELETE
   const deleteTask = useMutation({
     mutationFn: ({ groupId, taskId }: { groupId: string; taskId: string }) =>
-      taskApi.delete(groupId, taskId),
+      tasksApi.delete(groupId, taskId),
     onSuccess: (_data, { groupId }) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", groupId] });
     },
     onError: () => toast.error("Failed to delete task"),
   });
 
-  // REORDER -> change order inside the same group
+  // REORDER inside group
   const reorderTask = useMutation({
-    mutationFn: ({ groupId, taskIds }: { groupId: string; taskIds: string[] }) =>
-      taskApi.reorder(groupId, taskIds),
+    mutationFn: async ({
+      groupId,
+      fromIndex,
+      toIndex,
+    }: {
+      groupId: string;
+      fromIndex: number;
+      toIndex: number;
+    }) => {
+      const tasks = queryClient.getQueryData<Task[]>(["tasks", groupId]) || [];
+      const reordered = [...tasks];
+      const [moved] = reordered.splice(fromIndex, 1);
+      if (!moved) return;
+      reordered.splice(toIndex, 0, moved);
 
-    onMutate: async ({ groupId, taskIds }) => {
+      return tasksApi.reorder(
+        groupId,
+        reordered.map((t) => String(t.id))
+      );
+    },
+
+    onMutate: async ({ groupId, fromIndex, toIndex }) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
+
       const prev = queryClient.getQueryData<Task[]>(["tasks", groupId]) || [];
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      if (!moved) return { prev };
 
-      const reordered = taskIds
-        .map((id) => prev.find((t) => String(t.id) === String(id)))
-        .filter(Boolean) as Task[];
+      next.splice(toIndex, 0, moved);
+      queryClient.setQueryData(["tasks", groupId], next);
 
-      queryClient.setQueryData(["tasks", groupId], reordered);
       return { prev };
     },
 
@@ -86,15 +125,25 @@ export const useTaskMutations = () => {
       if (ctx?.prev) queryClient.setQueryData(["tasks", groupId], ctx.prev);
       toast.error("Failed to reorder tasks");
     },
+
+    // IMPORTANT: remove invalidate onSuccess (it causes flicker)
+    onSuccess: () => {},
   });
 
-  // UPDATE -> change task fields (title, completed)
+  // UPDATE title/completed (and can also be used for same-group move if you pass toIndex)
   const updateTask = useMutation({
-    mutationFn: ({ groupId, taskId, payload }: {
+    mutationFn: ({
+      groupId,
+      taskId,
+      payload,
+    }: {
       groupId: string;
       taskId: string;
-      payload: Partial<Pick<Task, "title" | "completed">>;
-    }) => taskApi.update(groupId, taskId, payload),
+      payload: Partial<Pick<Task, "title" | "completed">> & {
+        groupId?: string;
+        toIndex?: number;
+      };
+    }) => tasksApi.update(groupId, taskId, payload),
 
     onMutate: async ({ groupId, taskId, payload }) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
@@ -102,7 +151,9 @@ export const useTaskMutations = () => {
 
       queryClient.setQueryData(
         ["tasks", groupId],
-        prev.map((t) => (t.id === taskId ? { ...t, ...payload } : t))
+        prev.map((t) =>
+          String(t.id) === String(taskId) ? { ...t, ...payload } : t
+        )
       );
 
       return { prev };
@@ -111,6 +162,10 @@ export const useTaskMutations = () => {
     onError: (_e, { groupId }, ctx) => {
       if (ctx?.prev) queryClient.setQueryData(["tasks", groupId], ctx.prev);
       toast.error("Failed to update task");
+    },
+
+    onSuccess: (_d, { groupId }) => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", groupId] });
     },
   });
 

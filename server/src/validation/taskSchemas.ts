@@ -1,42 +1,50 @@
 import { z } from "zod";
+import { objectId } from "./common";
 
-
-const id = z.string().min(1, "ID is required");
-const title = z.string().min(1, "Title is required").max(400, "Max 400 chars");
-
+const title = z.string().min(1).max(400);
 
 export const createTaskSchema = z.object({
   title,
 });
 
-export const importTaskSchema = z.object({
-  tasks: z.array(z.object({
-    title: z.string().min(1),
-    groupId: z.string().min(1),
-    order: z.number(),
-    completed: z.boolean().optional(),
-  })),
-});
-
-
 export const updateTaskSchema = z
   .object({
     title: title.optional(),
     completed: z.boolean().optional(),
-    groupId: id.optional(),
+    groupId: objectId.optional(),
+    toIndex: z.number().int().min(0).optional(),
   })
-  .refine((data) => Object.keys(data).length > 0, {
+  .refine((d) => Object.keys(d).length > 0, {
     message: "At least one field must be provided",
   });
 
 export const reorderTaskSchema = z.object({
-  order: z.array(id).min(1, "Order is required"),
+  order: z
+    .array(objectId)
+    .min(1)
+    .refine((v) => new Set(v).size === v.length, "Duplicate task ids"),
 });
 
+// export const importTaskSchema = z.object({
+//   tasks: z.array(
+//     z.object({
+//       title,
+//       groupId: objectId,
+//       order: z.number().int().min(0),
+//       completed: z.boolean().optional(),
+//     })
+//   ),
+// });
 
-export const groupIdParamSchema = z.object({ groupId: id });
-export const taskIdParamSchema = z.object({ taskId: id });
+export const groupIdParamSchema = z.object({
+  groupId: objectId,
+});
+
+export const taskIdParamSchema = z.object({
+  taskId: objectId,
+});
+
 export const groupAndTaskIdParamSchema = z.object({
-  groupId: id,
-  taskId: id,
+  groupId: objectId,
+  taskId: objectId,
 });
