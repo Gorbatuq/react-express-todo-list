@@ -53,9 +53,12 @@ app.use("/api/groups/:groupId/tasks", taskRoutes);
 app.use("/api/auth", authRoutes);
 
 if (env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "public")));
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+  const publicDir = path.join(__dirname, "public");
+
+  app.use(express.static(publicDir));
+
+  app.get(/^(?!\/api\/).*/, (_req, res) => {
+    res.sendFile(path.join(publicDir, "index.html"));
   });
 }
 
