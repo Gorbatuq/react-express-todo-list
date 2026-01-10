@@ -2,8 +2,9 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User";
 import { AppError } from "../errors/AppError";
+import { env } from "../config/env";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_SECRET = env.JWT_SECRET!;
 
 export const authMiddleware = async (
   req: Request,
