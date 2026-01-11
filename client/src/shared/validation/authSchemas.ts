@@ -1,9 +1,8 @@
 import z from "zod";
 
-/// change in production
 export const authInputSchema = z.object({
-  email: z.string().min(4, "Email must be at least 4 characters"), // change
-  password: z.string().min(4, "Password must be at least 4 characters"), // change
+  email: z.email("Invalid email").max(128, "Email too long"),
+  password: z.string().min(8, "Min 8 characters").max(128, "Max 32 characters"),
 });
 
 export type AuthInputValues = z.infer<typeof authInputSchema>;
