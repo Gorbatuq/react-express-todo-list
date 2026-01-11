@@ -2,7 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthMutations } from "../hooks/auth/useAuthMutations";
-import { passwordSchema, passwordType } from "../shared/validation/authSchemas";
+import {
+  passwordSchema,
+  type passwordType,
+} from "../shared/validation/authSchemas";
+import { FormField } from "../shared/ui/FormField";
 
 export const ResetPasswordPage = () => {
   const location = useLocation();
@@ -16,19 +20,20 @@ export const ResetPasswordPage = () => {
     defaultValues: { newPassword: "", confirm: "" },
   });
 
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit = form.handleSubmit(({ newPassword }) => {
     if (!token) {
       navigate("/", { replace: true });
       return;
     }
+
     resetPassword.mutate(
-      { token, newPassword: data.newPassword },
+      { token, newPassword },
       { onSuccess: () => navigate("/", { replace: true }) }
     );
   });
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[url('/back-img-auth-forget.png')] bg-cover bg-center">
+    <div className="flex items-center text-black justify-center min-h-screen bg-[url('/back-img-auth-forget.png')] bg-cover bg-center">
       <form
         onSubmit={onSubmit}
         className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-4"
@@ -37,29 +42,21 @@ export const ResetPasswordPage = () => {
           Reset password
         </h2>
 
-        <input
+        <FormField
           type="password"
           placeholder="New password"
-          {...form.register("newPassword")}
-          className="w-full px-4 py-2 border rounded-md"
+          registration={form.register("newPassword")}
+          error={form.formState.errors.newPassword}
+          autoComplete="new-password"
         />
-        {form.formState.errors.newPassword && (
-          <p className="text-red-500 text-sm">
-            {form.formState.errors.newPassword.message}
-          </p>
-        )}
 
-        <input
+        <FormField
           type="password"
           placeholder="Confirm password"
-          {...form.register("confirm")}
-          className="w-full px-4 py-2 border rounded-md"
+          registration={form.register("confirm")}
+          error={form.formState.errors.confirm}
+          autoComplete="new-password"
         />
-        {form.formState.errors.confirm && (
-          <p className="text-red-500 text-sm">
-            {form.formState.errors.confirm.message}
-          </p>
-        )}
 
         <div className="flex pt-4 gap-2">
           <button
@@ -69,6 +66,7 @@ export const ResetPasswordPage = () => {
           >
             Cancel
           </button>
+
           <button
             type="submit"
             disabled={resetPassword.isPending || !token}

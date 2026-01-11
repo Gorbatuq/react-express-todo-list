@@ -4,7 +4,7 @@ import { useAuthMutations } from "../hooks/auth/useAuthMutations";
 
 export const ProfilePage = () => {
   const { data: user } = useMe();
-  const { logout } = useAuthMutations();
+  const { logout, forgotPassword } = useAuthMutations();
   const navigate = useNavigate();
 
   const registrationDate = user?.createdAt
@@ -12,6 +12,12 @@ export const ProfilePage = () => {
     : "-";
 
   if (!user) return <Navigate to="/" replace />;
+
+  const isGuest = user.role === "GUEST";
+  const onResetPassword = () => {
+    if (!user.email) return;
+    forgotPassword.mutate(user.email);
+  };
 
   return (
     <main className="min-h-screen bg-slate-100 dark:bg-zinc-800 flex justify-center items-start py-10 px-4">
@@ -21,7 +27,7 @@ export const ProfilePage = () => {
             👤
           </div>
           <h2 className="text-xl font-semibold text-slate-800 dark:text-white break-words">
-            {user?.email || "Unknown user"}
+            {user.email || "Unknown user"}
           </h2>
         </div>
 
@@ -35,21 +41,37 @@ export const ProfilePage = () => {
           <div className="flex justify-between text-slate-600 dark:text-zinc-300">
             <span>Stats task:</span>
             <span className="font-medium text-slate-800 dark:text-white">
-              {user?.taskCount ?? "-"}
+              {user.taskCount ?? "-"}
             </span>
           </div>
         </div>
 
-        <div className="pt-4 flex justify-center gap-4">
+        {!isGuest && (
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={onResetPassword}
+              disabled={forgotPassword.isPending}
+              className="w-full bg-slate-400 hover:bg-slate-500 text-white py-2 rounded-lg transition disabled:opacity-60"
+            >
+              Send reset password email
+            </button>
+            <p className="mt-2 text-center text-xs text-slate-500 dark:text-zinc-300">
+              We’ll email you a link to set a new password.
+            </p>
+          </div>
+        )}
+
+        <div className="pt-2 flex justify-center gap-4 text-white">
           <button
             onClick={() => logout.mutate()}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+            className="bg-red-500 hover:bg-red-600  px-4 py-2 rounded-lg transition"
           >
             Log out
           </button>
           <button
             onClick={() => navigate("/todo")}
-            className="bg-slate-200 dark:bg-zinc-600 hover:bg-slate-300 dark:hover:bg-zinc-500 text-black dark:text-white px-4 py-2 rounded-lg transition"
+            className="bg-slate-400 dark:bg-zinc-600 hover:bg-slate-500 dark:hover:bg-zinc-500 px-4 py-2 rounded-lg transition"
           >
             Back
           </button>
