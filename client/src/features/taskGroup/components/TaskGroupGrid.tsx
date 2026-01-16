@@ -1,48 +1,27 @@
-import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { TaskGroupCard } from "./TaskGroupCard/TaskGroupCard";
-import { TaskGroup } from "../../../types";
+// TaskGroupGrid.tsx
+import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
+import type { TaskGroup } from "../../../types";
+import { SortableGroup } from "./SortableGroup";
+import { dndIds } from "../types/dndIds";
 
-type Props = {
-  groups: TaskGroup[];
-};
-
-export const TaskGroupGrid = ({ groups }: Props) => {
-  if (groups.length === 0) {
+export const TaskGroupGrid = ({ groups }: { groups: TaskGroup[] }) => {
+  if (groups.length === 0)
     return (
       <p className="text-gray-500 text-sm text-center">
         No groups. Create first group !
       </p>
     );
-  }
 
   return (
-    <Droppable droppableId="groups" type="group" direction="horizontal">
-      {(provided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 
-           gap-6 items-start max-w-full"
-        >
-          {groups.map((group, index) => {
-            return (
-              <Draggable key={group.id} draggableId={group.id} index={index}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={provided.draggableProps.style}
-                  >
-                    <TaskGroupCard group={group} />
-                  </div>
-                )}
-              </Draggable>
-            );
-          })}
-          {provided.placeholder}
-        </div>
-      )}
-    </Droppable>
+    <SortableContext
+      items={groups.map((g) => dndIds.group(g.id))}
+      strategy={rectSortingStrategy}
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start max-w-full">
+        {groups.map((g) => (
+          <SortableGroup key={g.id} group={g} />
+        ))}
+      </div>
+    </SortableContext>
   );
 };

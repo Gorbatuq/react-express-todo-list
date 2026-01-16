@@ -1,24 +1,31 @@
 import { useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
-import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import {
+  MdOutlineDelete,
+  MdOutlineEdit,
+  MdDragIndicator,
+} from "react-icons/md";
 import { Priority } from "../../../../types";
 
-// create validation later
-
-interface Props {
+export const GroupHeader = ({
+  title,
+  priority,
+  onSubmit,
+  onDelete,
+  dragHandleProps,
+}: {
   title: string;
   priority: Priority;
-  onSubmit: (title: string, priority: Priority) => void | Promise<void>;
+  onSubmit: (t: string, p: Priority) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
-}
-
-export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
+  dragHandleProps?: React.HTMLAttributes<HTMLElement>;
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [localTitle, setLocalTitle] = useState(title);
   const [localPriority, setLocalPriority] = useState<Priority>(priority);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const priorityColors: Record<Priority, string> = {
+  const colors: Record<Priority, string> = {
     1: "bg-red-500",
     2: "bg-orange-400",
     3: "bg-yellow-200",
@@ -27,7 +34,6 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
 
   return (
     <div className="flex justify-between items-center mb-4">
-      {/* when the user clicked/edit menu */}
       {isEditing ? (
         <form
           onSubmit={(e) => {
@@ -43,8 +49,6 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
             autoFocus
             className="border rounded px-2 py-1"
           />
-
-          {/* priority selection */}
           <select
             value={localPriority}
             onChange={(e) => setLocalPriority(+e.target.value as Priority)}
@@ -55,7 +59,6 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
             <option value={3}>Low</option>
             <option value={4}>Super Low</option>
           </select>
-
           <button
             type="submit"
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -72,12 +75,18 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
         </form>
       ) : (
         <div className="flex items-center gap-2 cursor-default min-w-0 flex-1">
+          <button
+            type="button"
+            aria-label="Drag group"
+            {...dragHandleProps}
+            className="shrink-0 cursor-grab active:cursor-grabbing touch-manipulation text-gray-500"
+          >
+            <MdDragIndicator />
+          </button>
           <div
-            className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColors[priority]}`}
+            className={`w-3 h-3 rounded-full flex-shrink-0 ${colors[priority]}`}
           />
-
           <span className="text-lg font-semibold truncate">{title}</span>
-
           <button
             onClick={() => setIsEditing(true)}
             className="ml-2 text-gray-500 hover:text-blue-400 flex-shrink-0"
@@ -86,6 +95,7 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
           </button>
         </div>
       )}
+
       <div className="relative">
         <button
           onClick={() => setShowConfirm(true)}
@@ -93,7 +103,6 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
         >
           <MdOutlineDelete />
         </button>
-
         {showConfirm && (
           <ConfirmModal
             message="Are you sure you want to delete this group?"
