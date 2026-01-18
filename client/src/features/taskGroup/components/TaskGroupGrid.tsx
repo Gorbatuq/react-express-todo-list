@@ -9,7 +9,7 @@ type Props = {
 export const TaskGroupGrid = ({ groups }: Props) => {
   if (groups.length === 0) {
     return (
-      <p className="text-gray-500 text-sm text-center">
+      <p className="text-gray-500 text-lg text-center">
         No groups. Create first group !
       </p>
     );

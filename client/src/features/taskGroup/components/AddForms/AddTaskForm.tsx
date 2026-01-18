@@ -26,15 +26,12 @@ export const AddTaskForm = ({ groupId }: Props) => {
   });
 
   return (
-    <div className="mt-3 flex flex-col gap-2 w-full overflow-hidden">
-      <form
-        onSubmit={onSubmit}
-        className="flex gap-2 items-center w-full overflow-hidden"
-      >
+    <div className="mt-3 flex flex-col gap-2 w-full ">
+      <form onSubmit={onSubmit} className="flex gap-2 items-center w-full ">
         <input
           {...register("title")}
           placeholder="Task title"
-          className="flex-1 min-w-0 px-3 py-2 rounded-md
+          className="flex-1 min-w-0 px-3 py-2 rounded-lg
                  hover:bg-zinc-50
                  border border-gray-300 text-gray-900 dark:focus:outline-none
                  dark:bg-zinc-700 dark:text-gray-100 "
@@ -42,7 +39,7 @@ export const AddTaskForm = ({ groupId }: Props) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="shrink-0 px-3 py-2 rounded-md bg-green-500 text-white 
+          className="shrink-0 px-3 py-2 rounded-md  bg-green-500 text-white 
                  hover:bg-green-600 transition-colors duration-200 
                  disabled:opacity-50 disabled:cursor-not-allowed"
         >

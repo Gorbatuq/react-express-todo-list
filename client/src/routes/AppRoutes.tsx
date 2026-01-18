@@ -8,63 +8,74 @@ import { useMe } from "../hooks/auth/useMe";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicOnlyRoute } from "./PublicOnlyRoute";
 
+function LoadingOverlay() {
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/5 backdrop-blur-sm">
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/30 border-t-white" />
+    </div>
+  );
+}
+
 export const AppRoutes = () => {
   const { data: user, isLoading } = useMe();
-  if (isLoading) return <p className="text-center mt-10">Checking login...</p>;
 
   const isAuth = !!user?.id;
   const entry = isAuth ? "/todo" : "/welcome";
 
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to={entry} replace />} />
+    <>
+      <Routes>
+        <Route path="/" element={<Navigate to={entry} replace />} />
 
-      <Route
-        path="/welcome"
-        element={
-          <PublicOnlyRoute isAuth={isAuth}>
-            <WelcomePage />
-          </PublicOnlyRoute>
-        }
-      />
+        <Route
+          path="/welcome"
+          element={
+            <PublicOnlyRoute isAuth={isAuth}>
+              <WelcomePage />
+            </PublicOnlyRoute>
+          }
+        />
 
-      <Route
-        path="/auth"
-        element={
-          <PublicOnlyRoute isAuth={isAuth}>
-            <AuthPage />
-          </PublicOnlyRoute>
-        }
-      />
+        <Route
+          path="/auth"
+          element={
+            <PublicOnlyRoute isAuth={isAuth}>
+              <AuthPage />
+            </PublicOnlyRoute>
+          }
+        />
 
-      <Route
-        path="/reset-password"
-        element={
-          <PublicOnlyRoute isAuth={isAuth}>
-            <ResetPasswordPage />
-          </PublicOnlyRoute>
-        }
-      />
+        <Route
+          path="/reset-password"
+          element={
+            <PublicOnlyRoute isAuth={isAuth}>
+              <ResetPasswordPage />
+            </PublicOnlyRoute>
+          }
+        />
 
-      <Route
-        path="/todo"
-        element={
-          <ProtectedRoute isAuth={isAuth}>
-            <TodoPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/todo"
+          element={
+            <ProtectedRoute isAuth={isAuth}>
+              <TodoPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute isAuth={isAuth}>
-            <ProfilePage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute isAuth={isAuth}>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+
+      {isLoading && <LoadingOverlay />}
+    </>
   );
 };

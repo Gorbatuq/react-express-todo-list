@@ -38,13 +38,13 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
           {...register("title")}
           placeholder="Group title"
           disabled={isDisabled}
-          className="border rounded px-3 py-2 w-64 hover:bg-zinc-50 dark:text-zinc-800 dark:bg-gray-700 "
+          className="border rounded  px-3 py-2 w-64 hover:bg-zinc-50 dark:text-zinc-100 dark:bg-gray-700 "
         />
         <button
           type="submit"
           aria-label="Add group"
           disabled={isDisabled}
-          className="px-4 py-2 rounded-xl bg-slate-400 dark:bg-zinc-100
+          className="px-4 py-2  rounded-xl bg-slate-400 dark:bg-zinc-100
             text-white dark:text-zinc-800 hover:bg-slate-700 transition-colors 
             duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >

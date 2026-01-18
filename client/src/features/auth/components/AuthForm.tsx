@@ -48,7 +48,7 @@ export const AuthForm = ({ login, register, guest, onForgot }: Props) => {
         <button
           type="submit"
           disabled={login.isPending}
-          className="flex-1 rounded-md bg-green-500 py-2 text-white transition hover:bg-green-600 disabled:opacity-60"
+          className="flex-1 rounded-md cartoon-shadow-sm bg-green-500 py-2 text-white transition hover:bg-green-600 disabled:opacity-60"
         >
           Login
         </button>
@@ -57,7 +57,7 @@ export const AuthForm = ({ login, register, guest, onForgot }: Props) => {
           type="button"
           onClick={form.handleSubmit((data) => register.mutate(data))}
           disabled={register.isPending}
-          className="flex-1 rounded-md bg-sky-500 py-2 text-white transition hover:bg-sky-600 disabled:opacity-60"
+          className="flex-1 rounded-md cartoon-shadow-sm bg-sky-500 py-2 text-white transition hover:bg-sky-600 disabled:opacity-60"
         >
           Register
         </button>
@@ -76,7 +76,7 @@ export const AuthForm = ({ login, register, guest, onForgot }: Props) => {
           type="button"
           onClick={() => guest.mutate()}
           disabled={guest.isPending}
-          className="w-full rounded-md bg-gray-500 py-2 text-white transition hover:bg-gray-600 disabled:opacity-60"
+          className="w-full rounded-md  bg-gray-500 py-2 text-white transition hover:bg-gray-600 disabled:opacity-60"
         >
           Continue as guest
         </button>

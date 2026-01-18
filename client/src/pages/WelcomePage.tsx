@@ -9,7 +9,7 @@ export function WelcomePage() {
       <div className="mx-auto w-full max-w-6xl px-5 py-10">
         <HeroSection />
 
-        <div className="mt-14 space-y-14">
+        <div className="mt-14 space-y-14 ">
           {WELCOME_FEATURES.map((feature, idx) => (
             <div key={feature.title} className="pt-4">
               <FeatureSection feature={feature} step={idx + 1} />

@@ -3,7 +3,7 @@ import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
 import { useTasks } from "../../hooks/queries/task/useTasks";
 import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
 import { useGroupFilter } from "../../hooks/useGroupFilter";
-import { TaskGroup } from "../../../../types";
+import type { TaskGroup } from "../../../../types";
 import { AddTaskForm } from "../AddForms/AddTaskForm";
 import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
@@ -21,11 +21,7 @@ export const TaskGroupCard = React.memo(({ group }: Props) => {
   const { filter, setFilter, filteredTasks } = useGroupFilter(tasks);
 
   return (
-    <div
-      className="flex flex-col w-72 sm:w-auto rounded-2xl 
-                bg-white dark:bg-zinc-800 
-                shadow-lg p-4 transition-shadow hover:shadow-xl"
-    >
+    <div className="flex flex-col w-72 sm:w-auto rounded-2xl bg-white dark:bg-zinc-800 shadow-lg p-4 transition-shadow hover:shadow-xl">
       <GroupHeader
         title={group.title}
         priority={group.priority}
@@ -54,6 +50,7 @@ export const TaskGroupCard = React.memo(({ group }: Props) => {
           });
         }}
       />
+
       <AddTaskForm groupId={group.id} />
       <FilterButtons currentFilter={filter} onChange={setFilter} />
     </div>

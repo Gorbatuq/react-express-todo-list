@@ -1,0 +1,10 @@
+{
+  "name": "react-express-todo-list",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n server,client -c auto \"npm --prefix server run dev\" \"npm --prefix client run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
