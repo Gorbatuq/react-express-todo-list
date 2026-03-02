@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Side, WelcomeFeature } from "../types";
 
 const VIEWPORT = { once: true, amount: 0.35 } as const;
-const SWORD_SRC = "/pixel_sword_spin_pixel2.png";
+const SWORD_SRC = "/demon-sword.png";
 
 type XY = string | number;
 
@@ -31,21 +31,20 @@ const SWORDS: readonly SwordDef[] = [
     key: "top",
     classNameRight:
       "left-1/4 sm:left-1/2 top-0 -translate-x-1/2 -translate-y-1/2",
-    idle: { x: "-60%", y: "-60%", rotate: 173 },
-    hover: { x: "-58%", y: "-59%", rotate: 180 },
+    idle: { x: "-30%", y: "-49%", rotate: -7 },
+    hover: { x: "-29%", y: "-45%", rotate: 0 },
   },
   {
     key: "side",
-    // view bugs. Fix later
     classNameRight: "right-200 xl:right-0 top-1/4 translate-x-1/2",
-    idle: { x: "63%", y: "30%", rotate: 265 },
-    hover: { x: "60%", y: "30%", rotate: 270 },
+    idle: { x: "63%", y: "30%", rotate: 85 },
+    hover: { x: "60%", y: "30%", rotate: 90 },
   },
   {
     key: "bottom",
     classNameRight: "right-10 bottom-0 translate-y-1/2",
-    idle: { x: 0, y: "66%", rotate: -5 },
-    hover: { x: 0, y: "64%", rotate: -2 },
+    idle: { x: 0, y: "66%", rotate: 175 },
+    hover: { x: 0, y: "64%", rotate: 178 },
   },
 ] as const;
 
@@ -138,14 +137,14 @@ export default function FeatureSection({
   const hoverRot = reduce ? 0 : isRight ? -0.6 : 0.6;
 
   return (
-    <section className="grid items-center gap-20 lg:grid-cols-12">
+    <section className="grid items-center mt-4 gap-20 lg:grid-cols-12 text-slate-900">
       <div className={textCol}>
         <div className="cartoon-surface inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold">
           <span className="inline-block h-2 w-2 rounded-full bg-amber-400" />
           ACT {step}
         </div>
 
-        <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">
+        <h2 className="mt-3 text-2xl font-extrabold tracking-tight">
           {feature.title}
         </h2>
         <p className="mt-2 text-sm text-slate-700">{feature.text}</p>

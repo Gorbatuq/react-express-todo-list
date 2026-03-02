@@ -3,6 +3,7 @@ import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
 import { useTasks } from "../../hooks/queries/task/useTasks";
 import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
 import { useGroupFilter } from "../../hooks/useGroupFilter";
+import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import type { TaskGroup } from "../../../../types";
 import { AddTaskForm } from "../AddForms/AddTaskForm";
 import { GroupHeader } from "./GroupHeader";
@@ -11,9 +12,10 @@ import { FilterButtons } from "./FilterButtons";
 
 type Props = {
   group: TaskGroup;
+  dragHandleProps: DraggableProvidedDragHandleProps | null | undefined;
 };
 
-export const TaskGroupCard = React.memo(({ group }: Props) => {
+export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
   const { deleteGroup, updateGroup } = useGroupMutations();
   const { data: tasks = [] } = useTasks(group.id);
   const { updateTask, deleteTask } = useTaskMutations();
@@ -25,6 +27,7 @@ export const TaskGroupCard = React.memo(({ group }: Props) => {
       <GroupHeader
         title={group.title}
         priority={group.priority}
+        dragHandleProps={dragHandleProps}
         onSubmit={(title, priority) =>
           updateGroup.mutate({ groupId: group.id, data: { title, priority } })
         }

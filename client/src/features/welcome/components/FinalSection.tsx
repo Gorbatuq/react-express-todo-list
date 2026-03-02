@@ -3,7 +3,7 @@ import PimRow from "./PimRow";
 
 export default function FinalSection() {
   return (
-    <section className="cartoon-surface cartoon-shadow-xl mt-24 rounded-[30px] p-7 text-center">
+    <section className="cartoon-surface cartoon-shadow-xl mt-24 text-slate-900 rounded-[30px] p-7 text-center">
       <h2 className="text-lg font-extrabold">
         Make your productivity happy — with FinTask.
       </h2>
@@ -16,7 +16,7 @@ export default function FinalSection() {
       <div className="mt-7">
         <Link
           to="/auth"
-          className="cartoon-button w-full bg-amber-400 font-extrabold text-slate-900 sm:w-auto"
+          className="cartoon-button w-full bg-amber-400 font-extrabold sm:w-auto"
         >
           Start the adventure
         </Link>

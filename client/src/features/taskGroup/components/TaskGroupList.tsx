@@ -1,3 +1,4 @@
+// TaskGroupList.tsx
 import { DragDropContext } from "@hello-pangea/dnd";
 import { AddGroupForm } from "./AddForms/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
@@ -11,12 +12,9 @@ export const TaskGroupList = () => {
   const { data: user } = useMe();
   const handleDragEnd = useHandleDragEnd();
 
-  const isGuestLimited: boolean =
-    user?.role === "GUEST" && (groups?.length ?? 0) >= 3;
+  const isGuestLimited = user?.role === "GUEST" && (groups?.length ?? 0) >= 3;
 
-  if (isLoading) {
-    return <TaskGroupSkeletonGrid />;
-  }
+  if (isLoading) return <TaskGroupSkeletonGrid />;
 
   return (
     <div>

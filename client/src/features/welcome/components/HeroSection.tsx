@@ -4,7 +4,7 @@ import { HERO_STATS } from "../content";
 
 export default function HeroSection() {
   return (
-    <section className="cartoon-surface cartoon-shadow-xl relative overflow-hidden rounded-[30px] p-6 sm:p-8">
+    <section className="cartoon-surface cartoon-shadow-xl relative overflow-hidden rounded-[30px] p-6 sm:p-8 text-slate-900">
       <div className="cartoon-surface cartoon-shadow-lg absolute -right-8 -top-10 h-28 w-28 rotate-[10deg] rounded-[28px] bg-amber-400/60" />
       <div className="cartoon-surface cartoon-shadow-lg absolute -left-10 bottom-4 -z-10 h-24 w-24 rotate-[-8deg] rounded-[26px] bg-slate-100" />
 
@@ -20,7 +20,7 @@ export default function HeroSection() {
           <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
             Welcome to FinTask
           </h2>
-          <h1 className="mt-2 text-lg font-semibold text-slate-800">
+          <h1 className="mt-2 text-lg font-semibold">
             Maybe the best TODO list ever.
           </h1>
           <p className="mt-1 text-sm text-slate-600">
@@ -30,7 +30,7 @@ export default function HeroSection() {
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/auth"
-              className="cartoon-button bg-amber-400 font-extrabold text-slate-900"
+              className="cartoon-button bg-amber-400 font-extrabold"
             >
               Start the adventure
             </Link>
