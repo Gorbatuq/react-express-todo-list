@@ -24,7 +24,7 @@ export const updateGroupDtoSchema = z
   })
   .refine(
     (v) => Object.values(v).some((x) => x !== undefined),
-    "At least one field required"
+    "At least one field required",
   );
 
 export const reorderGroupsDtoSchema = z.object({

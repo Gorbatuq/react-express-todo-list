@@ -30,7 +30,7 @@ export const FormField = ({
           type={inputType}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className="w-full rounded-md border px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-sky-400"
+          className="w-full cartoon-shadow-sm rounded-md border px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-slate-300 hover:bg-slate-100"
         />
 
         {isPassword && (

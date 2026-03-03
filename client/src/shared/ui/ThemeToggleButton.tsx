@@ -8,7 +8,7 @@ export const ThemeToggleButton = () => {
     <button
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       aria-label="Toggle Theme"
-      className="fixed top-4 right-2 
+      className="fixed top-4 right-4
              [width:clamp(3rem,5vw,3rem)]
              [height:clamp(3rem,5vw,2rem)]
              rounded-full border-2

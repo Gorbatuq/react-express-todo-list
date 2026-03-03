@@ -21,7 +21,7 @@ export const ProfilePage = () => {
 
   return (
     <main className="min-h-screen bg-slate-100 dark:bg-zinc-800 flex justify-center items-start py-10 px-4">
-      <section className="w-full max-w-md bg-white dark:bg-zinc-700 rounded-2xl shadow-xl p-8 space-y-6 transition-all duration-200">
+      <section className="w-full max-w-md  border-4 border-zinc-50 bg-white dark:bg-zinc-700 rounded-2xl shadow-xl p-8 space-y-6 transition-all duration-200">
         <div className="flex flex-col items-center gap-2">
           <div className="w-24 h-24 rounded-full bg-slate-300 dark:bg-zinc-600 flex items-center justify-center text-4xl">
             👤
@@ -71,7 +71,7 @@ export const ProfilePage = () => {
           </button>
           <button
             onClick={() => navigate("/todo")}
-            className="bg-slate-400 dark:bg-zinc-600 hover:bg-slate-500 dark:hover:bg-zinc-500 px-4 py-2 rounded-lg transition"
+            className="bg-slate-400 dark:bg-zinc-600 hover:bg-slate-500 dark:hover:bg-zinc-500 rounded-lg px-4 py-2  transition"
           >
             Back
           </button>

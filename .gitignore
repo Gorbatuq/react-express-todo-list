@@ -15,3 +15,5 @@ tech-debt.md
 client/dist
 server/dist
 server/logs
+
+package-lock.json

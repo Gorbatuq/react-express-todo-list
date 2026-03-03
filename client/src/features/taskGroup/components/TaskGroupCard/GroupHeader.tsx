@@ -1,18 +1,25 @@
 import { useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import { TbGripVertical } from "react-icons/tb";
+import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { Priority } from "../../../../types";
-
-// create validation later
 
 interface Props {
   title: string;
   priority: Priority;
   onSubmit: (title: string, priority: Priority) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
 
-export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
+export const GroupHeader = ({
+  title,
+  priority,
+  onSubmit,
+  onDelete,
+  dragHandleProps,
+}: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [localTitle, setLocalTitle] = useState(title);
   const [localPriority, setLocalPriority] = useState<Priority>(priority);
@@ -26,72 +33,92 @@ export const GroupHeader = ({ title, priority, onSubmit, onDelete }: Props) => {
   };
 
   return (
-    <div className="flex justify-between items-center mb-4">
-      {/* when the user clicked/edit menu */}
-      {isEditing ? (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmit(localTitle.trim(), localPriority);
-            setIsEditing(false);
-          }}
-          className="flex items-center gap-2 flex-wrap"
+    <div className="mb-4 flex items-center gap-2">
+      {!isEditing && (
+        <div
+          {...dragHandleProps}
+          role="button"
+          tabIndex={0}
+          aria-label="Drag group"
+          className="inline-flex items-center justify-center rounded-md
+                     text-gray-500 hover:text-gray-900 hover:bg-gray-100
+                     dark:text-gray-300 dark:hover:text-white dark:hover:bg-zinc-700
+                     cursor-grab active:cursor-grabbing select-none touch-none"
         >
-          <input
-            value={localTitle}
-            onChange={(e) => setLocalTitle(e.target.value)}
-            autoFocus
-            className="border rounded px-2 py-1"
-          />
-
-          {/* priority selection */}
-          <select
-            value={localPriority}
-            onChange={(e) => setLocalPriority(+e.target.value as Priority)}
-            className="border rounded px-2 py-1"
-          >
-            <option value={1}>High</option>
-            <option value={2}>Medium</option>
-            <option value={3}>Low</option>
-            <option value={4}>Super Low</option>
-          </select>
-
-          <button
-            type="submit"
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            OK
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsEditing(false)}
-            className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-        </form>
-      ) : (
-        <div className="flex items-center gap-2 cursor-default min-w-0 flex-1">
-          <div
-            className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColors[priority]}`}
-          />
-
-          <span className="text-lg font-semibold truncate">{title}</span>
-
-          <button
-            onClick={() => setIsEditing(true)}
-            className="ml-2 text-gray-500 hover:text-blue-400 flex-shrink-0"
-          >
-            <MdOutlineEdit />
-          </button>
+          <TbGripVertical className="text-xl" />
         </div>
       )}
-      <div className="relative">
+
+      {/* CONTENT */}
+      <div className="min-w-0 flex-1">
+        {isEditing ? (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSubmit(localTitle.trim(), localPriority);
+              setIsEditing(false);
+            }}
+            className="flex items-center gap-2 flex-wrap"
+          >
+            <input
+              value={localTitle}
+              onChange={(e) => setLocalTitle(e.target.value)}
+              autoFocus
+              className="border rounded px-2 py-1 dark:text-zinc-100 dark:bg-gray-700"
+            />
+            <select
+              value={localPriority}
+              onChange={(e) => setLocalPriority(+e.target.value as Priority)}
+              className="border rounded px-2 py-1 dark:text-zinc-100 dark:bg-gray-700"
+            >
+              <option value={1}>High</option>
+              <option value={2}>Medium</option>
+              <option value={3}>Low</option>
+              <option value={4}>Super Low</option>
+            </select>
+
+            <button
+              type="submit"
+              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              OK
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 dark:text-zinc-700"
+            >
+              Cancel
+            </button>
+          </form>
+        ) : (
+          <div className="flex items-center gap-2 min-w-0">
+            <div
+              className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColors[priority]}`}
+            />
+            <span className="text-lg font-semibold truncate">{title}</span>
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className="ml-1 text-gray-500 hover:text-blue-400 flex-shrink-0"
+              aria-label="Edit group"
+            >
+              <MdOutlineEdit />
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center gap-1 flex-shrink-0">
         <button
+          type="button"
           onClick={() => setShowConfirm(true)}
-          className="ml-3 text-red-600 text-xl hover:text-red-700"
+          className="inline-flex items-center justify-center rounded-md p-2
+                     text-red-600 hover:text-red-700 hover:bg-red-50
+                     dark:hover:bg-red-950/40"
+          aria-label="Delete group"
         >
-          <MdOutlineDelete />
+          <MdOutlineDelete className="text-xl" />
         </button>
 
         {showConfirm && (

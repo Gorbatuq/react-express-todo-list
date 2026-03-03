@@ -8,7 +8,7 @@ type Props = {
 
 export const AuthShell = ({ title, onBack, children }: Props) => {
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-[url('/back-img-auth.jpg')] bg-cover bg-center text-black px-6">
+    <div className="relative  flex min-h-screen  items-center justify-center bg-[url('/back-img-auth.jpg')] bg-cover bg-center text-black px-6">
       <button
         type="button"
         onClick={onBack}
@@ -19,7 +19,7 @@ export const AuthShell = ({ title, onBack, children }: Props) => {
         <span>Back</span>
       </button>
 
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl">
+      <div className="w-full max-w-sm rounded-2xl bg-slate-50 p-8 shadow-xl ">
         <h2 className="text-center text-2xl font-bold text-slate-800">
           {title}
         </h2>
