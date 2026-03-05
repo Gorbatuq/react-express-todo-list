@@ -17,3 +17,12 @@ export function setTokenCookie(res: Response, token: string) {
 export function clearTokenCookie(res: Response) {
   res.clearCookie("token", cookieBase);
 }
+
+// --- Google OAuth state cookie ---
+export function setGoogleStateCookie(res: Response, state: string) {
+  res.cookie("g_state", state, { ...cookieBase, maxAge: 10 * 60 * 1000 });
+}
+
+export function clearGoogleStateCookie(res: Response) {
+  res.clearCookie("g_state", cookieBase);
+}

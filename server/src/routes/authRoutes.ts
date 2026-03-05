@@ -15,6 +15,10 @@ import rateLimit from "express-rate-limit";
 import { forgotSchema } from "../validation/forgotSchema";
 import { resetSchema } from "../validation/resetSchema";
 import { AppError } from "../errors/AppError";
+import {
+  googleStart,
+  googleCallback,
+} from "../controllers/auth/authGoogleController";
 
 const router = express.Router();
 
@@ -25,7 +29,7 @@ const guestLimiter = rateLimit({
   legacyHeaders: false,
   handler: (_req, _res, next) =>
     next(
-      new AppError(429, "RATE_LIMIT", "Too many attempts. Try again later.")
+      new AppError(429, "RATE_LIMIT", "Too many attempts. Try again later."),
     ),
 });
 
@@ -39,12 +43,14 @@ const forgotLimiter = rateLimit({
       new AppError(
         429,
         "RATE_LIMIT",
-        "Too many reset attempts. Try again later."
-      )
+        "Too many reset attempts. Try again later.",
+      ),
     ),
 });
 
 router.get("/me", authMiddleware, getMe);
+router.get("/google/start", googleStart);
+router.get("/google/callback", googleCallback);
 
 router.post("/register", validateBody(authSchema), register);
 router.post("/login", validateBody(authSchema), login);
@@ -55,7 +61,7 @@ router.post(
   "/forgot-password",
   forgotLimiter,
   validateBody(forgotSchema),
-  forgotPassword
+  forgotPassword,
 );
 router.post("/reset-password", validateBody(resetSchema), resetPassword);
 
