@@ -5,3 +5,4 @@ export { logoutUsecase } from "./logout.usecase";
 export { createGuestUsecase } from "./guest.usecase";
 export { forgotPasswordUsecase } from "./forgotPassword.usecase";
 export { resetPasswordUsecase } from "./resetPassword.usecase";
+export { googleLoginUsecase } from "./googleLogin.usecase";

@@ -22,6 +22,10 @@ const EnvSchema = z.object({
     .default("7d"),
 
   RESET_TOKEN_TTL_MIN: z.coerce.number().default(15),
+
+  GOOGLE_CLIENT_ID: z.string().min(1),
+  GOOGLE_SECRET: z.string().min(1),
+  GOOGLE_REDIRECT_URI: z.string().min(1),
 });
 
 export const env = (() => {
@@ -30,7 +34,7 @@ export const env = (() => {
   const cookieMaxAgeMs = ms(raw.COOKIE_MAX_AGE as ms.StringValue);
   if (typeof cookieMaxAgeMs !== "number") {
     throw new Error(
-      "Invalid COOKIE_MAX_AGE (expected like '7d', '12h', '30m')"
+      "Invalid COOKIE_MAX_AGE (expected like '7d', '12h', '30m')",
     );
   }
 

@@ -5,6 +5,8 @@ import {
   type AuthInputValues,
 } from "../../../shared/validation/authSchemas";
 import { FormField } from "../../../shared/ui/FormField";
+import { GoogleIcon } from "../../../shared/ui/icons/GoogleIcon";
+import { startGoogleAuth } from "../../../lib/google";
 
 type MutationLike<T> = {
   mutate: (data: T) => void;
@@ -63,7 +65,18 @@ export const AuthForm = ({ login, register, guest, onForgot }: Props) => {
         </button>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <button
+        type="button"
+        onClick={startGoogleAuth}
+        className="w-full rounded-md border border-gray-300 bg-white py-2 text-black cartoon-shadow-sm transition hover:bg-gray-50"
+      >
+        <span className="flex items-center justify-center gap-3">
+          <GoogleIcon className="h-5 w-5" />
+          <span className="font-medium">Continue with Google</span>
+        </span>
+      </button>
+
+      <div className="flex flex-col pt-2 p-2 gap-2">
         <button
           type="button"
           onClick={onForgot}

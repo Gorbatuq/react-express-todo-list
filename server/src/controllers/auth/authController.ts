@@ -44,19 +44,19 @@ export const createGuest = asyncHandler(
     const { user, token } = await createGuestUsecase();
     setTokenCookie(res, token);
     return created(res, user);
-  }
+  },
 );
 
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response) => {
     const data = await forgotPasswordUsecase(req.body);
     return ok(res, data);
-  }
+  },
 );
 
 export const resetPassword = asyncHandler(
   async (req: Request, res: Response) => {
     const data = await resetPasswordUsecase(req.body);
     return ok(res, data);
-  }
+  },
 );

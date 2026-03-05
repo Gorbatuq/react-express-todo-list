@@ -30,7 +30,7 @@ export const AppRoutes = () => {
         <Route
           path="/welcome"
           element={
-            <PublicOnlyRoute isAuth={isAuth}>
+            <PublicOnlyRoute isAuth={isAuth} isLoading={isLoading}>
               <WelcomePage />
             </PublicOnlyRoute>
           }
@@ -39,7 +39,7 @@ export const AppRoutes = () => {
         <Route
           path="/auth"
           element={
-            <PublicOnlyRoute isAuth={isAuth}>
+            <PublicOnlyRoute isAuth={isAuth} isLoading={isLoading}>
               <AuthPage />
             </PublicOnlyRoute>
           }
@@ -48,7 +48,7 @@ export const AppRoutes = () => {
         <Route
           path="/reset-password"
           element={
-            <PublicOnlyRoute isAuth={isAuth}>
+            <PublicOnlyRoute isAuth={isAuth} isLoading={isLoading}>
               <ResetPasswordPage />
             </PublicOnlyRoute>
           }
@@ -57,7 +57,7 @@ export const AppRoutes = () => {
         <Route
           path="/todo"
           element={
-            <ProtectedRoute isAuth={isAuth}>
+            <ProtectedRoute isAuth={isAuth} isLoading={isLoading}>
               <TodoPage />
             </ProtectedRoute>
           }
@@ -66,7 +66,7 @@ export const AppRoutes = () => {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute isAuth={isAuth}>
+            <ProtectedRoute isAuth={isAuth} isLoading={isLoading}>
               <ProfilePage />
             </ProtectedRoute>
           }

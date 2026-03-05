@@ -12,7 +12,7 @@ export const authApi = {
         url: "/auth/register",
         data: { email, password },
       },
-      userSchema
+      userSchema,
     ),
 
   login: (email: string, password: string) =>
@@ -22,7 +22,7 @@ export const authApi = {
         url: "/auth/login",
         data: { email, password },
       },
-      userSchema
+      userSchema,
     ),
 
   logout: () => request({ method: "POST", url: "/auth/logout" }),
@@ -37,7 +37,7 @@ export const authApi = {
         url: "/auth/forgot-password",
         data: { email },
       },
-      messageSchema
+      messageSchema,
     ),
 
   resetPassword: (token: string, newPassword: string) =>
@@ -47,6 +47,6 @@ export const authApi = {
         url: "/auth/reset-password",
         data: { token, newPassword },
       },
-      messageSchema
+      messageSchema,
     ),
 };
