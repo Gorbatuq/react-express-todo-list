@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { taskSchema, type TaskInputValues } from "../../validation/taskSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextareaAutosize from "react-textarea-autosize";
@@ -12,11 +12,13 @@ interface Props {
 
 export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
   const [editing, setEditing] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const { register, handleSubmit, reset, setFocus } = useForm<TaskInputValues>({
-    resolver: zodResolver(taskSchema),
-    defaultValues: { title: task.title },
-  });
+  const { register, handleSubmit, reset, setFocus, getValues, trigger } =
+    useForm<TaskInputValues>({
+      resolver: zodResolver(taskSchema),
+      defaultValues: { title: task.title },
+    });
 
   const submitHandler = ({ title }: TaskInputValues) => {
     if (title !== task.title) {
@@ -28,6 +30,22 @@ export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
   useEffect(() => {
     if (editing) setFocus("title");
   }, [editing, setFocus]);
+
+  useEffect(() => {
+    if (!editing) return;
+
+    const submitOnClickAway = async (event: PointerEvent) => {
+      if (formRef.current?.contains(event.target as Node)) return;
+
+      const isValid = await trigger("title");
+      if (!isValid) return;
+
+      submitHandler(getValues());
+    };
+
+    document.addEventListener("pointerdown", submitOnClickAway);
+    return () => document.removeEventListener("pointerdown", submitOnClickAway);
+  }, [editing, getValues, trigger]);
 
   if (!editing) {
     return (
@@ -41,7 +59,11 @@ export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(submitHandler)} className="flex-1">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit(submitHandler)}
+      className="flex-1"
+    >
       <TextareaAutosize
         {...register("title")}
         minRows={1}

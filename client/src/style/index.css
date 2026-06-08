@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
     @apply text-base;
     background-color: #18062b;
@@ -96,6 +100,20 @@
 
   .task-item-surface {
     @apply rounded-lg bg-slate-50 px-3 py-2 dark:bg-zinc-600/80;
+  }
+
+  .task-wheel-frame {
+    --task-wheel-size: clamp(16rem, min(40vw, 54dvh), 28rem);
+
+    @apply flex justify-center;
+    min-height: var(--task-wheel-size);
+  }
+
+  .task-wheel-frame > div {
+    width: var(--task-wheel-size) !important;
+    height: var(--task-wheel-size) !important;
+    max-width: var(--task-wheel-size) !important;
+    max-height: var(--task-wheel-size) !important;
   }
 
 }
