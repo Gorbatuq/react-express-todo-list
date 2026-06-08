@@ -3,8 +3,9 @@ import { ConfirmModal } from "./ConfirmModal";
 import { MdContentCopy, MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { TbGripVertical } from "react-icons/tb";
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
-import { Priority } from "../../../../types";
+import { PRIORITY_COLORS, type Priority } from "../../../../types";
 import { IconButton } from "../../../../shared/ui/IconButton";
+import { PrioritySelect } from "../../../../shared/ui/PrioritySelect";
 
 interface Props {
   title: string;
@@ -27,13 +28,6 @@ export const GroupHeader = ({
   const [localTitle, setLocalTitle] = useState(title);
   const [localPriority, setLocalPriority] = useState<Priority>(priority);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const priorityColors: Record<Priority, string> = {
-    1: "bg-red-500",
-    2: "bg-orange-400",
-    3: "bg-yellow-200",
-    4: "bg-blue-100",
-  };
 
   return (
     <div className="mb-4 flex items-center gap-2">
@@ -67,18 +61,13 @@ export const GroupHeader = ({
               value={localTitle}
               onChange={(e) => setLocalTitle(e.target.value)}
               autoFocus
-              className="border rounded px-2 py-1 dark:text-zinc-100 dark:bg-gray-700"
+              className="app-input px-2 py-1"
             />
-            <select
+            <PrioritySelect
               value={localPriority}
-              onChange={(e) => setLocalPriority(+e.target.value as Priority)}
-              className="border rounded px-2 py-1 dark:text-zinc-100 dark:bg-gray-700"
-            >
-              <option value={1}>High</option>
-              <option value={2}>Medium</option>
-              <option value={3}>Low</option>
-              <option value={4}>Super Low</option>
-            </select>
+              onChange={setLocalPriority}
+              className="px-2 py-1"
+            />
 
             <button
               type="submit"
@@ -97,7 +86,7 @@ export const GroupHeader = ({
         ) : (
           <div className="flex items-center gap-2 min-w-0">
             <div
-              className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColors[priority]}`}
+              className={`w-3 h-3 rounded-full flex-shrink-0 ${PRIORITY_COLORS[priority]}`}
             />
             <span className="text-lg font-semibold truncate">{title}</span>
           </div>

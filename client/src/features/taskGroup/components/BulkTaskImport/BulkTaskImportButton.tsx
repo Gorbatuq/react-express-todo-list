@@ -6,7 +6,8 @@ import { useMe } from "../../../../hooks/auth/useMe";
 import { useGroups } from "../../hooks/queries/group/useGroups";
 import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
 import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
-import type { Priority } from "../../../../types";
+import { DEFAULT_PRIORITY, type Priority } from "../../../../types";
+import { PrioritySelect } from "../../../../shared/ui/PrioritySelect";
 
 const parseTaskTitles = (value: string) => {
   const hasHardSeparators = /[,;\n\r]/.test(value);
@@ -26,7 +27,7 @@ export const BulkTaskImportButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [groupTitle, setGroupTitle] = useState("");
   const [rawTasks, setRawTasks] = useState("");
-  const [priority, setPriority] = useState<Priority>(2);
+  const [priority, setPriority] = useState<Priority>(DEFAULT_PRIORITY);
   const [error, setError] = useState("");
 
   const { data: groups } = useGroups();
@@ -41,7 +42,7 @@ export const BulkTaskImportButton = () => {
   const resetForm = () => {
     setGroupTitle("");
     setRawTasks("");
-    setPriority(2);
+    setPriority(DEFAULT_PRIORITY);
     setError("");
   };
 
@@ -143,17 +144,12 @@ export const BulkTaskImportButton = () => {
               className="app-input w-full"
             />
 
-            <select
+            <PrioritySelect
               value={priority}
-              onChange={(event) => setPriority(+event.target.value as Priority)}
+              onChange={setPriority}
               disabled={isSubmitting}
-              className="app-input w-full"
-            >
-              <option value={1}>High</option>
-              <option value={2}>Medium</option>
-              <option value={3}>Low</option>
-              <option value={4}>Super Low</option>
-            </select>
+              className="w-full"
+            />
 
             <textarea
               value={rawTasks}
