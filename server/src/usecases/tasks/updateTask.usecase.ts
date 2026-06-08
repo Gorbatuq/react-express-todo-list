@@ -43,6 +43,7 @@ export async function updateTaskUsecase(
 
       if (!isMove) {
         await task.save({ session });
+        await groupRepo.touchUpdatedAt(realFromGroupId, userId, session);
         dto = toTaskDto(task);
         return;
       }
@@ -92,6 +93,8 @@ export async function updateTaskUsecase(
         // 3) Set final order
         task.order = toIndex;
         await task.save({ session });
+        await groupRepo.touchUpdatedAt(realFromGroupId, userId, session);
+        await groupRepo.touchUpdatedAt(toGroupId, userId, session);
 
         dto = toTaskDto(task);
         return;
@@ -100,6 +103,7 @@ export async function updateTaskUsecase(
       // Reorder in same group
       if (toIndex === fromOrder) {
         await task.save({ session });
+        await groupRepo.touchUpdatedAt(realFromGroupId, userId, session);
         dto = toTaskDto(task);
         return;
       }
@@ -124,6 +128,7 @@ export async function updateTaskUsecase(
 
       task.order = toIndex;
       await task.save({ session });
+      await groupRepo.touchUpdatedAt(realFromGroupId, userId, session);
       dto = toTaskDto(task);
     });
 

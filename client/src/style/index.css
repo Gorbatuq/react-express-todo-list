@@ -97,4 +97,5 @@
   .task-item-surface {
     @apply rounded-lg bg-slate-50 px-3 py-2 dark:bg-zinc-600/80;
   }
+
 }

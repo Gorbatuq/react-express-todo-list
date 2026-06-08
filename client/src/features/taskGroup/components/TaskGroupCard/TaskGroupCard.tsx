@@ -10,6 +10,7 @@ import { AddTaskForm } from "../AddForms/AddTaskForm";
 import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
 import { FilterButtons } from "./FilterButtons";
+import { GroupCobwebOverlay } from "./GroupCobwebOverlay";
 
 type Props = {
   group: TaskGroup;
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
+  const [isCobwebDismissed, setIsCobwebDismissed] = React.useState(false);
   const { deleteGroup, updateGroup } = useGroupMutations();
   const { data: tasks = [] } = useTasks(group.id);
   const { updateTask, deleteTask } = useTaskMutations();
@@ -26,6 +28,10 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
   const deleteTaskMutate = deleteTask.mutate;
 
   const { filter, setFilter, filteredTasks } = useGroupFilter(group.id, tasks);
+
+  React.useEffect(() => {
+    setIsCobwebDismissed(false);
+  }, [group.updatedAt]);
 
   const copyGroupTasks = React.useCallback(async () => {
     const text = [group.title, ...tasks.map((task) => task.title)].join("\n");
@@ -80,7 +86,14 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
   );
 
   return (
-    <div className="app-card app-card-hover flex w-full min-w-0 flex-col p-4">
+    <div
+      className="app-card app-card-hover relative flex w-full min-w-0 flex-col p-4"
+      onClick={() => setIsCobwebDismissed(true)}
+    >
+      <GroupCobwebOverlay
+        updatedAt={group.updatedAt}
+        dismissed={isCobwebDismissed}
+      />
       <GroupHeader
         title={group.title}
         priority={group.priority}

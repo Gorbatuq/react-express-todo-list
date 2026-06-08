@@ -5,9 +5,10 @@ import { getDropAnimationStyle } from "../utils/getDropAnimationStyle";
 
 type Props = {
   groups: TaskGroup[];
+  isGroupDragDisabled?: boolean;
 };
 
-export const TaskGroupGrid = ({ groups }: Props) => {
+export const TaskGroupGrid = ({ groups, isGroupDragDisabled = false }: Props) => {
   if (groups.length === 0) {
     return (
       <p className="text-gray-500 text-lg text-center">
@@ -26,7 +27,12 @@ export const TaskGroupGrid = ({ groups }: Props) => {
         >
           {groups.map((group, index) => {
             return (
-              <Draggable key={group.id} draggableId={group.id} index={index}>
+              <Draggable
+                key={group.id}
+                draggableId={group.id}
+                index={index}
+                isDragDisabled={isGroupDragDisabled}
+              >
                 {(droppableProvided, snapshot) => (
                   <div
                     ref={droppableProvided.innerRef}

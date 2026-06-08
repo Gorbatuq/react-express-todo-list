@@ -32,6 +32,7 @@ export async function createTaskUsecase(
         { title, completed: false, order: count, groupId, userId },
         session
       );
+      await groupRepo.touchUpdatedAt(groupId, userId, session);
 
       dto = toTaskDto(created);
     });

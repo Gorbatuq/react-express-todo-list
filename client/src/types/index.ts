@@ -28,6 +28,15 @@ export type Theme = (typeof THEME)[keyof typeof THEME];
 export const FILTER_OPTIONS = ["all", "completed", "active"] as const;
 export type FilterType = (typeof FILTER_OPTIONS)[number];
 
+export const GROUP_SORT_OPTIONS = [
+  { value: "manual", label: "Manual" },
+  { value: "createdAt", label: "Created" },
+  { value: "updatedAt", label: "Changed" },
+  { value: "priority", label: "Priority" },
+] as const;
+
+export type GroupSortType = (typeof GROUP_SORT_OPTIONS)[number]["value"];
+
 export type User = {
   id: string;
   email: string;
@@ -41,6 +50,8 @@ export type TaskGroup = {
   title: string;
   order: number;
   priority: Priority;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type Task = {

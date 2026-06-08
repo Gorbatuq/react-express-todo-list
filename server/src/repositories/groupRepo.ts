@@ -52,4 +52,16 @@ export const groupRepo = {
     await TaskGroup.bulkWrite(phase1, { session, ordered: true });
     await TaskGroup.bulkWrite(phase2, { session, ordered: true });
   },
+
+  touchUpdatedAt(
+    groupId: string,
+    userId: string,
+    session?: mongoose.ClientSession
+  ) {
+    const q = TaskGroup.updateOne(
+      { _id: groupId, userId },
+      { $set: { updatedAt: new Date() } }
+    );
+    return session ? q.session(session) : q;
+  },
 };

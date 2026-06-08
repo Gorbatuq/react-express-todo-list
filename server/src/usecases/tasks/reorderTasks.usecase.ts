@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { AppError } from "../../errors/AppError";
 import { taskRepo } from "../../repositories/taskRepo";
+import { groupRepo } from "../../repositories/groupRepo";
 
 export async function reorderTasksUsecase(
   userId: string,
@@ -35,6 +36,7 @@ export async function reorderTasksUsecase(
         );
 
       await taskRepo.bulkSetOrder(userId, groupId, order, session);
+      await groupRepo.touchUpdatedAt(groupId, userId, session);
     });
 
     return { message: "Tasks reordered" };
