@@ -22,7 +22,7 @@ export const TaskGroupGrid = ({ groups }: Props) => {
         <div
           ref={droppableProvided.innerRef}
           {...droppableProvided.droppableProps}
-          className="grid w-full grid-cols-1 items-start gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+          className="grid w-full grid-cols-1 items-start gap-6 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4"
         >
           {groups.map((group, index) => {
             return (

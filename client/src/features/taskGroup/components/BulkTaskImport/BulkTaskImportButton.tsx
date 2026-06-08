@@ -99,10 +99,10 @@ export const BulkTaskImportButton = () => {
         aria-label="Import tasks"
         disabled={isGuestLimited}
         onClick={() => setIsOpen(true)}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border-2
-          border-slate-300 bg-white text-2xl text-gray-900 transition-all duration-300
+        className="inline-flex h-11 w-11 items-center justify-center rounded-full border-2
+          border-slate-300 bg-white text-gray-900 transition-all duration-300
           hover:scale-105 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50
-          dark:border-slate-600 dark:bg-gray-700 dark:text-gray-200"
+          text-3xl dark:border-slate-600 dark:bg-gray-700 dark:text-gray-200"
       >
         <MdPlaylistAdd />
       </button>

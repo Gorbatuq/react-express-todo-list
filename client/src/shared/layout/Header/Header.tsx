@@ -17,7 +17,7 @@ export const Header = ({ actions }: HeaderProps) => {
             ? "/pixel_sword_spin_pixel_128.gif"
             : "/pixel_sword_spin_pixel2.png"
         }
-        className={`h-9 w-auto ${rotate}`}
+        className={`h-11 w-auto ${rotate}`}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       />
@@ -30,7 +30,7 @@ export const Header = ({ actions }: HeaderProps) => {
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
         <Sword rotate="rotate-90" />
 
-        <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white sm:text-3xl">
           FinTask
         </h1>
 

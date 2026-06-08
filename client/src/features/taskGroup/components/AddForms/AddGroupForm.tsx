@@ -44,7 +44,7 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
           type="submit"
           aria-label="Add group"
           disabled={isDisabled}
-          className="app-action-button app-action-button-neutral rounded-xl dark:bg-zinc-100 dark:text-zinc-800 dark:hover:bg-zinc-200"
+          className="app-action-button h-9 app-action-button-neutral rounded-xl dark:bg-zinc-100 dark:text-zinc-800 dark:hover:bg-zinc-200"
         >
           <MdFormatListBulletedAdd />
         </button>
