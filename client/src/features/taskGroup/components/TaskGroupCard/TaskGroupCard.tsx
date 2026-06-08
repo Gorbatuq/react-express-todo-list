@@ -1,4 +1,5 @@
 import React from "react";
+import toast from "react-hot-toast";
 import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
 import { useTasks } from "../../hooks/queries/task/useTasks";
 import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
@@ -22,8 +23,20 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
 
   const { filter, setFilter, filteredTasks } = useGroupFilter(tasks);
 
+  const copyGroupTasks = async () => {
+    const text = [group.title, ...tasks.map((task) => task.title)].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Group copied");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to copy group");
+    }
+  };
+
   return (
-    <div className="flex flex-col w-72 sm:w-auto rounded-2xl bg-white dark:bg-zinc-800 shadow-lg p-4 transition-shadow hover:shadow-xl">
+    <div className="app-card app-card-hover flex w-full min-w-0 flex-col p-4">
       <GroupHeader
         title={group.title}
         priority={group.priority}
@@ -32,6 +45,7 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
           updateGroup.mutate({ groupId: group.id, data: { title, priority } })
         }
         onDelete={() => deleteGroup.mutate(group.id)}
+        onCopy={copyGroupTasks}
       />
 
       <TaskList
@@ -55,7 +69,9 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
       />
 
       <AddTaskForm groupId={group.id} />
-      <FilterButtons currentFilter={filter} onChange={setFilter} />
+      {tasks.length > 0 && (
+        <FilterButtons currentFilter={filter} onChange={setFilter} />
+      )}
     </div>
   );
 });

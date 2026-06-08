@@ -31,17 +31,12 @@ export const AddTaskForm = ({ groupId }: Props) => {
         <input
           {...register("title")}
           placeholder="Task title"
-          className="flex-1 min-w-0 px-3 py-2 rounded-lg
-                 hover:bg-zinc-50
-                 border border-gray-300 text-gray-900 dark:focus:outline-none
-                 dark:bg-zinc-700 dark:text-gray-100 "
+          className="app-input min-w-0 flex-1"
         />
         <button
           type="submit"
           disabled={isSubmitting}
-          className="shrink-0 px-3 py-2 rounded-md  bg-green-500 text-white 
-                 hover:bg-green-600 transition-colors duration-200 
-                 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="app-action-button app-action-button-success shrink-0 rounded-md px-3"
         >
           <PiPlus className="text-lg" />
         </button>

@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
-import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import { MdContentCopy, MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { TbGripVertical } from "react-icons/tb";
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { Priority } from "../../../../types";
+import { IconButton } from "../../../../shared/ui/IconButton";
 
 interface Props {
   title: string;
   priority: Priority;
   onSubmit: (title: string, priority: Priority) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
+  onCopy: () => void | Promise<void>;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
 
@@ -18,6 +20,7 @@ export const GroupHeader = ({
   priority,
   onSubmit,
   onDelete,
+  onCopy,
   dragHandleProps,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -40,12 +43,12 @@ export const GroupHeader = ({
           role="button"
           tabIndex={0}
           aria-label="Drag group"
-          className="inline-flex items-center justify-center rounded-md
+          className="app-icon-button app-icon-button-muted h-7 w-5 flex-shrink-0
                      text-gray-500 hover:text-gray-900 hover:bg-gray-100
                      dark:text-gray-300 dark:hover:text-white dark:hover:bg-zinc-700
                      cursor-grab active:cursor-grabbing select-none touch-none"
         >
-          <TbGripVertical className="text-xl" />
+          <TbGripVertical className="text-base" />
         </div>
       )}
 
@@ -97,41 +100,46 @@ export const GroupHeader = ({
               className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColors[priority]}`}
             />
             <span className="text-lg font-semibold truncate">{title}</span>
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="ml-1 text-gray-500 hover:text-blue-400 flex-shrink-0"
-              aria-label="Edit group"
-            >
-              <MdOutlineEdit />
-            </button>
           </div>
         )}
       </div>
 
-      <div className="flex items-center gap-1 flex-shrink-0">
-        <button
-          type="button"
-          onClick={() => setShowConfirm(true)}
-          className="inline-flex items-center justify-center rounded-md p-2
-                     text-red-600 hover:text-red-700 hover:bg-red-50
-                     dark:hover:bg-red-950/40"
-          aria-label="Delete group"
-        >
-          <MdOutlineDelete className="text-xl" />
-        </button>
-
-        {showConfirm && (
-          <ConfirmModal
-            message="Are you sure you want to delete this group?"
-            onConfirm={() => {
-              onDelete();
-              setShowConfirm(false);
-            }}
-            onCancel={() => setShowConfirm(false)}
+      {!isEditing && (
+        <div className="relative flex flex-shrink-0 items-center gap-px">
+          <IconButton
+            onClick={() => setIsEditing(true)}
+            aria-label="Edit group"
+            icon={<MdOutlineEdit className="text-base" />}
+            sizeClassName="h-7 w-7"
           />
-        )}
-      </div>
+
+          <IconButton
+            onClick={onCopy}
+            aria-label="Copy group tasks"
+            icon={<MdContentCopy className="text-base" />}
+            sizeClassName="h-7 w-7"
+          />
+
+          <IconButton
+            onClick={() => setShowConfirm(true)}
+            aria-label="Delete group"
+            icon={<MdOutlineDelete className="text-base" />}
+            sizeClassName="h-7 w-7"
+            variant="danger"
+          />
+
+          {showConfirm && (
+            <ConfirmModal
+              message="Are you sure you want to delete this group?"
+              onConfirm={() => {
+                onDelete();
+                setShowConfirm(false);
+              }}
+              onCancel={() => setShowConfirm(false)}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -38,22 +38,20 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
           {...register("title")}
           placeholder="Group title"
           disabled={isDisabled}
-          className="border rounded  px-3 py-2 w-64 hover:bg-zinc-50 dark:text-zinc-100 dark:bg-gray-700 "
+          className="app-input w-64"
         />
         <button
           type="submit"
           aria-label="Add group"
           disabled={isDisabled}
-          className="px-4 py-2  rounded-xl bg-slate-400 dark:bg-zinc-100
-            text-white dark:text-zinc-800 hover:bg-slate-700 transition-colors 
-            duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="app-action-button app-action-button-neutral rounded-xl dark:bg-zinc-100 dark:text-zinc-800 dark:hover:bg-zinc-200"
         >
           <MdFormatListBulletedAdd />
         </button>
       </form>
 
       {/* message from below */}
-      <div aria-live="polite" className="min-h-[1.5rem]">
+      <div aria-live="polite" className="min-h-6">
         {typeof errors.title?.message === "string" && (
           <p className="text-red-500 text-sm">{errors.title.message}</p>
         )}

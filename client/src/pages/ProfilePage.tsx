@@ -20,8 +20,8 @@ export const ProfilePage = () => {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 dark:bg-zinc-800 flex justify-center items-start py-10 px-4">
-      <section className="w-full max-w-md  border-4 border-zinc-50 bg-white dark:bg-zinc-700 rounded-2xl shadow-xl p-8 space-y-6 transition-all duration-200">
+    <main className="flex min-h-screen items-start justify-center bg-slate-100 px-4 py-10 dark:bg-zinc-800">
+      <section className="app-card w-full max-w-md space-y-6 p-8">
         <div className="flex flex-col items-center gap-2">
           <div className="w-24 h-24 rounded-full bg-slate-300 dark:bg-zinc-600 flex items-center justify-center text-4xl">
             👤
@@ -52,7 +52,7 @@ export const ProfilePage = () => {
               type="button"
               onClick={onResetPassword}
               disabled={forgotPassword.isPending}
-              className="w-full bg-slate-400 hover:bg-slate-500 text-white py-2 rounded-lg transition disabled:opacity-60"
+              className="app-action-button app-action-button-neutral w-full"
             >
               Send reset password email
             </button>
@@ -62,16 +62,18 @@ export const ProfilePage = () => {
           </div>
         )}
 
-        <div className="pt-2 flex justify-center gap-4 text-white">
+        <div className="flex justify-center gap-4 pt-2 text-white">
           <button
+            type="button"
             onClick={() => logout.mutate()}
-            className="bg-red-500 hover:bg-red-600  px-4 py-2 rounded-lg transition"
+            className="app-action-button app-action-button-danger"
           >
             Log out
           </button>
           <button
+            type="button"
             onClick={() => navigate("/todo")}
-            className="bg-slate-400 dark:bg-zinc-600 hover:bg-slate-500 dark:hover:bg-zinc-500 rounded-lg px-4 py-2  transition"
+            className="app-action-button app-action-button-neutral"
           >
             Back
           </button>

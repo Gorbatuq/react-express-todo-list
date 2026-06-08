@@ -21,8 +21,7 @@ export const TaskGroupGrid = ({ groups }: Props) => {
         <div
           ref={droppableProvided.innerRef}
           {...droppableProvided.droppableProps}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 
-           gap-6 items-start max-w-full"
+          className="grid w-full grid-cols-1 items-start gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
         >
           {groups.map((group, index) => {
             return (
@@ -32,6 +31,7 @@ export const TaskGroupGrid = ({ groups }: Props) => {
                     ref={droppableProvided.innerRef}
                     {...droppableProvided.draggableProps}
                     style={droppableProvided.draggableProps.style}
+                    className="min-w-0"
                   >
                     <TaskGroupCard
                       group={group}

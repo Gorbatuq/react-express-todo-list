@@ -6,11 +6,10 @@ export const ThemeToggleButton = () => {
 
   return (
     <button
+      type="button"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       aria-label="Toggle Theme"
-      className="fixed top-4 right-4
-             [width:clamp(3rem,5vw,3rem)]
-             [height:clamp(3rem,5vw,2rem)]
+      className="relative h-9 w-9 shrink-0
              rounded-full border-2
              hover:bg-zinc-50
              flex items-center justify-center
@@ -18,7 +17,7 @@ export const ThemeToggleButton = () => {
              bg-white dark:bg-slate-800"
     >
       <FaSun
-        className={`absolute text-yellow-400 text-2xl transition-all duration-500
+        className={`absolute text-yellow-400 text-xl transition-all duration-500
       ${
         theme === "light"
           ? "opacity-100 scale-100"
@@ -26,7 +25,7 @@ export const ThemeToggleButton = () => {
       }`}
       />
       <FaMoon
-        className={`absolute text-blue-400 text-2xl transition-all duration-500
+        className={`absolute text-blue-400 text-xl transition-all duration-500
       ${
         theme === "dark"
           ? "opacity-100 scale-100"
