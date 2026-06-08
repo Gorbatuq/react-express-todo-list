@@ -1,6 +1,6 @@
-import { useZodForm } from "../../hooks/useZodForm";
+import { useZodForm } from "../../../../shared/form/useZodForm";
 import { PiPlus } from "react-icons/pi";
-import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
+import { useTaskMutations } from "../../hooks/tasks/useTaskMutations";
 import { taskSchema } from "../../validation/taskSchema";
 
 interface Props {

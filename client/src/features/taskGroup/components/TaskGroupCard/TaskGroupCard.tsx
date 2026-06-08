@@ -1,8 +1,8 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
-import { useTasks } from "../../hooks/queries/task/useTasks";
-import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
+import { useGroupMutations } from "../../hooks/groups/useGroupMutations";
+import { useTasks } from "../../hooks/tasks/useTasks";
+import { useTaskMutations } from "../../hooks/tasks/useTaskMutations";
 import { useGroupFilter } from "../../hooks/useGroupFilter";
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import type { TaskGroup } from "../../../../types";

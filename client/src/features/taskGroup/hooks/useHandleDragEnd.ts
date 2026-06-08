@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import type { DropResult } from "@hello-pangea/dnd";
 import { flushSync } from "react-dom";
-import { useGroupMutations } from "./queries/group/useGroupMutations";
-import { useTaskMutations } from "./queries/task/useTaskMutations";
+import { useGroupMutations } from "./groups/useGroupMutations";
+import { useTaskMutations } from "./tasks/useTaskMutations";
 import { queryClient } from "../../../lib/queryClient";
 import { Task, TaskGroup } from "../../../types";
 import { useGroupFilterStore } from "../store/groupFilterStore";

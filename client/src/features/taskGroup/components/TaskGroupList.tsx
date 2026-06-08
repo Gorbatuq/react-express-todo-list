@@ -3,9 +3,9 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import { AddGroupForm } from "./AddForms/AddGroupForm";
 import { TaskGroupGrid } from "./TaskGroupGrid";
 import { TaskGroupSkeletonGrid } from "./ui/TaskGroupSkeletonGrid";
-import { useGroups } from "../hooks/queries/group/useGroups";
+import { useGroups } from "../hooks/groups/useGroups";
 import { useHandleDragEnd } from "../hooks/useHandleDragEnd";
-import { useMe } from "../../../hooks/auth/useMe";
+import { useMe } from "../../auth/hooks/useMe";
 
 export const TaskGroupList = () => {
   const { data: groups, isLoading } = useGroups();

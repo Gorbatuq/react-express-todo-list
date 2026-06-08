@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { ApiError } from "../../api/core/errors";
-import { authApi } from "../../api";
+import { ApiError } from "../../../api/core/errors";
+import { authApi } from "../../../api";
 
 type Credentials = { email: string; password: string };
 type ResetPayload = { token: string; newPassword: string };

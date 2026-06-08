@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Priority, TaskGroup } from "../../../../../types";
-import { groupsApi } from "../../../../../api";
+import { Priority, TaskGroup } from "../../../../types";
+import { groupsApi } from "../../../../api";
 
 export const useGroupMutations = () => {
   const queryClient = useQueryClient();

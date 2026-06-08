@@ -4,7 +4,7 @@ import { TodoPage } from "../pages/TodoPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { ResetPasswordPage } from "../pages/ResetPasswordPage";
 import { WelcomePage } from "../pages/WelcomePage";
-import { useMe } from "../hooks/auth/useMe";
+import { useMe } from "../features/auth/hooks/useMe";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicOnlyRoute } from "./PublicOnlyRoute";
 

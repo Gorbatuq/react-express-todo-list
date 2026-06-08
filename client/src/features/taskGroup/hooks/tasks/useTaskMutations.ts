@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import type { Task } from "../../../../../types";
-import { tasksApi } from "../../../../../api";
+import type { Task } from "../../../../types";
+import { tasksApi } from "../../../../api";
 
 const withSequentialOrder = (tasks: Task[]) =>
   tasks.map((task, order) => ({ ...task, order }));

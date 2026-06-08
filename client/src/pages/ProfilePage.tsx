@@ -1,6 +1,6 @@
 import { useNavigate, Navigate } from "react-router-dom";
-import { useMe } from "../hooks/auth/useMe";
-import { useAuthMutations } from "../hooks/auth/useAuthMutations";
+import { useMe } from "../features/auth/hooks/useMe";
+import { useAuthMutations } from "../features/auth/hooks/useAuthMutations";
 
 export const ProfilePage = () => {
   const { data: user } = useMe();

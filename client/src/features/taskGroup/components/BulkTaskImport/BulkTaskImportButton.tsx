@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { FiX } from "react-icons/fi";
 import { MdPlaylistAdd } from "react-icons/md";
-import { useMe } from "../../../../hooks/auth/useMe";
-import { useGroups } from "../../hooks/queries/group/useGroups";
-import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
-import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
+import { useMe } from "../../../auth/hooks/useMe";
+import { useGroups } from "../../hooks/groups/useGroups";
+import { useGroupMutations } from "../../hooks/groups/useGroupMutations";
+import { useTaskMutations } from "../../hooks/tasks/useTaskMutations";
 import { DEFAULT_PRIORITY, type Priority } from "../../../../types";
 import { PrioritySelect } from "../../../../shared/ui/PrioritySelect";
 

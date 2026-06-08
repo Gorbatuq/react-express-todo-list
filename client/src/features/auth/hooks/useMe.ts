@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { authApi } from "../../api";
-import type { ApiError } from "../../api/core/errors";
+import { authApi } from "../../../api";
+import type { ApiError } from "../../../api/core/errors";
 
 export const useMe = () =>
   useQuery({

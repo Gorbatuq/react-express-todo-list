@@ -1,6 +1,6 @@
 import { MdFormatListBulletedAdd } from "react-icons/md";
-import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
-import { useZodForm } from "../../hooks/useZodForm";
+import { useGroupMutations } from "../../hooks/groups/useGroupMutations";
+import { useZodForm } from "../../../../shared/form/useZodForm";
 import { groupSchema } from "../../validation/groupSchema";
 import toast from "react-hot-toast";
 
