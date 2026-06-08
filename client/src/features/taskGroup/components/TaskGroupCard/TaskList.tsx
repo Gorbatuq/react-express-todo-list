@@ -1,3 +1,4 @@
+import React from "react";
 import { Droppable } from "@hello-pangea/dnd";
 import { TaskItem } from "../TaskItem/TaskItem";
 import type { Task } from "../../../../types";
@@ -10,7 +11,7 @@ interface Props {
   onEditSubmit: (taskId: string, title: string) => void;
 }
 
-export const TaskList = ({
+export const TaskList = React.memo(({
   groupId,
   tasks,
   onToggle,
@@ -40,4 +41,4 @@ export const TaskList = ({
       )}
     </Droppable>
   );
-};
+});

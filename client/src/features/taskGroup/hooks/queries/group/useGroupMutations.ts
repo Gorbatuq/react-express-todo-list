@@ -44,10 +44,14 @@ export const useGroupMutations = () => {
 
   // REORDER
   const reorderGroup = useMutation({
-    mutationFn: (idsInOrder: string[]) => groupsApi.reorder(idsInOrder),
+    mutationFn: ({ idsInOrder }: { idsInOrder: string[]; prev?: TaskGroup[] }) =>
+      groupsApi.reorder(idsInOrder),
 
-    onMutate: async (idsInOrder) => {
-      await queryClient.cancelQueries({ queryKey: ["groups"] });
+    onMutate: ({ idsInOrder, prev: providedPrev }) => {
+      if (providedPrev) {
+        void queryClient.cancelQueries({ queryKey: ["groups"] });
+        return { prev: providedPrev };
+      }
 
       const prev = queryClient.getQueryData<TaskGroup[]>(["groups"]) ?? [];
       const byId = new Map(prev.map((g) => [String(g.id), g] as const));
@@ -59,6 +63,8 @@ export const useGroupMutations = () => {
       const nextWithOrder = next.map((g, i) => ({ ...g, order: i }));
 
       queryClient.setQueryData(["groups"], nextWithOrder);
+      void queryClient.cancelQueries({ queryKey: ["groups"] });
+
       return { prev };
     },
 
@@ -67,10 +73,7 @@ export const useGroupMutations = () => {
       toast.error("Failed to reorder groups");
     },
 
-    onSuccess: (serverGroups) => {
-      const normalized = serverGroups.map((g, i) => ({ ...g, order: i }));
-      queryClient.setQueryData(["groups"], normalized);
-    },
+    onSuccess: () => {},
   });
 
   return { createGroup, deleteGroup, updateGroup, reorderGroup };

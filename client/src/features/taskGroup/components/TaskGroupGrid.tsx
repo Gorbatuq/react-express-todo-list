@@ -1,6 +1,7 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { TaskGroupCard } from "./TaskGroupCard/TaskGroupCard";
 import { TaskGroup } from "../../../types";
+import { getDropAnimationStyle } from "../utils/getDropAnimationStyle";
 
 type Props = {
   groups: TaskGroup[];
@@ -26,11 +27,14 @@ export const TaskGroupGrid = ({ groups }: Props) => {
           {groups.map((group, index) => {
             return (
               <Draggable key={group.id} draggableId={group.id} index={index}>
-                {(droppableProvided) => (
+                {(droppableProvided, snapshot) => (
                   <div
                     ref={droppableProvided.innerRef}
                     {...droppableProvided.draggableProps}
-                    style={droppableProvided.draggableProps.style}
+                    style={getDropAnimationStyle(
+                      droppableProvided.draggableProps.style,
+                      snapshot,
+                    )}
                     className="min-w-0"
                   >
                     <TaskGroupCard

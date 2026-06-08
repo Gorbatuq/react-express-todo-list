@@ -1,8 +1,10 @@
+import React from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { TaskCheckbox } from "./TaskCheckbox";
 import { EditableTaskTitle } from "./EditableTaskTitle";
 import { DeleteButton } from "./DeleteButton";
 import { Task } from "../../../../types";
+import { getDropAnimationStyle } from "../../utils/getDropAnimationStyle";
 
 interface Props {
   task: Task;
@@ -12,7 +14,7 @@ interface Props {
   onEditSubmit: (taskId: string, title: string) => void;
 }
 
-export const TaskItem = ({
+export const TaskItem = React.memo(({
   task,
   index,
   onToggle,
@@ -26,7 +28,10 @@ export const TaskItem = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          style={provided.draggableProps.style}
+          style={getDropAnimationStyle(
+            provided.draggableProps.style,
+            snapshot,
+          )}
           className={`task-item-surface flex items-center justify-between ${
             snapshot.isDragging ? "ring-2 ring-blue-50 shadow-xl" : ""
           }`}
@@ -46,4 +51,4 @@ export const TaskItem = ({
       )}
     </Draggable>
   );
-};
+});

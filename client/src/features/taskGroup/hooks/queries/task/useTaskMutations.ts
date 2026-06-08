@@ -3,6 +3,19 @@ import toast from "react-hot-toast";
 import type { Task } from "../../../../../types";
 import { tasksApi } from "../../../../../api";
 
+const withSequentialOrder = (tasks: Task[]) =>
+  tasks.map((task, order) => ({ ...task, order }));
+
+const orderTasksByIds = (tasks: Task[], taskIds: string[]) => {
+  const byId = new Map(tasks.map((task) => [String(task.id), task] as const));
+
+  return withSequentialOrder(
+    taskIds
+      .map((taskId) => byId.get(String(taskId)))
+      .filter(Boolean) as Task[],
+  );
+};
+
 export const useTaskMutations = () => {
   const queryClient = useQueryClient();
 
@@ -28,15 +41,27 @@ export const useTaskMutations = () => {
       taskId: string;
       newGroupId: string;
       toIndex: number;
+      prevSource?: Task[];
+      prevDest?: Task[];
     }) =>
       tasksApi.update(groupId, taskId, {
         groupId: newGroupId,
         toIndex,
       }),
 
-    onMutate: async ({ groupId, taskId, newGroupId, toIndex }) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
-      await queryClient.cancelQueries({ queryKey: ["tasks", newGroupId] });
+    onMutate: ({
+      groupId,
+      taskId,
+      newGroupId,
+      toIndex,
+      prevSource: providedPrevSource,
+      prevDest: providedPrevDest,
+    }) => {
+      if (providedPrevSource && providedPrevDest) {
+        void queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
+        void queryClient.cancelQueries({ queryKey: ["tasks", newGroupId] });
+        return { prevSource: providedPrevSource, prevDest: providedPrevDest };
+      }
 
       const prevSource =
         queryClient.getQueryData<Task[]>(["tasks", groupId]) || [];
@@ -46,24 +71,26 @@ export const useTaskMutations = () => {
       const moved = prevSource.find((t) => String(t.id) === String(taskId));
       if (!moved) return { prevSource, prevDest };
 
-      // remove from source
       queryClient.setQueryData(
         ["tasks", groupId],
-        prevSource.filter((t) => String(t.id) !== String(taskId))
+        withSequentialOrder(
+          prevSource.filter((t) => String(t.id) !== String(taskId)),
+        ),
       );
 
-      // insert into dest
       const newDest = [...prevDest];
       newDest.splice(toIndex, 0, { ...moved, groupId: newGroupId });
-      queryClient.setQueryData(["tasks", newGroupId], newDest);
+      queryClient.setQueryData(
+        ["tasks", newGroupId],
+        withSequentialOrder(newDest),
+      );
+      void queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
+      void queryClient.cancelQueries({ queryKey: ["tasks", newGroupId] });
 
       return { prevSource, prevDest };
     },
 
-    onSuccess: (_d, { groupId, newGroupId }) => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", groupId] });
-      queryClient.invalidateQueries({ queryKey: ["tasks", newGroupId] });
-    },
+    onSuccess: () => {},
 
     onError: (_e, { groupId, newGroupId }, ctx) => {
       if (ctx) {
@@ -88,35 +115,28 @@ export const useTaskMutations = () => {
   const reorderTask = useMutation({
     mutationFn: async ({
       groupId,
-      fromIndex,
-      toIndex,
+      taskIds,
+      prev,
     }: {
       groupId: string;
-      fromIndex: number;
-      toIndex: number;
+      taskIds: string[];
+      prev?: Task[];
     }) => {
-      const tasks = queryClient.getQueryData<Task[]>(["tasks", groupId]) || [];
-      const reordered = [...tasks];
-      const [moved] = reordered.splice(fromIndex, 1);
-      if (!moved) return;
-      reordered.splice(toIndex, 0, moved);
-
-      return tasksApi.reorder(
-        groupId,
-        reordered.map((t) => String(t.id))
-      );
+      return tasksApi.reorder(groupId, taskIds);
     },
 
-    onMutate: async ({ groupId, fromIndex, toIndex }) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
+    onMutate: ({ groupId, taskIds, prev: providedPrev }) => {
+      if (providedPrev) {
+        void queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
+        return { prev: providedPrev };
+      }
 
       const prev = queryClient.getQueryData<Task[]>(["tasks", groupId]) || [];
-      const next = [...prev];
-      const [moved] = next.splice(fromIndex, 1);
-      if (!moved) return { prev };
-
-      next.splice(toIndex, 0, moved);
-      queryClient.setQueryData(["tasks", groupId], next);
+      queryClient.setQueryData(
+        ["tasks", groupId],
+        orderTasksByIds(prev, taskIds),
+      );
+      void queryClient.cancelQueries({ queryKey: ["tasks", groupId] });
 
       return { prev };
     },
