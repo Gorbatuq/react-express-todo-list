@@ -1,7 +1,8 @@
 import React from "react";
-import { useGroupMutations } from "../../hooks/queries/group/useGroupMutations";
-import { useTasks } from "../../hooks/queries/task/useTasks";
-import { useTaskMutations } from "../../hooks/queries/task/useTaskMutations";
+import toast from "react-hot-toast";
+import { useGroupMutations } from "../../hooks/groups/useGroupMutations";
+import { useTasks } from "../../hooks/tasks/useTasks";
+import { useTaskMutations } from "../../hooks/tasks/useTaskMutations";
 import { useGroupFilter } from "../../hooks/useGroupFilter";
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import type { TaskGroup } from "../../../../types";
@@ -9,6 +10,7 @@ import { AddTaskForm } from "../AddForms/AddTaskForm";
 import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
 import { FilterButtons } from "./FilterButtons";
+import { GroupCobwebOverlay } from "./GroupCobwebOverlay";
 
 type Props = {
   group: TaskGroup;
@@ -16,46 +18,103 @@ type Props = {
 };
 
 export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
+  const [isCobwebDismissed, setIsCobwebDismissed] = React.useState(false);
   const { deleteGroup, updateGroup } = useGroupMutations();
   const { data: tasks = [] } = useTasks(group.id);
   const { updateTask, deleteTask } = useTaskMutations();
+  const updateGroupMutate = updateGroup.mutate;
+  const deleteGroupMutate = deleteGroup.mutate;
+  const updateTaskMutate = updateTask.mutate;
+  const deleteTaskMutate = deleteTask.mutate;
 
-  const { filter, setFilter, filteredTasks } = useGroupFilter(tasks);
+  const { filter, setFilter, filteredTasks } = useGroupFilter(group.id, tasks);
+
+  React.useEffect(() => {
+    setIsCobwebDismissed(false);
+  }, [group.updatedAt]);
+
+  const copyGroupTasks = React.useCallback(async () => {
+    const text = [group.title, ...tasks.map((task) => task.title)].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Group copied");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to copy group");
+    }
+  }, [group.title, tasks]);
+
+  const handleGroupSubmit = React.useCallback(
+    (title: string, priority: typeof group.priority) => {
+      updateGroupMutate({ groupId: group.id, data: { title, priority } });
+    },
+    [group.id, updateGroupMutate],
+  );
+
+  const handleGroupDelete = React.useCallback(() => {
+    deleteGroupMutate(group.id);
+  }, [deleteGroupMutate, group.id]);
+
+  const handleTaskToggle = React.useCallback(
+    (taskId: string, completed: boolean) => {
+      updateTaskMutate({
+        groupId: group.id,
+        taskId,
+        payload: { completed },
+      });
+    },
+    [group.id, updateTaskMutate],
+  );
+
+  const handleTaskDelete = React.useCallback(
+    (taskId: string) => {
+      deleteTaskMutate({ groupId: group.id, taskId });
+    },
+    [deleteTaskMutate, group.id],
+  );
+
+  const handleTaskEditSubmit = React.useCallback(
+    (taskId: string, title: string) => {
+      updateTaskMutate({
+        groupId: group.id,
+        taskId,
+        payload: { title },
+      });
+    },
+    [group.id, updateTaskMutate],
+  );
 
   return (
-    <div className="flex flex-col w-72 sm:w-auto rounded-2xl bg-white dark:bg-zinc-800 shadow-lg p-4 transition-shadow hover:shadow-xl">
+    <div
+      className="app-card app-card-hover relative flex w-full min-w-0 flex-col p-4"
+      onClick={() => setIsCobwebDismissed(true)}
+    >
+      <GroupCobwebOverlay
+        updatedAt={group.updatedAt}
+        dismissed={isCobwebDismissed}
+      />
       <GroupHeader
         title={group.title}
         priority={group.priority}
         dragHandleProps={dragHandleProps}
-        onSubmit={(title, priority) =>
-          updateGroup.mutate({ groupId: group.id, data: { title, priority } })
-        }
-        onDelete={() => deleteGroup.mutate(group.id)}
+        onSubmit={handleGroupSubmit}
+        onDelete={handleGroupDelete}
+        onCopy={copyGroupTasks}
       />
 
       <TaskList
         groupId={group.id}
         tasks={filteredTasks}
-        onToggle={(taskId, completed) => {
-          updateTask.mutate({
-            groupId: group.id,
-            taskId,
-            payload: { completed },
-          });
-        }}
-        onDelete={(taskId) => deleteTask.mutate({ groupId: group.id, taskId })}
-        onEditSubmit={(taskId, title) => {
-          updateTask.mutate({
-            groupId: group.id,
-            taskId,
-            payload: { title },
-          });
-        }}
+        onToggle={handleTaskToggle}
+        onDelete={handleTaskDelete}
+        onEditSubmit={handleTaskEditSubmit}
       />
 
       <AddTaskForm groupId={group.id} />
-      <FilterButtons currentFilter={filter} onChange={setFilter} />
+      {tasks.length > 0 && (
+        <FilterButtons currentFilter={filter} onChange={setFilter} />
+      )}
     </div>
   );
 });

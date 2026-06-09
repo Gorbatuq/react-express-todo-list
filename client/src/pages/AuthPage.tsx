@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuthMutations } from "../hooks/auth/useAuthMutations";
+import { useAuthMutations } from "../features/auth/hooks/useAuthMutations";
 import { AuthShell } from "../features/auth/components/AuthShell";
 import { AuthForm } from "../features/auth/components/AuthForm";
 import { ForgotPasswordForm } from "../features/auth/components/ForgotPasswordForm";

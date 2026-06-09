@@ -7,6 +7,8 @@ export const taskGroupSchema = z.object({
   title: z.string(),
   order: z.number(),
   priority: prioritySchema,
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export type TaskGroupDto = z.infer<typeof taskGroupSchema>;

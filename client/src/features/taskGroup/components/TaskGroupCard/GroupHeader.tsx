@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { ConfirmModal } from "./ConfirmModal";
-import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import { MdContentCopy, MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { TbGripVertical } from "react-icons/tb";
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
-import { Priority } from "../../../../types";
+import { PRIORITY_COLORS, type Priority } from "../../../../types";
+import { IconButton } from "../../../../shared/ui/IconButton";
+import { PrioritySelect } from "../../../../shared/ui/PrioritySelect";
 
 interface Props {
   title: string;
   priority: Priority;
   onSubmit: (title: string, priority: Priority) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
+  onCopy: () => void | Promise<void>;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
 
@@ -18,19 +21,13 @@ export const GroupHeader = ({
   priority,
   onSubmit,
   onDelete,
+  onCopy,
   dragHandleProps,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [localTitle, setLocalTitle] = useState(title);
   const [localPriority, setLocalPriority] = useState<Priority>(priority);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const priorityColors: Record<Priority, string> = {
-    1: "bg-red-500",
-    2: "bg-orange-400",
-    3: "bg-yellow-200",
-    4: "bg-blue-100",
-  };
 
   return (
     <div className="mb-4 flex items-center gap-2">
@@ -40,12 +37,12 @@ export const GroupHeader = ({
           role="button"
           tabIndex={0}
           aria-label="Drag group"
-          className="inline-flex items-center justify-center rounded-md
+          className="app-icon-button app-icon-button-muted h-7 w-5 flex-shrink-0
                      text-gray-500 hover:text-gray-900 hover:bg-gray-100
                      dark:text-gray-300 dark:hover:text-white dark:hover:bg-zinc-700
                      cursor-grab active:cursor-grabbing select-none touch-none"
         >
-          <TbGripVertical className="text-xl" />
+          <TbGripVertical className="text-base" />
         </div>
       )}
 
@@ -64,18 +61,13 @@ export const GroupHeader = ({
               value={localTitle}
               onChange={(e) => setLocalTitle(e.target.value)}
               autoFocus
-              className="border rounded px-2 py-1 dark:text-zinc-100 dark:bg-gray-700"
+              className="app-input px-2 py-1"
             />
-            <select
+            <PrioritySelect
               value={localPriority}
-              onChange={(e) => setLocalPriority(+e.target.value as Priority)}
-              className="border rounded px-2 py-1 dark:text-zinc-100 dark:bg-gray-700"
-            >
-              <option value={1}>High</option>
-              <option value={2}>Medium</option>
-              <option value={3}>Low</option>
-              <option value={4}>Super Low</option>
-            </select>
+              onChange={setLocalPriority}
+              className="px-2 py-1"
+            />
 
             <button
               type="submit"
@@ -94,44 +86,49 @@ export const GroupHeader = ({
         ) : (
           <div className="flex items-center gap-2 min-w-0">
             <div
-              className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColors[priority]}`}
+              className={`w-3 h-3 rounded-full flex-shrink-0 ${PRIORITY_COLORS[priority]}`}
             />
             <span className="text-lg font-semibold truncate">{title}</span>
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="ml-1 text-gray-500 hover:text-blue-400 flex-shrink-0"
-              aria-label="Edit group"
-            >
-              <MdOutlineEdit />
-            </button>
           </div>
         )}
       </div>
 
-      <div className="flex items-center gap-1 flex-shrink-0">
-        <button
-          type="button"
-          onClick={() => setShowConfirm(true)}
-          className="inline-flex items-center justify-center rounded-md p-2
-                     text-red-600 hover:text-red-700 hover:bg-red-50
-                     dark:hover:bg-red-950/40"
-          aria-label="Delete group"
-        >
-          <MdOutlineDelete className="text-xl" />
-        </button>
-
-        {showConfirm && (
-          <ConfirmModal
-            message="Are you sure you want to delete this group?"
-            onConfirm={() => {
-              onDelete();
-              setShowConfirm(false);
-            }}
-            onCancel={() => setShowConfirm(false)}
+      {!isEditing && (
+        <div className="relative flex flex-shrink-0 items-center gap-px">
+          <IconButton
+            onClick={() => setIsEditing(true)}
+            aria-label="Edit group"
+            icon={<MdOutlineEdit className="text-base" />}
+            sizeClassName="h-7 w-7"
           />
-        )}
-      </div>
+
+          <IconButton
+            onClick={onCopy}
+            aria-label="Copy group tasks"
+            icon={<MdContentCopy className="text-base" />}
+            sizeClassName="h-7 w-7"
+          />
+
+          <IconButton
+            onClick={() => setShowConfirm(true)}
+            aria-label="Delete group"
+            icon={<MdOutlineDelete className="text-base" />}
+            sizeClassName="h-7 w-7"
+            variant="danger"
+          />
+
+          {showConfirm && (
+            <ConfirmModal
+              message="Are you sure you want to delete this group?"
+              onConfirm={() => {
+                onDelete();
+                setShowConfirm(false);
+              }}
+              onCancel={() => setShowConfirm(false)}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

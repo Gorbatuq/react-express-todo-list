@@ -10,4 +10,3 @@ export const ProfileButton = () => {
       </Link>
     )
 }
-

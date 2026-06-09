@@ -1,12 +1,14 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { TaskGroupCard } from "./TaskGroupCard/TaskGroupCard";
 import { TaskGroup } from "../../../types";
+import { getDropAnimationStyle } from "../utils/getDropAnimationStyle";
 
 type Props = {
   groups: TaskGroup[];
+  isGroupDragDisabled?: boolean;
 };
 
-export const TaskGroupGrid = ({ groups }: Props) => {
+export const TaskGroupGrid = ({ groups, isGroupDragDisabled = false }: Props) => {
   if (groups.length === 0) {
     return (
       <p className="text-gray-500 text-lg text-center">
@@ -21,17 +23,25 @@ export const TaskGroupGrid = ({ groups }: Props) => {
         <div
           ref={droppableProvided.innerRef}
           {...droppableProvided.droppableProps}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 
-           gap-6 items-start max-w-full"
+          className="grid w-full grid-cols-1 items-start gap-6 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4"
         >
           {groups.map((group, index) => {
             return (
-              <Draggable key={group.id} draggableId={group.id} index={index}>
-                {(droppableProvided) => (
+              <Draggable
+                key={group.id}
+                draggableId={group.id}
+                index={index}
+                isDragDisabled={isGroupDragDisabled}
+              >
+                {(droppableProvided, snapshot) => (
                   <div
                     ref={droppableProvided.innerRef}
                     {...droppableProvided.draggableProps}
-                    style={droppableProvided.draggableProps.style}
+                    style={getDropAnimationStyle(
+                      droppableProvided.draggableProps.style,
+                      snapshot,
+                    )}
+                    className="min-w-0"
                   >
                     <TaskGroupCard
                       group={group}

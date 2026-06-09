@@ -1,12 +1,15 @@
 import { FiX } from "react-icons/fi";
+import { IconButton } from "../../../../shared/ui/IconButton";
 
 export const DeleteButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <button
+    <IconButton
       onClick={onClick}
-      className="ml-3 text-red-400 flex items-center justify-center"
-    >
-      <FiX />
-    </button>
+      aria-label="Delete task"
+      className="ml-2"
+      icon={<FiX className="text-base" />}
+      sizeClassName="h-7 w-7"
+      variant="danger"
+    />
   );
 };

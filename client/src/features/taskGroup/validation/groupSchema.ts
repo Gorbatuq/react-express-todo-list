@@ -1,4 +1,7 @@
 import z from "zod";
+import { DEFAULT_PRIORITY, PRIORITY_OPTIONS, type Priority } from "../../../types";
+
+const priorityValues = PRIORITY_OPTIONS.map((option) => option.value);
 
 export const groupSchema = z.object({
   title: z
@@ -6,7 +9,12 @@ export const groupSchema = z.object({
     .min(3, "Minimum 3 characters")
     .max(100, "Maximum 100 characters")
     .regex(/[^\s]/, "Cannot be empty or whitespace only"),
-  priority: z.number().min(1).max(4).default(2),
+  priority: z
+    .number()
+    .refine((value): value is Priority =>
+      priorityValues.includes(value as Priority),
+    )
+    .default(DEFAULT_PRIORITY),
 });
 
 

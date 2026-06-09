@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { AppError } from "../../errors/AppError";
 import { taskRepo } from "../../repositories/taskRepo";
+import { groupRepo } from "../../repositories/groupRepo";
 import { ensureObjectId } from "../../utils/objectId";
 
 export async function deleteTaskUsecase(userId: string, taskId: string) {
@@ -19,6 +20,7 @@ export async function deleteTaskUsecase(userId: string, taskId: string) {
         deleted.order,
         session
       );
+      await groupRepo.touchUpdatedAt(String(deleted.groupId), userId, session);
     });
   } finally {
     session.endSession();

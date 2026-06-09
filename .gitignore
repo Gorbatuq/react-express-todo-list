@@ -17,3 +17,4 @@ server/dist
 server/logs
 
 package-lock.json
+client/bundle-stats.html

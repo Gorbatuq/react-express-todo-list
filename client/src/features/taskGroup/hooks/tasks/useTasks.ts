@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Task } from "../../../../../types";
-import { tasksApi } from "../../../../../api";
+import { Task } from "../../../../types";
+import { tasksApi } from "../../../../api";
 
 export const useTasks = (groupId: string) => {
   return useQuery<Task[]>({

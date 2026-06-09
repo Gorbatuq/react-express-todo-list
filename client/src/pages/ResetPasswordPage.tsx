@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuthMutations } from "../hooks/auth/useAuthMutations";
+import { useAuthMutations } from "../features/auth/hooks/useAuthMutations";
 import {
   passwordSchema,
   type passwordType,
