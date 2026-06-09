@@ -12,9 +12,7 @@ import {
   SPIN_DURATION_OPTIONS,
   WHEEL_COLORS,
 } from "./taskChoice";
-import {
-  TaskChoiceGroupSelect,
-} from "./TaskChoiceGroupSelect";
+import { TaskChoiceGroupSelect } from "./TaskChoiceGroupSelect";
 import { TaskChoiceModalShell } from "./TaskChoiceModalShell";
 import { TaskChoiceResult } from "./TaskChoiceResult";
 
@@ -43,8 +41,8 @@ export const TaskWheelModal = ({ onClose }: Props) => {
           style: {
             backgroundColor: WHEEL_COLORS[index % WHEEL_COLORS.length],
             textColor: "#ffffff",
-            fontSize: 14,
-            fontWeight: 400,
+            fontSize: 12,
+            fontWeight: 300,
           },
         }),
       ),
@@ -76,12 +74,12 @@ export const TaskWheelModal = ({ onClose }: Props) => {
               data={wheelData}
               backgroundColors={WHEEL_COLORS}
               textColors={["#ffffff"]}
-              outerBorderColor="#ffffff"
-              outerBorderWidth={8}
-              innerRadius={12}
-              innerBorderColor="#ffffff"
-              innerBorderWidth={4}
-              radiusLineColor="#ffffff"
+              outerBorderColor="#757575"
+              outerBorderWidth={2}
+              innerRadius={10}
+              innerBorderColor="#757575"
+              innerBorderWidth={2}
+              radiusLineColor="#757575"
               radiusLineWidth={2}
               fontSize={14}
               fontWeight={400}

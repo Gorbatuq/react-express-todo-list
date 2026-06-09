@@ -1,6 +1,6 @@
 export const TaskGroupSkeletonGrid = () => (
   // Creating a similar structure while waiting for loading
-  <div className="mx-auto mt-20 w-full max-w-screen-2xl px-4 sm:px-6 md:px-8">
+  <div className="mt-20 w-full">
     <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {/* Create 6 Group Cards */}
       {Array.from({ length: 6 }).map((_, i) => (
