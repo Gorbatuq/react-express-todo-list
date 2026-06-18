@@ -2,8 +2,12 @@ import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import { taskSchema, type TaskInputValues } from "../../validation/taskSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TextareaAutosize from "react-textarea-autosize";
 import { Task } from "../../../../types";
+import { AutoResizeTextarea } from "../../../../shared/ui/AutoResizeTextarea";
+import {
+  TASK_TITLE_MAX_LENGTH,
+  TEXT_LIMIT_WARNING_RATIO,
+} from "../../constants/textLimits";
 
 interface Props {
   task: Task;
@@ -64,10 +68,13 @@ export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
       onSubmit={handleSubmit(submitHandler)}
       className="flex-1"
     >
-      <TextareaAutosize
+      <AutoResizeTextarea
         {...register("title")}
+        showOverflowFade={false}
+        lengthWarningRatio={TEXT_LIMIT_WARNING_RATIO}
         minRows={1}
-        maxRows={6}
+        maxRows={14}
+        maxLength={TASK_TITLE_MAX_LENGTH}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -79,7 +86,7 @@ export const EditableTaskTitle = ({ task, onSubmit }: Props) => {
           }
         }}
         autoFocus
-        className="w-full bg-white dark:text-zinc-800 resize-none overflow-hidden"
+        className="w-full rounded-md bg-white px-2 py-1 dark:bg-gray-700 dark:text-gray-100"
       />
     </form>
   );

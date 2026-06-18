@@ -36,7 +36,7 @@ const SWORDS: readonly SwordDef[] = [
   },
   {
     key: "side",
-    classNameRight: "right-200 xl:right-0 top-1/4 translate-x-1/2",
+    classNameRight: "right-48 top-1/4 translate-x-1/2 xl:right-0",
     idle: { x: "63%", y: "30%", rotate: 85 },
     hover: { x: "60%", y: "30%", rotate: 90 },
   },
@@ -137,7 +137,7 @@ export default function FeatureSection({
   const hoverRot = reduce ? 0 : isRight ? -0.6 : 0.6;
 
   return (
-    <section className="grid items-center mt-4 gap-20 lg:grid-cols-12 text-slate-900">
+    <section className="mt-4 grid items-center gap-20 text-slate-900 dark:text-zinc-100 lg:grid-cols-12">
       <div className={textCol}>
         <div className="cartoon-surface inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold">
           <span className="inline-block h-2 w-2 rounded-full bg-amber-400" />
@@ -147,10 +147,12 @@ export default function FeatureSection({
         <h2 className="mt-3 text-2xl font-extrabold tracking-tight">
           {feature.title}
         </h2>
-        <p className="mt-2 text-sm text-slate-700">{feature.text}</p>
+        <p className="mt-2 text-sm text-slate-700 dark:text-zinc-300">
+          {feature.text}
+        </p>
 
         <div className="flex justify-end pt-10">
-          <div className="h-1 w-56 rounded-full bg-amber-400/80 shadow-[0_2px_0_rgba(2,6,23,0.18)]" />
+          <div className="h-1 w-56 rounded-full bg-amber-400/80 shadow-sm" />
         </div>
       </div>
 
@@ -165,7 +167,7 @@ export default function FeatureSection({
           <div
             className={[
               "cartoon-surface cartoon-shadow-md absolute z-30 -translate-y-1/2 px-3 py-1 text-xs font-extrabold",
-              isRight ? "left-0 -rotate-[16deg]" : "right-0 rotate-[8deg]",
+              isRight ? "left-0 -rotate-12" : "right-0 rotate-6",
             ].join(" ")}
             style={{ top: 0 }}
           >
@@ -194,10 +196,13 @@ export default function FeatureSection({
                     alt=""
                     draggable={false}
                     className={[
-                      "pointer-events-none absolute z-10 h-36 select-none [image-rendering:pixelated]",
+                      "pointer-events-none absolute z-10 h-36 select-none",
                       s.className,
                     ].join(" ")}
-                    style={{ transformOrigin: "50% 50%" }}
+                    style={{
+                      imageRendering: "pixelated",
+                      transformOrigin: "50% 50%",
+                    }}
                     variants={{
                       idle: { x: s.idle.x, y: s.idle.y, rotate: s.idle.rotate },
                       hover: {
@@ -216,12 +221,12 @@ export default function FeatureSection({
               })}
 
             <motion.div
-              className="cartoon-surface cartoon-shadow-xl overflow-hidden rounded-[26px] relative z-20"
+              className="cartoon-surface cartoon-shadow-xl relative z-20 overflow-hidden rounded-3xl"
               style={{ rotate: baseRot }}
               whileHover={reduce ? undefined : { rotate: hoverRot, y: -4 }}
               transition={{ type: "spring", stiffness: 260, damping: 18 }}
             >
-              <div className="relative aspect-[16/9] w-full">
+              <div className="relative aspect-video w-full">
                 <img
                   src={feature.src}
                   alt={feature.title}

@@ -5,9 +5,11 @@ import { Header } from "../shared/layout/Header/Header";
 
 export const TodoPage = () => {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen w-full min-w-0 flex-col bg-white dark:bg-transparent">
       <Header actions={<BulkTaskImportButton />} />
-      <TaskGroupList />
+      <main className="w-full min-w-0 flex-1">
+        <TaskGroupList />
+      </main>
       <TodoToolsFooter />
     </div>
   );

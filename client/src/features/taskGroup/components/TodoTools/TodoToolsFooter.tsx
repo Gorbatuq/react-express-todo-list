@@ -9,7 +9,7 @@ export const TodoToolsFooter = () => {
   const [activeTool, setActiveTool] = useState<ToolMode | null>(null);
 
   return (
-    <footer className="mt-40 flex-1 w-full border-t border-gray-200 bg-slate-50 px-4 py-8 dark:border-zinc-700 dark:bg-zinc-900/40 sm:px-6 md:px-8">
+    <footer className="w-full min-w-0 border-t border-gray-200 bg-white px-4 py-8 dark:border-gray-600 dark:bg-zinc-800 sm:px-6 md:px-8">
       <div className="mx-auto flex w-full max-w-screen-2xl flex-col items-start gap-5 sm:flex-row sm:gap-8">
         <button
           type="button"

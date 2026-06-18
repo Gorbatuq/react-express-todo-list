@@ -10,7 +10,9 @@ import {
   getTaskLabel,
   getWheelSpinCoefficient,
   SPIN_DURATION_OPTIONS,
+  WHEEL_BORDER_COLOR,
   WHEEL_COLORS,
+  WHEEL_TEXT_COLOR,
 } from "./taskChoice";
 import { TaskChoiceGroupSelect } from "./TaskChoiceGroupSelect";
 import { TaskChoiceModalShell } from "./TaskChoiceModalShell";
@@ -40,7 +42,7 @@ export const TaskWheelModal = ({ onClose }: Props) => {
           option: getTaskLabel(task.title),
           style: {
             backgroundColor: WHEEL_COLORS[index % WHEEL_COLORS.length],
-            textColor: "#ffffff",
+            textColor: WHEEL_TEXT_COLOR,
             fontSize: 12,
             fontWeight: 300,
           },
@@ -65,7 +67,7 @@ export const TaskWheelModal = ({ onClose }: Props) => {
       onClose={onClose}
       title="Task wheel"
     >
-      <div className="grid gap-5 sm:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)] sm:items-center">
+      <div className="grid gap-5 sm:grid-cols-2 sm:items-center">
         <div className="order-2 max-w-full overflow-visible sm:order-1">
           <div className="task-wheel-frame">
             <Wheel
@@ -73,13 +75,13 @@ export const TaskWheelModal = ({ onClose }: Props) => {
               prizeNumber={prizeNumber}
               data={wheelData}
               backgroundColors={WHEEL_COLORS}
-              textColors={["#ffffff"]}
-              outerBorderColor="#757575"
+              textColors={[WHEEL_TEXT_COLOR]}
+              outerBorderColor={WHEEL_BORDER_COLOR}
               outerBorderWidth={2}
               innerRadius={10}
-              innerBorderColor="#757575"
+              innerBorderColor={WHEEL_BORDER_COLOR}
               innerBorderWidth={2}
-              radiusLineColor="#757575"
+              radiusLineColor={WHEEL_BORDER_COLOR}
               radiusLineWidth={2}
               fontSize={14}
               fontWeight={400}

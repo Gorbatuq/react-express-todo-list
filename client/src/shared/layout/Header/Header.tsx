@@ -25,7 +25,7 @@ export const Header = ({ actions }: HeaderProps) => {
   }
 
   return (
-    <header className="relative flex items-center justify-between py-4 px-4 border-b border-gray-200 dark:border-gray-600">
+    <header className="relative flex w-full min-w-0 items-center justify-between border-b border-gray-200 bg-white px-4 py-4 dark:border-gray-600 dark:bg-zinc-800">
       <ProfileButton />
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
         <Sword rotate="rotate-90" />

@@ -11,6 +11,8 @@ export const WHEEL_COLORS = [
   "#f472b6",
 ];
 
+export const WHEEL_TEXT_COLOR = "#ffffff";
+export const WHEEL_BORDER_COLOR = "#757575";
 export const SPIN_DURATION_OPTIONS = [2, 3, 5, 8];
 
 const WHEEL_LIBRARY_SPIN_SECONDS = 11.35;

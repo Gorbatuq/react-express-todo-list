@@ -8,6 +8,11 @@ import { useGroupMutations } from "../../hooks/groups/useGroupMutations";
 import { useTaskMutations } from "../../hooks/tasks/useTaskMutations";
 import { DEFAULT_PRIORITY, type Priority } from "../../../../types";
 import { PrioritySelect } from "../../../../shared/ui/PrioritySelect";
+import { AutoResizeTextarea } from "../../../../shared/ui/AutoResizeTextarea";
+import {
+  BULK_TASK_IMPORT_MAX_LENGTH,
+  TEXT_LIMIT_WARNING_RATIO,
+} from "../../constants/textLimits";
 
 const parseTaskTitles = (value: string) => {
   const hasHardSeparators = /[,;\n\r]/.test(value);
@@ -39,6 +44,10 @@ export const BulkTaskImportButton = () => {
   const isGuestLimited = user?.role === "GUEST" && (groups?.length ?? 0) >= 3;
   const isSubmitting = createGroup.isPending || addTask.isPending;
 
+  const clearError = () => {
+    if (error) setError("");
+  };
+
   const resetForm = () => {
     setGroupTitle("");
     setRawTasks("");
@@ -66,6 +75,11 @@ export const BulkTaskImportButton = () => {
 
     if (taskTitles.length === 0) {
       setError("Add at least one task");
+      return;
+    }
+
+    if (rawTasks.length > BULK_TASK_IMPORT_MAX_LENGTH) {
+      setError(`Tasks input must be at most ${BULK_TASK_IMPORT_MAX_LENGTH} characters`);
       return;
     }
 
@@ -99,10 +113,11 @@ export const BulkTaskImportButton = () => {
         aria-label="Import tasks"
         disabled={isGuestLimited}
         onClick={() => setIsOpen(true)}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border-2
+        className="mt-5 inline-flex h-6 w-6 items-center justify-center rounded-full border
           border-slate-300 bg-white text-gray-900 transition-all duration-300
           hover:scale-105 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50
-          text-3xl dark:border-slate-600 dark:bg-gray-700 dark:text-gray-200"
+          text-lg dark:border-slate-600 dark:bg-gray-700 dark:text-gray-200
+          sm:mt-0 sm:h-11 sm:w-11 sm:border-2 sm:text-3xl"
       >
         <MdPlaylistAdd />
       </button>
@@ -138,7 +153,10 @@ export const BulkTaskImportButton = () => {
 
             <input
               value={groupTitle}
-              onChange={(event) => setGroupTitle(event.target.value)}
+              onChange={(event) => {
+                setGroupTitle(event.target.value);
+                clearError();
+              }}
               placeholder="Group title"
               disabled={isSubmitting}
               className="app-input w-full"
@@ -146,18 +164,27 @@ export const BulkTaskImportButton = () => {
 
             <PrioritySelect
               value={priority}
-              onChange={setPriority}
+              onChange={(nextPriority) => {
+                setPriority(nextPriority);
+                clearError();
+              }}
               disabled={isSubmitting}
               className="w-full"
             />
 
-            <textarea
+            <AutoResizeTextarea
               value={rawTasks}
-              onChange={(event) => setRawTasks(event.target.value)}
+              onChange={(event) => {
+                setRawTasks(event.target.value);
+                clearError();
+              }}
               placeholder="Task one, task two; task three"
-              rows={6}
+              minRows={6}
+              maxRows={10}
+              maxLength={BULK_TASK_IMPORT_MAX_LENGTH}
+              lengthWarningRatio={TEXT_LIMIT_WARNING_RATIO}
               disabled={isSubmitting}
-              className="app-input max-h-60 min-h-32 w-full resize-y"
+              className="app-input w-full"
             />
 
             <div aria-live="polite" className="min-h-5">

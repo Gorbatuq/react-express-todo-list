@@ -11,6 +11,9 @@ import { GroupHeader } from "./GroupHeader";
 import { TaskList } from "./TaskList";
 import { FilterButtons } from "./FilterButtons";
 import { GroupCobwebOverlay } from "./GroupCobwebOverlay";
+import { MdExpandLess, MdExpandMore } from "react-icons/md";
+import { useCobwebDismissal } from "../../hooks/useCobwebDismissal";
+import { useTaskListCollapse } from "../../hooks/useTaskListCollapse";
 
 type Props = {
   group: TaskGroup;
@@ -18,9 +21,9 @@ type Props = {
 };
 
 export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
-  const [isCobwebDismissed, setIsCobwebDismissed] = React.useState(false);
   const { deleteGroup, updateGroup } = useGroupMutations();
-  const { data: tasks = [] } = useTasks(group.id);
+  const tasksQuery = useTasks(group.id);
+  const tasks = tasksQuery.data ?? [];
   const { updateTask, deleteTask } = useTaskMutations();
   const updateGroupMutate = updateGroup.mutate;
   const deleteGroupMutate = deleteGroup.mutate;
@@ -28,10 +31,12 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
   const deleteTaskMutate = deleteTask.mutate;
 
   const { filter, setFilter, filteredTasks } = useGroupFilter(group.id, tasks);
-
-  React.useEffect(() => {
-    setIsCobwebDismissed(false);
-  }, [group.updatedAt]);
+  const cobweb = useCobwebDismissal(group.updatedAt);
+  const taskListCollapse = useTaskListCollapse({
+    groupId: group.id,
+    isTasksLoaded: tasksQuery.isSuccess,
+    taskCount: tasks.length,
+  });
 
   const copyGroupTasks = React.useCallback(async () => {
     const text = [group.title, ...tasks.map((task) => task.title)].join("\n");
@@ -88,11 +93,11 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
   return (
     <div
       className="app-card app-card-hover relative flex w-full min-w-0 flex-col p-4"
-      onClick={() => setIsCobwebDismissed(true)}
+      onClick={cobweb.dismiss}
     >
       <GroupCobwebOverlay
         updatedAt={group.updatedAt}
-        dismissed={isCobwebDismissed}
+        dismissed={cobweb.isDismissed}
       />
       <GroupHeader
         title={group.title}
@@ -106,10 +111,35 @@ export const TaskGroupCard = React.memo(({ group, dragHandleProps }: Props) => {
       <TaskList
         groupId={group.id}
         tasks={filteredTasks}
+        isCollapsed={
+          taskListCollapse.canCollapse && taskListCollapse.isCollapsed
+        }
+        onExpand={taskListCollapse.expand}
         onToggle={handleTaskToggle}
         onDelete={handleTaskDelete}
         onEditSubmit={handleTaskEditSubmit}
       />
+
+      {taskListCollapse.canCollapse && (
+        <button
+          type="button"
+          aria-expanded={!taskListCollapse.isCollapsed}
+          onClick={taskListCollapse.toggle}
+          className="mb-3 inline-flex items-center justify-center gap-1 self-center rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-200 dark:hover:bg-zinc-700"
+        >
+          {taskListCollapse.isCollapsed ? (
+            <>
+              <MdExpandMore className="text-lg" />
+              Show tasks
+            </>
+          ) : (
+            <>
+              <MdExpandLess className="text-lg" />
+              Collapse tasks
+            </>
+          )}
+        </button>
+      )}
 
       <AddTaskForm groupId={group.id} />
       {tasks.length > 0 && (

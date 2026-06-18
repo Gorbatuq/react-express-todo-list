@@ -3,12 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    scrollbar-gutter: stable;
-  }
-
   body {
-    @apply text-base;
+    @apply m-0 text-base;
     background-color: #18062b;
     color: #f6feff;
     font-family: "Exo 2", "PT Sans", system-ui, sans-serif;
@@ -116,4 +112,25 @@
     max-height: var(--task-wheel-size) !important;
   }
 
+  .task-list-collapse-fade {
+    mask-image: linear-gradient(to bottom, transparent, black 45%);
+  }
+
+  .task-input-fade-top {
+    @apply bg-gradient-to-b from-white/50 to-white/0
+      dark:from-gray-700/55 dark:to-gray-700/0;
+  }
+
+  .task-input-fade-bottom {
+    @apply bg-gradient-to-t from-white/50 to-white/0
+      dark:from-gray-700/55 dark:to-gray-700/0;
+  }
+
+  .task-input-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .task-input-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }

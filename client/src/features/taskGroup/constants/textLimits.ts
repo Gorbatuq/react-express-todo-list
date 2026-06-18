@@ -1,0 +1,4 @@
+export const TASK_TITLE_MAX_LENGTH = 400;
+export const BULK_TASK_IMPORT_MAX_LENGTH = 10000;
+
+export const TEXT_LIMIT_WARNING_RATIO = 0.85;

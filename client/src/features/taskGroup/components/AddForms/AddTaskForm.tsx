@@ -2,6 +2,11 @@ import { useZodForm } from "../../../../shared/form/useZodForm";
 import { PiPlus } from "react-icons/pi";
 import { useTaskMutations } from "../../hooks/tasks/useTaskMutations";
 import { taskSchema } from "../../validation/taskSchema";
+import { AutoResizeTextarea } from "../../../../shared/ui/AutoResizeTextarea";
+import {
+  TASK_TITLE_MAX_LENGTH,
+  TEXT_LIMIT_WARNING_RATIO,
+} from "../../constants/textLimits";
 
 interface Props {
   groupId: string;
@@ -13,25 +18,45 @@ export const AddTaskForm = ({ groupId }: Props) => {
     register,
     handleSubmit,
     reset,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useZodForm(taskSchema);
 
   const onSubmit = handleSubmit(async ({ title }) => {
     try {
       await addTask.mutateAsync({ groupId, title: title.trim() });
-      reset();
+      reset({ title: "" });
+      clearErrors();
     } catch (err) {
       console.error(err);
     }
   });
+  const titleRegistration = register("title");
 
   return (
     <div className="mt-3 flex flex-col gap-2 w-full ">
-      <form onSubmit={onSubmit} className="flex gap-2 items-center w-full ">
-        <input
-          {...register("title")}
+      <form onSubmit={onSubmit} className="flex gap-2 items-end w-full ">
+        <AutoResizeTextarea
+          {...titleRegistration}
+          wrapperClassName="min-w-0 flex-1"
+          showOverflowFade={false}
+          showLengthWarning={!errors.title}
+          lengthWarningRatio={TEXT_LIMIT_WARNING_RATIO}
+          minRows={1}
+          maxRows={14}
+          maxLength={TASK_TITLE_MAX_LENGTH}
           placeholder="Task title"
-          className="app-input min-w-0 flex-1"
+          onChange={(event) => {
+            titleRegistration.onChange(event);
+            clearErrors("title");
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              onSubmit();
+            }
+          }}
+          className="app-input w-full"
         />
         <button
           type="submit"

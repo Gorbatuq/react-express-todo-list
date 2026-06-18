@@ -32,7 +32,7 @@ export const TaskChoiceModalShell = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto px-3 py-4 sm:px-4 sm:py-6">
       <div
-        className="fixed inset-0 bg-black/20"
+        className="fixed inset-0 bg-black/20 dark:bg-black/80"
         aria-hidden="true"
         onMouseDown={onClose}
       />

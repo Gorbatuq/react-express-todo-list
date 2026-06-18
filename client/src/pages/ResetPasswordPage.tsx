@@ -33,7 +33,10 @@ export const ResetPasswordPage = () => {
   });
 
   return (
-    <div className="flex items-center text-black justify-center min-h-screen bg-[url('/back-img-auth-forget.png')] bg-cover bg-center">
+    <div
+      className="flex min-h-screen items-center justify-center bg-cover bg-center text-black"
+      style={{ backgroundImage: 'url("/back-img-auth-forget.png")' }}
+    >
       <form
         onSubmit={onSubmit}
         className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-4"

@@ -5,7 +5,7 @@ import { WELCOME_FEATURES } from "../features/welcome/content";
 
 export function WelcomePage() {
   return (
-    <div className="mx-auto min-h-screen max-w-[90%] border-slate-900 xl:border-x-2 xl:bg-white">
+    <div className="mx-auto min-h-screen w-11/12 max-w-screen-2xl border-slate-900 dark:border-zinc-700 xl:border-x-2 xl:bg-white xl:dark:bg-zinc-900">
       <div className="mx-auto w-full max-w-6xl px-5 py-10">
         <HeroSection />
 

@@ -14,6 +14,7 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
     register,
     handleSubmit,
     reset,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useZodForm(groupSchema);
 
@@ -22,11 +23,13 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await createGroup.mutateAsync(data);
-      reset();
+      reset({ title: "" });
+      clearErrors();
     } catch (err) {
       toast.error("Failed to create group");
     }
   });
+  const titleRegistration = register("title");
 
   return (
     <div className="mt-6 flex flex-col items-center gap-2">
@@ -35,9 +38,13 @@ export const AddGroupForm = ({ isGuestLimited }: Props) => {
         className="flex gap-2 justify-center items-center"
       >
         <input
-          {...register("title")}
+          {...titleRegistration}
           placeholder="Group title"
           disabled={isDisabled}
+          onChange={(event) => {
+            titleRegistration.onChange(event);
+            clearErrors("title");
+          }}
           className="app-input w-64"
         />
         <button

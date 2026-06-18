@@ -20,7 +20,7 @@ export const ProfilePage = () => {
   };
 
   return (
-    <main className="flex min-h-screen items-start justify-center bg-slate-100 px-4 py-10 dark:bg-zinc-800">
+    <main className="flex min-h-screen items-start justify-center bg-white px-4 py-10 dark:bg-transparent">
       <section className="app-card w-full max-w-md space-y-6 p-8">
         <div className="flex flex-col items-center gap-2">
           <div className="w-24 h-24 rounded-full bg-slate-300 dark:bg-zinc-600 flex items-center justify-center text-4xl">
